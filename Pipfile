@@ -1,0 +1,27 @@
+[[source]]
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[requires]
+python_version = "3.8"
+
+[pipenv]
+allow_prereleases = true
+
+[packages]
+boto3 = "*"
+jsonref = "*"
+pyyaml = "*"
+simplejson = "*"
+
+[dev-packages]
+pylint = "*"
+pylint-report = "*"
+pytest = "*"
+pytest-html = "*"
+pytest-cov = "*"
+
+[scripts]
+test = "pipenv run pytest"
+lint = "pipenv run pylint syngenta_digital_dta/*"
