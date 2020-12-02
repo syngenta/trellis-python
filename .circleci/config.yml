@@ -3,6 +3,10 @@ orbs:
     aws-cli: circleci/aws-cli@1.2.1
     slack: circleci/slack@3.4.2
 commands:
+    run-docker:
+        steps:
+            - run: docker-compose -f tests/local/test-dbs.yml up -d
+            - run: sleep 20
     python-install:
         steps:
             - run: pip install pipenv
@@ -62,11 +66,12 @@ commands:
                 mentions: '${CIRCLE_USERNAME}'
 jobs:
     install-build-test:
-        docker:
-            - image: cimg/python:3.8
+        machine:
+            image: ubuntu-1604:201903-01
         steps:
             - checkout
             - aws-cli/setup
+            - run-docker
             - python-test-install
             - python-lint
             - python-test

@@ -13,6 +13,7 @@ class DynamodbAdapter:
 
     def __init__(self, **kwargs):
         self.table = self._get_dynamo_table(kwargs['table'], kwargs.get('endpoint'))
+        self.model_schema_file = kwargs['model_schema_file']
         self.model_schema = kwargs['model_schema']
         self.model_identifier = kwargs['model_identifier']
         self.model_version_key = kwargs['model_version_key']
@@ -46,13 +47,13 @@ class DynamodbAdapter:
         return self.table.query(**kwargs.get('query', {})).get('Items', [])
 
     def overwrite(self, **kwargs):
-        overwrite_item = schema_mapper.map_to_schema(kwargs['data'], self.model_schema)
+        overwrite_item = schema_mapper.map_to_schema(kwargs['data'], self.model_schema_file, self.model_schema)
         self.table.put_item(Item=overwrite_item)
         self._publish('create', overwrite_item)
         return overwrite_item
 
     def insert(self, **kwargs):
-        new_item = schema_mapper.map_to_schema(kwargs['data'], self.model_schema)
+        new_item = schema_mapper.map_to_schema(kwargs['data'], self.model_schema_file, self.model_schema)
         self.table.put_item(Item=new_item, ConditionExpression=Attr(self.model_identifier).not_exists())
         self._publish('create', new_item)
         return new_item
@@ -66,7 +67,7 @@ class DynamodbAdapter:
     def update(self, **kwargs):
         original_data = self._get_original_data(**kwargs)
         merged_data = dict_merger.merge(original_data, kwargs['data'], **kwargs)
-        updated_data = schema_mapper.map_to_schema(merged_data, self.model_schema)
+        updated_data = schema_mapper.map_to_schema(merged_data, self.model_schema_file, self.model_schema)
         self.table.put_item(Item=updated_data, ConditionExpression=Attr(self.model_version_key).eq(original_data[self.model_version_key]))
         self._publish('update', updated_data)
         return updated_data

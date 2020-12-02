@@ -25,3 +25,4 @@ pytest-cov = "*"
 [scripts]
 test = "pipenv run pytest"
 lint = "pipenv run pylint syngenta_digital_dta/*"
+test-dbs = "docker-compose -f tests/local/test-dbs.yml up"
