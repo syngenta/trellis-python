@@ -39,9 +39,9 @@ $ pipenv install syngenta_digital_dta
 
 ```python
 import os
-import syngenta_data_adapter
+import syngenta_digital_dta
 
-adapter = syngenta_data_adapter.adapter(
+adapter = syngenta_digital_dta.adapter(
     engine='dynamodb',
     table=os.getenv('DYNAMODB_TABLE'),
     endpoint='http://localhost:4000',
