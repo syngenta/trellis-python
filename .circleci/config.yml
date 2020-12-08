@@ -6,32 +6,31 @@ commands:
     run-docker:
         steps:
             - run: docker-compose -f tests/local/test-dbs.yml up -d
-            - run: sleep 20
-    python-install:
+    pyenv-install:
         steps:
-            - run: pip install pipenv
-            - run: pipenv install
-    python-test-install:
+            - run: rm -rf /opt/circleci/.pyenv
+            - run: curl -L https://raw.githubusercontent.com/pyenv/pyenv-installer/master/bin/pyenv-installer | bash
+            - run: pyenv install 3.8.3
+            - run: pyenv global 3.8.3
+    pipenv-install-dev:
         steps:
-            - restore_cache:
-                key: deps9-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
-            - run: pip install pipenv
-            - run: pipenv install --dev
-            - save_cache:
-                key: deps9-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
-                paths:
-                    - ".venv"
+            - run: python3 -m pip install pipenv
+            - run: python3 -m pipenv install --dev
+    pipenv-install:
+        steps:
+            - run: python3 -m pip install pipenv
+            - run: python3 -m pipenv install
     python-lint:
         steps:
-            - run: pipenv run pylint syngenta_digital_dta/* | pipenv run pylint_report.py > lint-report.html || exit 0
+            - run: python3 -m pipenv run pylint syngenta_digital_dta/* | python3 -m pipenv run pylint_report.py > lint-report.html || exit 0
             - store_artifacts:
                 path: ./lint-report.html
     python-test:
         steps:
-            - run: RUN_MODE=unittest pipenv run python -m unittest discover
+            - run: RUN_MODE=unittest python3 -m pipenv run python -m unittest discover
     python-report:
         steps:
-            - run: RUN_MODE=unittest pipenv run pytest --junitxml=./coverage/unit-test/report.xml --html=./coverage/unit-test/$CIRCLE_PROJECT_REPONAME.html --self-contained-html --cov=syngenta_digital_dta tests/ --cov-report html:./coverage
+            - run: RUN_MODE=unittest python3 -m pipenv run pytest --junitxml=./coverage/unit-test/report.xml --html=./coverage/unit-test/$CIRCLE_PROJECT_REPONAME.html --self-contained-html --cov=syngenta_digital_dta tests/ --cov-report html:./coverage
             - store_test_results:
                 path: ./coverage/unit-test
     publish-results:
@@ -72,7 +71,8 @@ jobs:
             - checkout
             - aws-cli/setup
             - run-docker
-            - python-test-install
+            - pyenv-install
+            - pipenv-install-dev
             - python-lint
             - python-test
             - python-report
@@ -83,7 +83,7 @@ jobs:
             - image: cimg/python:3.8
         steps:
             - checkout
-            - python-install
+            - pipenv-install
             - pypi-setup
             - pypi-deploy
             - slack-status

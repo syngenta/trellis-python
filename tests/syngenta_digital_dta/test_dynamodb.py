@@ -146,3 +146,75 @@ class DynamoDBAdapterTest(unittest.TestCase):
         )
         new_data.pop('ignore_key', None)
         self.assertDictEqual(data, new_data)
+
+    def test_adapter_update(self):
+        new_data = {
+            'test_id': 'abc456-update',
+            'test_query_id': 'def789',
+            'object_key': {
+                'string_key': 'nothing'
+            },
+            'array_number': [1, 2, 3],
+            'array_objects': [
+                {
+                    'array_string_key': 'a',
+                    'array_number_key': 1
+                }
+            ],
+            'created': '2020-10-05',
+            'modified': '2020-10-05'
+        }
+        data = self.adapter.create(
+            data=new_data
+        )
+        self.assertDictEqual(data, new_data)
+        new_data['array_number'] = [1, 2, 3, 4]
+        updated_data = self.adapter.update(
+            data=new_data,
+            operation='get',
+            query={
+                'Key': {
+                    'test_id': 'abc456-update',
+                    'test_query_id': 'def789'
+                }
+            }
+        )
+        self.assertDictEqual(updated_data, new_data)
+
+    def test_adapter_delete(self):
+        new_data = {
+            'test_id': 'abc456-delete',
+            'test_query_id': 'def789',
+            'object_key': {
+                'string_key': 'nothing'
+            },
+            'array_number': [1, 2, 3],
+            'array_objects': [
+                {
+                    'array_string_key': 'a',
+                    'array_number_key': 1
+                }
+            ],
+            'created': '2020-10-05',
+            'modified': '2020-10-05'
+        }
+        data = self.adapter.create(
+            data=new_data
+        )
+        self.adapter.delete(
+            query={
+                'Key': {
+                    'test_id': 'abc456-delete',
+                    'test_query_id': 'def789'
+                }
+            }
+        )
+        deleted_data = self.adapter.get(
+            query={
+                'Key': {
+                    'test_id': 'abc456-delete',
+                    'test_query_id': 'def789'
+                }
+            }
+        )
+        self.assertDictEqual(deleted_data, {})

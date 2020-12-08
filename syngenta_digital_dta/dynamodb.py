@@ -74,9 +74,9 @@ class DynamodbAdapter:
 
     def _get_original_data(self, **kwargs):
         if kwargs['operation'] == 'get':
-            original_data = self.get(**kwargs).get('Item', {})
+            original_data = self.get(**kwargs)
         else:
-            original_data = self.query(**kwargs).get('Items', [{}])[0]
+            original_data = self.query(**kwargs)[0]
         if not original_data:
             raise Exception('update: no data found to update')
         return original_data

@@ -86,7 +86,7 @@ result = adapter.read(
 	   'Key': {
 	        'example_id': '3'
 	   }
-   }
+    }
 )
 
 # get
@@ -95,7 +95,7 @@ result = adapter.get(
 	   'Key': {
 	        'example_id': '3'
 	   }
-   }
+    }
 )
 
 # update
@@ -106,7 +106,7 @@ result = adapter.update(
 	   'Key': {
 	        'example_id': '3'
 	   }
-   }
+    }
 )
 
 # delete
@@ -115,7 +115,7 @@ result = adapter.delete(
 	   'Key': {
 	        'example_id': '3'
 	   }
-   }
+    }
 )
 ```
 

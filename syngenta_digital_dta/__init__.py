@@ -6,3 +6,4 @@ def adapter(**kwargs):
         raise Exception('engine {} not supported; contribute to get it supported :)'.format(kwargs['engine']))
     if kwargs['engine'] == 'dynamodb':
         return DynamodbAdapter(**kwargs)
+    return None
