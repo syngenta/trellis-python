@@ -4,25 +4,25 @@ verify_ssl = true
 name = "pypi"
 
 [requires]
-python_version = "3.8"
-
-[pipenv]
-allow_prereleases = true
+python_version = "3.8.7"
 
 [packages]
-boto3 = "*"
-jsonref = "*"
-pyyaml = "*"
-simplejson = "*"
+boto3 = "==1.16.52"
+jsonref = "==0.2"
+pyyaml = "==5.4.1"
+simplejson = "==3.17.2"
+psycopg2 = "==2.8.6"
 
 [dev-packages]
-pylint = "*"
-pylint-report = "*"
-pytest = "*"
-pytest-html = "*"
-pytest-cov = "*"
+pylint = "==2.6.0"
+pylint-report = "==0.1.0"
+pytest = "==6.2.1"
+pytest-html = "==3.1.1"
+pytest-cov = "==2.10.1"
 
 [scripts]
-test = "pipenv run pytest"
-lint = "pipenv run pylint syngenta_digital_dta/*"
-test-dbs = "docker-compose -f tests/local/test-dbs.yml up"
+db = "python -m unittest tests/syngenta_digital_dta/test_redshift.py"
+test = "python -m unittest discover"
+coverage = "coverage run --source application/ -m  pytest tests/application --cov=application --junitxml ./coverage/reports/xunit.xml --cov-report xml:./coverage/reports/coverage.xml --html=./coverage/unit-test/index.html --self-contained-html --cov-report html:./coverage -p no:warnings -o log_cli=true"
+lint = "pylint application"
+local = "docker-compose -f aws/local/databases.yml up"

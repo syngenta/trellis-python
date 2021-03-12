@@ -129,4 +129,5 @@ dmypy.json
 .pyre/
 .tags
 .neo4j
+.postgres
 .DS_Store
