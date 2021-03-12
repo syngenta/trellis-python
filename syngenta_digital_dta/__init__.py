@@ -1,5 +1,5 @@
 from syngenta_digital_dta.dynamodb import DynamodbAdapter
-from syngenta_digital_dta.redshift import RedshiftAdapter
+from syngenta_digital_dta.redshift import RedShiftAdapter
 
 def adapter(**kwargs):
     supported_engines = ['dynamodb', 'redshift']
@@ -8,5 +8,5 @@ def adapter(**kwargs):
     if kwargs['engine'] == 'dynamodb':
         return DynamodbAdapter(**kwargs)
     if kwargs['engine'] == 'redshift':
-        return RedshiftAdapter(**kwargs)
+        return RedShiftAdapter(**kwargs)
     return None

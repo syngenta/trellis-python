@@ -16,7 +16,11 @@ class RedshiftAdapterTest(unittest.TestCase):
             table=TABLE_NAME,
             port=5439,
             user='root',
-            password='Lq4nKg&&TRhHv%7z'
+            password='Lq4nKg&&TRhHv%7z',
+            autoconnect=True,
+            autocommit=True,
+            model_identifier='test_id',
+            model_version_key='modified'
         )
         self.adapter_2 = syngenta_digital_dta.adapter(
             engine='redshift',
@@ -25,9 +29,28 @@ class RedshiftAdapterTest(unittest.TestCase):
             table=TABLE_NAME,
             port=5439,
             user='root',
-            password='Lq4nKg&&TRhHv%7z'
+            password='Lq4nKg&&TRhHv%7z',
+            autoconnect=True,
+            autocommit=True,
+            model_identifier='test_id',
+            model_version_key='modified'
+        )
+        self.adapter_3 = syngenta_digital_dta.adapter(
+            engine='redshift',
+            endpoint='dta-test-cluster.covqcsgpxbmn.us-east-2.redshift.amazonaws.com',
+            database='dta',
+            table=TABLE_NAME,
+            port=5439,
+            user='root',
+            password='Lq4nKg&&TRhHv%7z',
+            model_identifier='test_id',
+            model_version_key='modified'
         )
 
     def test_connect(self):
         self.adapter_1.connect()
         self.adapter_2.connect()
+        self.adapter_3.connect()
+        self.adapter_1.disconnect()
+        self.adapter_2.disconnect()
+        self.adapter_3.disconnect()

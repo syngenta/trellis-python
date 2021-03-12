@@ -1,46 +1,34 @@
-import abc
 from functools import lru_cache
 
 import psycopg2
 
 
-# class SQLConnector(abc.ABC):
-#     def __init__(self, **kwargs):
-#         self.host = kwargs['endpoint']
-#         self.database = kwargs['database']
-#         self.table = kwargs['table']
-#         self.user = kwargs['user']
-#         self.password = kwargs['password']
-#         self.port = kwargs.get('port', 5439)
-#         self.connection = None
-#         self.cursor = None
-#
-#     @lru_cache(maxsize=128)
-#     def connect(self):
-#         try:
-#             if not self.connection:
-#                 print('connect')
-#                 self.connection = psycopg2.connect(
-#                     dbname=self.database,
-#                     host=self.host,
-#                     port=self.port,
-#                     user=self.user,
-#                     password=self.password
-#                 )
-#                 self.cursor = self.connection.cursor()
-#         except Exception as error:
-#             print(error)
-#             raise error
-#
-#     def __del__(self):
-#         try:
-#             self.cursor.close()
-#             self.connection.close()
-#             print('closed')
-#         except Exception as error:
-#             print(error)
-__connections = {}
+class SQLConnector():
+    def __init__(self, cls):
+        self.endpoint = cls.endpoint
+        self.database = cls.database
+        self.table = cls.table
+        self.user = cls.user
+        self.password = cls.password
+        self.port = cls.port
+        self.autocommit = cls.autocommit
+        self.connection = None
+        self.cursor = None
 
-def sql_connection():
-    def wraper(cls):
-        key = 
+    @lru_cache(maxsize=128)
+    def connect(self):
+        try:
+            if not self.connection:
+                self.connection = psycopg2.connect(
+                    dbname=self.database,
+                    host=self.endpoint,
+                    port=self.port,
+                    user=self.user,
+                    password=self.password,
+                )
+            if self.autocommit:
+                self.connection.set_session(autocommit=self.autocommit)
+            return self.connection
+        except Exception as error:
+            print(error)
+            raise error
