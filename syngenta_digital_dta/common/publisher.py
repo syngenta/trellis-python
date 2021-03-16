@@ -1,6 +1,8 @@
 import boto3
 import simplejson as json
 
+from syngenta_digital_dta.common import logger
+
 
 def _check_max_custom_attributes(default_attributes, custom_attributes):
     default_keys = default_attributes.keys()
@@ -58,4 +60,4 @@ def publish(**kwargs):
             MessageAttributes=message_attributes
         )
     except Exception as e:
-        print('publish_sns_error: {}'.format(e))
+        logger.log(level='WARN', log={'error':'publish_sns_error: {}'.format(e)})
