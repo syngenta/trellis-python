@@ -1,20 +1,31 @@
 components:
     schemas:
-        test-neo4j-model:
+        test-redshift-user-model:
             type: object
             properties:
-                test_id:
+                user_id:
                     type: string
-                string_key:
+                email:
                     type: string
-                number_key:
+                first:
                     type: number
-                created:
+                last:
+                    type: number
+        test-redshift-address-model:
+            type: object
+            properties:
+                address_id:
                     type: string
-                    format: date-time
-                modified:
+                user_id:
                     type: string
-                    format: date-time
+                address:
+                    type: string
+                city:
+                    type: string
+                state:
+                    type: string
+                zipcode:
+                    type: string
         test-dynamo-model:
             type: object
             properties:
