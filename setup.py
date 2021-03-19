@@ -18,6 +18,7 @@ setup(
     install_requires=[
         'boto3',
         'jsonref',
+        'psycopg2',
         'pyyaml',
         'simplejson'
     ],

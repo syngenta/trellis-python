@@ -9,9 +9,9 @@ python_version = "3.8"
 [packages]
 boto3 = "==1.17.26"
 jsonref = "==0.2"
+psycopg2 = "==2.8.6"
 pyyaml = "==5.4.1"
 simplejson = "==3.17.2"
-psycopg2 = "==2.8.6"
 
 [dev-packages]
 pylint = "==2.6.0"
