@@ -6,14 +6,14 @@ from syngenta_digital_dta.common import publisher
 from syngenta_digital_dta.common import schema_mapper
 from syngenta_digital_dta.common.sql_connection import sql_connection
 
-class RedShiftAdapter():
+class PostgresAdapter():
     def __init__(self, **kwargs):
         self.endpoint = kwargs['endpoint']
         self.database = kwargs['database']
         self.table = kwargs['table']
         self.user = kwargs['user']
         self.password = kwargs['password']
-        self.port = kwargs.get('port', 5439)
+        self.port = kwargs.get('port', 5432)
         self.relationships = kwargs.get('relationships', {})
         self.model_schema_file = kwargs['model_schema_file']
         self.model_schema = kwargs['model_schema']

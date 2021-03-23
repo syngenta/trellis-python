@@ -131,4 +131,5 @@ dmypy.json
 .tags
 .neo4j
 .postgres
+.redshift
 .DS_Store

@@ -5,21 +5,21 @@ import warnings
 import syngenta_digital_dta
 
 
-class RedshiftAdapterTest(unittest.TestCase):
+class PostgresAdapterTest(unittest.TestCase):
 
     def setUp(self, *args, **kwargs):
         warnings.simplefilter("ignore", ResourceWarning)
         self.maxDiff = None
         ADDRESSES_TABLE='addresses'
         self.user_adapter = syngenta_digital_dta.adapter(
-            engine='redshift',
+            engine='postgres',
             table='users',
             endpoint='localhost',
-            database='dta-redshift',
-            port=5439,
+            database='dta-postgres',
+            port=5432,
             user='root',
             password='Lq4nKg&&TRhHv%7z',
-            model_schema='test-redshift-user-model',
+            model_schema='test-postgres-user-model',
             model_schema_file='tests/openapi.yml',
             model_identifier='user_id',
             model_version_key='modified',
@@ -28,14 +28,14 @@ class RedshiftAdapterTest(unittest.TestCase):
             }
         )
         self.address_adapter = syngenta_digital_dta.adapter(
-            engine='redshift',
+            engine='postgres',
             endpoint='localhost',
-            database='dta-redshift',
+            database='dta-postgres',
             table=ADDRESSES_TABLE,
-            port=5439,
+            port=5432,
             user='root',
             password='Lq4nKg&&TRhHv%7z',
-            model_schema='test-redshift-address-model',
+            model_schema='test-postgres-address-model',
             model_schema_file='tests/openapi.yml',
             model_identifier='address_id',
             model_version_key='modified'

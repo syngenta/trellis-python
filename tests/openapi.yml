@@ -1,5 +1,31 @@
 components:
     schemas:
+        test-postgres-user-model:
+            type: object
+            properties:
+                user_id:
+                    type: string
+                email:
+                    type: string
+                first:
+                    type: number
+                last:
+                    type: number
+        test-postgres-address-model:
+            type: object
+            properties:
+                address_id:
+                    type: string
+                user_id:
+                    type: string
+                address:
+                    type: string
+                city:
+                    type: string
+                state:
+                    type: string
+                zipcode:
+                    type: string
         test-redshift-user-model:
             type: object
             properties:

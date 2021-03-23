@@ -64,7 +64,13 @@ jobs:
                 environment:
                     POSTGRES_USER: root
                     POSTGRES_PASSWORD: Lq4nKg&&TRhHv%7z
-                    POSTGRES_DB: dta
+                    POSTGRES_DB: dta-redshift
+            -
+                image: postgres:11.9
+                environment:
+                    POSTGRES_USER: root
+                    POSTGRES_PASSWORD: Lq4nKg&&TRhHv%7z
+                    POSTGRES_DB: dta-postgres
         steps:
             - checkout
             - aws-cli/setup
