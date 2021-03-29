@@ -4,9 +4,9 @@ from syngenta_digital_dta.common import dict_merger
 from syngenta_digital_dta.common import logger
 from syngenta_digital_dta.common import publisher
 from syngenta_digital_dta.common import schema_mapper
-from syngenta_digital_dta.common.sql_connection import sql_connection
+from syngenta_digital_dta.postgres.sql_connection import sql_connection
 
-class PostgresAdapter():
+class PostgresAdapter:
     def __init__(self, **kwargs):
         self.endpoint = kwargs['endpoint']
         self.database = kwargs['database']
@@ -236,9 +236,9 @@ class PostgresAdapter():
         if error_type == 'READ_ONLY':
             raise Exception('query method is for read-only operations; please use another function for destructive operatins')
         if error_type == 'NOT_UNIQUE':
-            raise Exception(f'row already exist with {self.model_identifier} = {kwargs["data"][self.model_identifier]}')
+            raise Exception(f'row already exist with {self.model_identifier} = {kwargs.get("data", {}).get(self.model_identifier)}')
         if error_type == 'NOT_EXISTS':
-            raise Exception(f'row does not exist with {self.model_identifier} = {kwargs["data"][self.model_identifier]}')
+            raise Exception(f'row does not exist with {self.model_identifier} = {kwargs.get("data", {}).get(self.model_identifier)}')
         raise Exception(f'Something went wrong and I am not sure how I got here: {error_type}')
 
     def __publish(self, operation, data):

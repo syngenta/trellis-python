@@ -1,22 +1,14 @@
-import simplejson as json
-import jsonref
-import yaml
+from syngenta_digital_dta.common import schema_loader
 
 
 def map_to_schema(data, schema_file, schema_key):
     model_data = {}
-    model_schema = _get_model_schema(schema_file, schema_key)
+    model_schema = schema_loader.load_schema(schema_file, schema_key)
     schemas = model_schema['allOf'] if model_schema.get('allOf') else [model_schema]
     for model in schemas:
         if model.get('type') == 'object':
             _populate_model_data(model.get('properties', {}), data, model_data)
     return model_data
-
-
-def _get_model_schema(schema_file, schema_key):
-    with open(schema_file) as openapi:
-        api_doc = yaml.load(openapi, Loader=yaml.FullLoader)
-    return jsonref.loads(json.dumps(api_doc))['components']['schemas'][schema_key]
 
 
 def _populate_model_data(properties, data, model_data):

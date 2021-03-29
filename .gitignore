@@ -132,4 +132,5 @@ dmypy.json
 .neo4j
 .postgres
 .redshift
+.elasticsearch
 .DS_Store

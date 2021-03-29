@@ -4,7 +4,8 @@ import warnings
 import boto3
 
 import syngenta_digital_dta
-from tests.syngenta_digital_dta.mock_table import MockTable
+from tests.syngenta_digital_dta.dynamodb.mock_table import MockTable
+
 
 class DynamoDBAdapterTest(unittest.TestCase):
 

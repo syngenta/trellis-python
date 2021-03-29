@@ -68,19 +68,20 @@ Option Name        | Required | Type   | Description
 
 **Examples**
 
+### DynamoDB Create
+
 ```python
-# create
 result = adapter.create(
-    operation='insert', # or overwrite (optional); defaults to insert
+	operation='insert', # or overwrite (optional); defaults to insert
 	data=some_dict_to_insert_into_the_table,
 )
 
-# insert
-result = adapter.insert(
-	data=some_dict_to_insert_into_the_table,
-)
+result = adapter.insert(data=some_dict_to_insert_into_the_table) # alias
+```
 
-# get
+### DynamoDB Read
+
+```python
 result = adapter.read(
     operation='get', # or query or scan (optional); defaults to get
 	query={
@@ -90,7 +91,6 @@ result = adapter.read(
     }
 )
 
-# get
 result = adapter.get(
 	query={
 	   'Key': {
@@ -98,8 +98,11 @@ result = adapter.get(
 	   }
     }
 )
+```
 
-# update
+### DynamoDB Update
+
+```python
 result = adapter.update(
 	data=some_dict_to_update_the_model,
 	operation='get',
@@ -109,8 +112,11 @@ result = adapter.update(
 	   }
     }
 )
+```
 
-# delete
+### DynamoDB Delete
+
+```python
 result = adapter.delete(
 	query={
 	   'Key': {
@@ -119,26 +125,27 @@ result = adapter.delete(
     }
 )
 ```
-## Common Usage: Postgres
+
+## Common Usage: Postgres & Redshift
 
 ```python
 import os
 import syngenta_digital_dta
 
 adapter = syngenta_digital_dta.adapter(
-    engine='postgres',
+    engine='postgres', # or redshift
     table='users',
     endpoint='localhost',
     database='dta',
-    port=5439,
-    user=os.getenv('REDSHIFT_USER'),
-    password=os.getenv('REDSHIFT_PASSWORD'),
+    port=5439, # 5432 for redshift
+    user=os.getenv('POSTGRES_USER'),
+    password=os.getenv('POSTGRES_PASSWORD'),
     model_schema='test-postgres-user-model',
     model_schema_file='tests/openapi.yml',
     model_identifier='user_id',
     model_version_key='modified',
     relationships={
-        f'{ADDRESSES_TABLE}': 'user_id'
+        'addresses': 'user_id'
     }
 )
 ```
@@ -165,59 +172,63 @@ Option Name        | Required | Type   | Description
 
 **Examples**
 
+### Postgres/Reshift Connect
+
 ```python
-# connect()
 # will always pool and share connections
 self.user_adapter.connect()
+```
 
-# create()
-# alias for insert()
-# will raise an error if not unique model identifier
-# will return the data you sent
+### Postgres/Reshift Create
+
+```python
 data = {
     'user_id': str(uuid.uuid4()),
-    'email': 'paul.cruse@syngenta.com',
-    'first': 'Paul',
-    'last': 'Cruse III'
+    'email': 'somen.user@some-email.com',
+    'first': 'Some',
+    'last': 'User'
 }
 result = self.user_adapter.create(data=data, commit=True)
+result = self.user_adapter.insert(data=data, commit=True) # alias
+```
 
-# update()
-# will raise an error if not row doesn't exist, using the model identifier
-# will return the data you sent
+### Postgres/Reshift Update
+
+```python
 data = {
     'user_id': 'some-update-guid',
-    'email': 'paul.cruse@syngenta.com',
-    'first': 'Paul',
-    'last': 'Cruse III'
+    'email': 'somen.user@some-email.com',
+    'first': 'Some',
+    'last': 'User'
 }
 result = self.user_adapter.update(data=data, commit=True)
+```
 
-# upsert()
-# will overwrite anything that is already there
-# will return the data you sent
+### Postgres/Reshift Upsert
+
+```python
 data = {
     'user_id': 'some-update-guid',
-    'email': 'paul.cruse@syngenta.com',
-    'first': 'Paul',
-    'last': 'Cruse III'
+    'email': 'somen.user@some-email.com',
+    'first': 'Some',
+    'last': 'User'
 }
 result = self.user_adapter.upsert(data=data, commit=True)
+```
 
-# delete()
-# will raise an error if record doesn't exists
+### Postgres/Reshift Delete
+
+```python
 self.user_adapter.delete('some-delete-guid', commit=True)
+```
 
-# read()
-# alias for get()
+### Postgres/Reshift Read
+
+```python
 # will only return 1 row or None
 result = self.user_adapter.read('some-read-guid')
+result = self.user_adapter.get('some-read-guid') # alias
 
-# read_all()
-# alias for get_all()
-# will only return limit of 1000 rows or empty list []
-# will auto sort by model identifier ASC
-# will always return an array of dicts
 # all fields optional (defaults to SELECT * FROM {table} ORDER BY {model_identifier} ASC LIMIT 1000)
 results = self.user_adapter.read_all(
     where={
@@ -230,30 +241,10 @@ results = self.user_adapter.read_all(
     orderby_sort='DESC'
 )
 
-# get_relationship()
 # limited to get 1 relationship at a time
-# will auto sort by model identifier ASC
-# will always return an array of dicts
-user_data = {
-    'user_id': 'some-user-relationship-guid',
-    'email': 'paul.cruse@syngenta.com',
-    'first': 'Paul',
-    'last': 'Cruse III'
-}
-address_data = {
-    'address_id': 'some-address-guid',
-    'user_id': 'some-user-relationship-guid',
-    'address': '400 Street',
-    'city': 'Chicago',
-    'state': 'IL',
-    'zipcode': '60616'
-}
 results = self.user_adapter.get_relationship('addresses', where={'user_id': 'some-user-relationship-guid'})
 
-# query()
-# WARNNING: USE LIGHTY; AVOID SQL IN THE CODEBASE
 # only will allow read-only operations
-# will always return an array of dicts
 # query and params are required; params can be empty dict
 results = self.user_adapter.query(
     query='SELECT * FROM users WHERE user_id = %(identifier_value)s',
@@ -263,27 +254,20 @@ results = self.user_adapter.query(
 )
 ```
 
-## Common Usage: Redshift
+## Common Usage: Elasticsearch
 
 ```python
 import os
 import syngenta_digital_dta
 
 adapter = syngenta_digital_dta.adapter(
-    engine='redshift',
-    table='users',
+    engine='elasticsearch',
+    index='users',
     endpoint='localhost',
-    database='dta',
-    port=5439,
-    user=os.getenv('REDSHIFT_USER'),
-    password=os.getenv('REDSHIFT_PASSWORD'),
-    model_schema='test-redshift-user-model',
+    model_schema='test-elasticsearch-user-model',
     model_schema_file='tests/openapi.yml',
     model_identifier='user_id',
-    model_version_key='modified',
-    relationships={
-        f'{ADDRESSES_TABLE}': 'user_id'
-    }
+    model_version_key='modified'
 )
 ```
 
@@ -292,118 +276,97 @@ adapter = syngenta_digital_dta.adapter(
 Option Name        | Required | Type   | Description
 :-----------       | :------- | :----- | :----------
 `engine`           | true     | string | name of supported db engine (dynamodb)
-`table`            | true     | string | name of redshift table to work as primary query point
-`endpoint`         | true     | string | url of the redshift cluster
-`database`         | true     | string | name of the database to connect to
-`port`             | true     | int    | port of database (defaults to 5439)
-`user`             | true     | string | username for database access
-`password`         | true     | string | password for database access
+`index`            | true     | string | name of postgres table to work as primary query point
+`endpoint`         | true     | string | url of the postgres cluster
+`port`             | false    | int    | port of database (defaults to 9200 if localhost or 443 if not)
 `model_schema`     | true     | string | key of openapi schema this is being set against
 `model_schema_file`| true     | string | path where your schema file can found (accepts JSON as well)
 `model_identifier` | true     | string | unique identifier key on the model
 `model_version_key`| true     | string | key that can be used as a version key (modified timestamps often suffice)
-`autocommit`       | false    | boolean| will commit transactions automatically without direct call
-`relationships`    | false    | dict   | key is the table with the relationship and value is the foreign key on that table (assumes your primiary key name is equal to that table's foreign key)
 `author_identifier`| false    | string | unique identifier of the author who made the change (optional)
 `sns_arn`          | false    | string | sns topic arn you want to broadcast the changes to
 
-**Examples**
+
+### Elasticsearch Connection
 
 ```python
-# connect()
-# will always pool and share connections
-self.user_adapter.connect()
+# elasticsearch is auto-connected to a shared connection; use this to test that connection
+self.adapter.connection.ping()
+```
 
-# create()
-# alias for insert()
-# will raise an error if not unique model identifier
-# will return the data you sent
-data = {
-    'user_id': str(uuid.uuid4()),
-    'email': 'paul.cruse@syngenta.com',
-    'first': 'Paul',
-    'last': 'Cruse III'
-}
-result = self.user_adapter.create(data=data, commit=True)
+### Elasticsearch Set-up
 
-# update()
-# will raise an error if not row doesn't exist, using the model identifier
-# will return the data you sent
-data = {
-    'user_id': 'some-update-guid',
-    'email': 'paul.cruse@syngenta.com',
-    'first': 'Paul',
-    'last': 'Cruse III'
-}
-result = self.user_adapter.update(data=data, commit=True)
-
-# upsert()
-# will overwrite anything that is already there
-# will return the data you sent
-data = {
-    'user_id': 'some-update-guid',
-    'email': 'paul.cruse@syngenta.com',
-    'first': 'Paul',
-    'last': 'Cruse III'
-}
-result = self.user_adapter.upsert(data=data, commit=True)
-
-# delete()
-# will raise an error if record doesn't exists
-self.user_adapter.delete('some-delete-guid', commit=True)
-
-# read()
-# alias for get()
-# will only return 1 row or None
-result = self.user_adapter.read('some-read-guid')
-
-# read_all()
-# alias for get_all()
-# will only return limit of 1000 rows or empty list []
-# will auto sort by model identifier ASC
-# will always return an array of dicts
-# all fields optional (defaults to SELECT * FROM {table} ORDER BY {model_identifier} ASC LIMIT 1000)
-results = self.user_adapter.read_all(
-    where={
-        'first': 'first',
-        'last': 'last',
-    },
-    limit=2,
-    offset=1,
-    orderby_column='first',
-    orderby_sort='DESC'
+```python
+# will convert openapi schema, defined in init, to a mapping
+self.adapter.create_template(
+    name='users',
+    index_patterns='users-*',
+    special={'phone': 'keyword'} # (optional) can send mapping of special types otherwise will default based on schema type
 )
 
-# get_relationship()
-# limited to get 1 relationship at a time
-# will auto sort by model identifier ASC
-# will always return an array of dicts
-user_data = {
-    'user_id': 'some-user-relationship-guid',
-    'email': 'paul.cruse@syngenta.com',
-    'first': 'Paul',
-    'last': 'Cruse III'
-}
-address_data = {
-    'address_id': 'some-address-guid',
-    'user_id': 'some-user-relationship-guid',
-    'address': '400 Street',
-    'city': 'Chicago',
-    'state': 'IL',
-    'zipcode': '60616'
-}
-results = self.user_adapter.get_relationship('addresses', where={'user_id': 'some-user-relationship-guid'})
+# will use sensible defaults or you can pass in a custom settings kwargs['settings']
+self.adapter.create_index(settings=some_optional_settings)
+```
 
-# query()
-# WARNNING: USE LIGHTY; AVOID SQL IN THE CODEBASE
-# REMEMBER: Redshift is Postgres Lite... what works in postgres may not in reshift
-# only will allow read-only operations
-# will always return an array of dicts
-# query and params are required; params can be empty dict
-results = self.user_adapter.query(
-    query='SELECT * FROM users WHERE user_id = %(identifier_value)s',
-    params={
-        'identifier_value':'some-query-relationship-guid'
+### Elasticsearch Create
+
+```python
+data = {
+    'user_id': uuid.uuid4().hex,
+    'email': 'somen.user@some-email.com',
+    'first': 'Some',
+    'last': 'User',
+    'phone': 1112224444
+}
+self.adapter.create(data=data, refresh=True) # (optional) refresh defaults to True
+```
+
+
+### Elasticsearch Update
+
+```python
+updated_data = {
+    'user_id': user_id,
+    'email': 'peter.cruse@some-email.com',
+    'first': 'Peter'
+}
+self.adapter.update(data=updated_data, refresh=True) # (optional) refresh defaults to True
+```
+
+### Elasticsearch Upsert
+
+```python
+data = {
+    'user_id': upsert_id,
+    'email': 'somen.user-upsert@some-email.com',
+    'first': 'Some',
+    'last': 'User',
+    'phone': 1112224444
+}
+self.adapter.upsert(data=data, refresh=True) # (optional) refresh defaults to True
+```
+
+### Elasticsearch Delete
+
+```python
+self.adapter.delete(delete_id, refresh=True) # (optional) refresh defaults to True
+```
+
+### Elasticsearch Read
+
+```python
+response = self.adapter.get(get_id)
+
+# returns single dictionary mapped to openapi model defined in init (or empty dict)
+dict_response = self.adapter.get(get_id, normalize=True) # (optional) normalize defaults to False
+
+# returns list of dictionaries mapped to openapi model defined in init (or empty array)
+list_response = self.adapter.query(
+    normalize=True, # (optional) normalize defaults to False
+    query={
+        'match': {
+            'first': 'Normal'
+        }
     }
 )
 ```

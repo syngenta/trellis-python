@@ -37,3 +37,14 @@ services:
             POSTGRES_USER: root
             POSTGRES_PASSWORD: Lq4nKg&&TRhHv%7z
             POSTGRES_DB: dta-postgres
+    elasticsearch:
+        image: docker.elastic.co/elasticsearch/elasticsearch:7.9.0
+        container_name: elasticsearch-local
+        restart: always
+        volumes:
+            - ./.elasticsearch/data:/usr/share/elasticsearch/data
+        ports:
+            - 9200:9200
+            - 9300:9300
+        environment:
+            - discovery.type=single-node

@@ -4,7 +4,7 @@ import psycopg2
 from psycopg2.extras import RealDictCursor
 
 
-class SQLConnector():
+class SQLConnector:
     def __init__(self, cls):
         self.endpoint = cls.endpoint
         self.database = cls.database

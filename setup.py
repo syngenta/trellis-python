@@ -17,9 +17,11 @@ setup(
     python_requires='>=3.0',
     install_requires=[
         'boto3',
+        'elasticsearch',
         'jsonref',
         'psycopg2',
         'pyyaml',
+        'requests-aws4auth',
         'simplejson'
     ],
     classifiers=[

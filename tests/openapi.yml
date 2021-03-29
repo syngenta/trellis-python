@@ -1,16 +1,88 @@
 components:
     schemas:
-        test-postgres-user-model:
+        test-es-mapper-model:
+            type: object
+            properties:
+                company_name:
+                    type: string
+                    minLength: 1
+                company_email:
+                    type: string
+                    format: email
+                address1:
+                    type: string
+                    minLength: 1
+                address2:
+                    type: string
+                    minLength: 1
+                city:
+                    type: string
+                    minLength: 1
+                state:
+                    type: string
+                    minLength: 1
+                zipcode:
+                    type: string
+                    minLength: 1
+                phone:
+                    type: string
+                    minLength: 1
+                salesforce_id:
+                    type: string
+                    minLength: 1
+                sap_id:
+                    type: string
+                    minLength: 1
+                active:
+                    type: boolean
+                created:
+                    type: string
+                    format: date-time
+                modified:
+                    type: string
+                    format: date-time
+                company_type:
+                    type: string
+                    enum:
+                    - grain-receiver
+                    - reseller
+                    - 3PO
+                geocodes:
+                    type: array
+                details:
+                    type: array
+                    items:
+                        type: object
+                        properties:
+                            details_name:
+                                type: string
+                            details_value:
+                                type: string
+        test-elasticsearch-user-model:
             type: object
             properties:
                 user_id:
                     type: string
                 email:
                     type: string
+                    format: email
                 first:
-                    type: number
+                    type: string
                 last:
+                    type: string
+                phone:
                     type: number
+        test-postgres-user-model:
+                type: object
+                properties:
+                    user_id:
+                        type: string
+                    email:
+                        type: string
+                    first:
+                        type: number
+                    last:
+                        type: number
         test-postgres-address-model:
             type: object
             properties:
