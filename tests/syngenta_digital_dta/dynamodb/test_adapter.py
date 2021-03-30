@@ -37,6 +37,10 @@ class DynamoDBAdapterTest(unittest.TestCase):
         )
         self.assertDictEqual(data, self.mock_table.mock_data)
 
+    def test_adapter_read_scan(self):
+        data = self.adapter.read(operation='scan')
+        self.assertEqual(len(data), len(data))
+
     def test_adapter_get(self):
         data = self.adapter.get(
             query={

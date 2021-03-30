@@ -36,9 +36,52 @@ class ElasticsearchAdapterTest(unittest.TestCase):
             print(e)
             self.assertEqual(False, True)
 
+    def test_create_template_list_patterns(self):
+        try:
+            self.adapter.create_template(
+                name=uuid.uuid4().hex,
+                index_patterns=[f'{uuid.uuid4().hex}-*']
+            )
+            self.assertEqual(True, True)
+        except Exception as e:
+            print(e)
+            self.assertEqual(False, True)
+
+    def test_create_custom_patterns(self):
+        try:
+            self.adapter.create_template(
+                name=uuid.uuid4().hex,
+                index_patterns=[f'{uuid.uuid4().hex}-*'],
+                settings={
+                    'number_of_replicas': 3,
+                    'number_of_shards': 3,
+                    'analysis': {
+                        'analyzer': {
+                            'url_email_analyzer': {
+                                'type': 'custom',
+                                'tokenizer': 'uax_url_email'
+                            }
+                        }
+                    }
+                }
+            )
+            self.assertEqual(True, True)
+        except Exception as e:
+            print(e)
+            self.assertEqual(False, True)
+
     def test_create_index(self):
         try:
-            self.adapter.create_index()
+            adapter = syngenta_digital_dta.adapter(
+                engine='elasticsearch',
+                index=uuid.uuid4().hex,
+                endpoint='localhost',
+                model_schema='test-elasticsearch-user-model',
+                model_schema_file='tests/openapi.yml',
+                model_identifier='user_id',
+                model_version_key='modified'
+            )
+            adapter.create_index()
             self.assertEqual(True, True)
         except Exception as e:
             print(e)

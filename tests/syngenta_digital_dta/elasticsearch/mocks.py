@@ -1,7 +1,7 @@
 class MockESAdapter:
-    def __init__(self):
+    def __init__(self, endpoint='localhost'):
         self.index = 'test'
-        self.endpoint = 'localhost'
+        self.endpoint = endpoint
         self.port = 9300
         self.connection = None
         self.authentication = None
@@ -88,6 +88,9 @@ def get_schema():
             },
             'shared': {
                 'type': 'string'
+            },
+            'unknown_obj': {
+                'type': 'object'
             },
             'details': {
                 'type': 'array',

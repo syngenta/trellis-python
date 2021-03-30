@@ -12,7 +12,12 @@ class ESConnectorTest(unittest.TestCase):
         warnings.simplefilter('ignore', ResourceWarning)
         self.maxDiff = None
 
-    def test_class(self):
+    def test_class_port(self):
         mock_adapter = MockESAdapter()
+        connector = ESConnector(mock_adapter)
+        self.assertEqual(connector.port, mock_adapter.port)
+
+    def test_class_port_nonlocalhost(self):
+        mock_adapter = MockESAdapter('dev.aws.com')
         connector = ESConnector(mock_adapter)
         self.assertEqual(connector.port, mock_adapter.port)
