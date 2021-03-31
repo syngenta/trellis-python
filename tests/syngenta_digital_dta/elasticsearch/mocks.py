@@ -1,11 +1,12 @@
 class MockESAdapter:
-    def __init__(self, endpoint='localhost'):
+    def __init__(self, **kwargs):
         self.index = 'test'
-        self.endpoint = endpoint
+        self.endpoint = kwargs.get('endpoint')
         self.port = 9300
         self.connection = None
-        self.authentication = None
-
+        self.authentication = kwargs.get('authentication')
+        self.user = kwargs.get('user')
+        self.password = kwargs.get('password')
 
 
 def get_schema():
@@ -109,6 +110,7 @@ def get_schema():
         }
     }
 
+
 def get_mapping(company_name_type = 'text'):
     return {
         'properties': {
@@ -148,11 +150,13 @@ def get_mapping(company_name_type = 'text'):
             },
             'created': {
                 'type': 'date',
-                'format': 'yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis'
+                'format': "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis||yyyy-MM-dd'T'HH:mm:ssZ",
+                'ignore_malformed': True
             },
             'modified': {
                 'type': 'date',
-                'format': 'yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis'
+                'format': "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis||yyyy-MM-dd'T'HH:mm:ssZ",
+                'ignore_malformed': True
             },
             'company_type': {
                 'type': 'text'

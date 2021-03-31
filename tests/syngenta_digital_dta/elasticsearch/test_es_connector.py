@@ -18,6 +18,12 @@ class ESConnectorTest(unittest.TestCase):
         self.assertEqual(connector.port, mock_adapter.port)
 
     def test_class_port_nonlocalhost(self):
-        mock_adapter = MockESAdapter('dev.aws.com')
+        mock_adapter = MockESAdapter(endpoint='dev.aws.com')
         connector = ESConnector(mock_adapter)
         self.assertEqual(connector.port, mock_adapter.port)
+
+    def test_class_port_user_pass(self):
+        mock_adapter = MockESAdapter(endpoint='dev.aws.com', user='root', password='root', authentication='user-password')
+        connector = ESConnector(mock_adapter)
+        self.assertEqual(connector.user, mock_adapter.user)
+        self.assertEqual(connector.password, mock_adapter.password)

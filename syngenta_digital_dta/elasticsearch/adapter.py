@@ -18,6 +18,8 @@ class ElasticsearchAdapter:
         self.sns_attributes = kwargs.get('sns_attributes')
         self.sns_arn = kwargs.get('sns_arn')
         self.port = kwargs.get('port')
+        self.user = kwargs.get('user')
+        self.password = kwargs.get('password')
         self.connection = None
         self.__connect()
 

@@ -11,6 +11,8 @@ class ESConnector:
         self.local = self.host == 'localhost'
         self.port = cls.port
         self.authentication = cls.authentication
+        self.user = cls.user
+        self.password = cls.password
 
     @lru_cache(maxsize=128)
     def connect(self):
@@ -36,6 +38,8 @@ class ESConnector:
         }
         if self.authentication == 'lambda':
             config['http_auth'] = self.__authenticate_lambda()
+        if self.authentication == 'user-password':
+            config['http_auth'] = (self.user, self.password)
         return config
 
     def __authenticate_lambda(self):
