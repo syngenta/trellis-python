@@ -260,6 +260,7 @@ results = self.user_adapter.query(
 import os
 import syngenta_digital_dta
 
+# localhost connection
 adapter = syngenta_digital_dta.adapter(
     engine='elasticsearch',
     index='users',
@@ -268,6 +269,32 @@ adapter = syngenta_digital_dta.adapter(
     model_schema_file='tests/openapi.yml',
     model_identifier='user_id',
     model_version_key='modified'
+)
+
+# lambda connection (assumes lambda role has access)
+adapter = syngenta_digital_dta.adapter(
+    engine='elasticsearch',
+    index='users',
+    endpoint='localhost',
+    model_schema='test-elasticsearch-user-model',
+    model_schema_file='tests/openapi.yml',
+    model_identifier='user_id',
+    model_version_key='modified',
+    authentication='lambda'
+)
+
+# traditional user password connection
+adapter = syngenta_digital_dta.adapter(
+    engine='elasticsearch',
+    index='users',
+    endpoint='localhost',
+    model_schema='test-elasticsearch-user-model',
+    model_schema_file='tests/openapi.yml',
+    model_identifier='user_id',
+    model_version_key='modified',
+    authentication='user-password',
+    user='root',
+    password='root'
 )
 ```
 
@@ -278,12 +305,15 @@ Option Name        | Required | Type   | Description
 `engine`           | true     | string | name of supported db engine (dynamodb)
 `index`            | true     | string | name of postgres table to work as primary query point
 `endpoint`         | true     | string | url of the postgres cluster
-`port`             | false    | int    | port of database (defaults to 9200 if localhost or 443 if not)
 `model_schema`     | true     | string | key of openapi schema this is being set against
 `model_schema_file`| true     | string | path where your schema file can found (accepts JSON as well)
 `model_identifier` | true     | string | unique identifier key on the model
 `model_version_key`| true     | string | key that can be used as a version key (modified timestamps often suffice)
+`port`             | false    | int    | port of database (defaults to 9200 if localhost or 443 if not)
 `author_identifier`| false    | string | unique identifier of the author who made the change (optional)
+`authentication`   | false    | string | either 'lamnbda' or 'user-password'
+`user`             | false    | string | only needed if authentication is user-password
+`password`         | false    | string | only needed if authentication is user-password
 `sns_arn`          | false    | string | sns topic arn you want to broadcast the changes to
 
 
