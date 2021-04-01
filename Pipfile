@@ -7,7 +7,7 @@ name = "pypi"
 python_version = "3.8"
 
 [packages]
-boto3 = "==1.17.26"
+boto3 = "==1.17.42"
 jsonref = "==0.2"
 psycopg2 = "==2.8.6"
 pyyaml = "==5.4.1"
