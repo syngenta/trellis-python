@@ -16,7 +16,7 @@ setup(
     packages=find_packages(),
     python_requires='>=3.0',
     install_requires=[
-        'aws-psycopg2==2.8.6',
+        'aws-psycopg2==1.2.1',
         'boto3==1.17.26',
         'elasticsearch==7.12.0',
         'jsonref==0.2',
