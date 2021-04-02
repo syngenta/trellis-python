@@ -1,7 +1,7 @@
 import os
 from setuptools import setup, find_packages
 
-with open("README.md", "r") as fh:
+with open('README.md', 'r') as fh:
     long_description = fh.read()
 
 setup(
@@ -12,14 +12,14 @@ setup(
     author_email='paul.cruse@syngenta.com',
     description='A DRY multi-database normalizer.',
     long_description=long_description,
-    long_description_content_type="text/markdown",
+    long_description_content_type='text/markdown',
     packages=find_packages(),
     python_requires='>=3.0',
     install_requires=[
+        'aws-psycopg2==2.8.6',
         'boto3==1.17.26',
-        'elasticsearch',
+        'elasticsearch==7.12.0',
         'jsonref==0.2',
-        'psycopg2==2.8.6',
         'pyyaml==5.4.1',
         'requests-aws4auth==1.0.1',
         'simplejson==3.17.2'
