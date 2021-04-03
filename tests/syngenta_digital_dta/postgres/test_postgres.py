@@ -15,7 +15,7 @@ class PostgresAdapterTest(unittest.TestCase):
             engine='postgres',
             table='users',
             endpoint='localhost',
-            database='dta-postgres',
+            database='dta-postgis',
             port=5432,
             user='root',
             password='Lq4nKg&&TRhHv%7z',
@@ -30,7 +30,7 @@ class PostgresAdapterTest(unittest.TestCase):
         self.address_adapter = syngenta_digital_dta.adapter(
             engine='postgres',
             endpoint='localhost',
-            database='dta-postgres',
+            database='dta-postgis',
             table=ADDRESSES_TABLE,
             port=5432,
             user='root',

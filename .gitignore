@@ -131,6 +131,7 @@ dmypy.json
 .tags
 .neo4j
 .postgres
+.postgis
 .redshift
 .elasticsearch
 .DS_Store

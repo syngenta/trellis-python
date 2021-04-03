@@ -40,7 +40,7 @@ class AdapterTest(unittest.TestCase):
             engine='postgres',
             table='users',
             endpoint='localhost',
-            database='dta-postgres',
+            database='dta-postgis',
             port=5432,
             user='root',
             password='Lq4nKg&&TRhHv%7z',
