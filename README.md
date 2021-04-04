@@ -338,6 +338,27 @@ self.adapter.create_template(
 self.adapter.create_index(settings=some_optional_settings)
 ```
 
+**OpenAPI Default Conversion**
+
+OpenAPI Type                | Elasticsearch Mapping
+:-----------                | :--------------------
+array                       | none (not needed to be included)
+array of objects            | nested
+boolean                     | boolean
+integer                     | integer
+number                      | long
+object (with properties)    | object
+object (without properties) | flattened
+string (no format)          | text
+string (format date)        | date (with iso date format acceptance)
+string (format date-time)   | date (with iso date format acceptance)
+string (format email)       | text (with url email analyzer)
+string (format ip)          | ip
+string (format hostname)    | text (with url email analyzer)
+string (format iri)         | text (with url email analyzer)
+string (format url)         | text (with url email analyzer)
+
+
 ### Elasticsearch Create
 
 ```python
