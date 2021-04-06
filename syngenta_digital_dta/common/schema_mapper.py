@@ -12,16 +12,25 @@ def map_to_schema(data, schema_file, schema_key):
 
 
 def _populate_model_data(properties, data, model_data):
+    if data and isinstance(data, dict):
+        _populate_model_dict(properties, data, model_data)
+    return model_data
+
+
+def _populate_model_dict(properties, data, model_data):
     for property_key, property_value in properties.items():
         model_data[property_key] = {}
-        if property_value.get('properties') and data and isinstance(data, dict):
+        if property_value.get('properties'):
             _populate_model_data(property_value['properties'], data.get(property_key), model_data[property_key])
-        elif property_value.get('items', {}).get('properties') and data:
-            model_data[property_key] = []
-            for index in range(len(data.get(property_key, []))):
-                if data.get(property_key) and isinstance(data[property_key], list) and index < len(data[property_key]):
-                    pop = _populate_model_data(property_value['items']['properties'], data[property_key][index], {})
-                    model_data[property_key].append(pop)
-        elif data and isinstance(data, dict):
+        elif property_value.get('items', {}).get('properties'):
+            _populate_model_list(model_data, property_key, property_value, data)
+        else:
             model_data[property_key] = data.get(property_key)
-    return model_data
+
+
+def _populate_model_list(model_data, property_key, property_value, data):
+    model_data[property_key] = []
+    for index in range(len(data.get(property_key, []))):
+        if data.get(property_key) and isinstance(data[property_key], list) and index < len(data[property_key]):
+            pop = _populate_model_data(property_value['items']['properties'], data[property_key][index], {})
+            model_data[property_key].append(pop)
