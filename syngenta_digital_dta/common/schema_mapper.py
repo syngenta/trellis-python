@@ -14,13 +14,14 @@ def map_to_schema(data, schema_file, schema_key):
 def _populate_model_data(properties, data, model_data):
     for property_key, property_value in properties.items():
         model_data[property_key] = {}
-        if property_value.get('properties'):
+        if property_value.get('properties') and data and isinstance(data, dict):
             _populate_model_data(property_value['properties'], data.get(property_key), model_data[property_key])
-        elif property_value.get('items', {}).get('properties'):
+        elif property_value.get('items', {}).get('properties') and data:
             model_data[property_key] = []
             for index in range(len(data.get(property_key, []))):
-                pop = _populate_model_data(property_value['items']['properties'], data[property_key][index], {})
-                model_data[property_key].append(pop)
-        else:
+                if data.get(property_key) and isinstance(data[property_key], list) and index < len(data[property_key]):
+                    pop = _populate_model_data(property_value['items']['properties'], data[property_key][index], {})
+                    model_data[property_key].append(pop)
+        elif data and isinstance(data, dict):
             model_data[property_key] = data.get(property_key)
     return model_data
