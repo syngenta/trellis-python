@@ -8,7 +8,7 @@ python_version = "3.8"
 
 [packages]
 aws-psycopg2 = "==1.2.1"
-boto3 = "==1.17.26"
+boto3 = "==1.17.62"
 elasticsearch = "==7.12.0"
 jsonref = "==0.2"
 pyyaml = "==5.4.1"
