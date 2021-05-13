@@ -16,14 +16,14 @@ setup(
     packages=find_packages(),
     python_requires='>=3.0',
     install_requires=[
-        'aws-psycopg2==1.2.1',
-        'boto3==1.17.26',
-        'elasticsearch==7.12.0',
-        'jsonref==0.2',
-        'jsonpickle==2.0.0',
-        'pyyaml==5.4.1',
-        'requests-aws4auth==1.0.1',
-        'simplejson==3.17.2'
+        'aws-psycopg2',
+        'boto3',
+        'elasticsearch',
+        'jsonref',
+        'jsonpickle',
+        'pyyaml',
+        'requests-aws4auth',
+        'simplejson'
     ],
     classifiers=[
         'Environment :: Web Environment',
