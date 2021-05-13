@@ -29,6 +29,8 @@ commands:
             - run: pipenv run coverage
             - store_test_results:
                 path: ./coverage/reports
+            - store_artifacts:
+                path: ./coverage
     pypi-setup:
         steps:
             - run: echo -e "[pypi]" >> ~/.pypirc
