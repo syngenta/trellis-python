@@ -15,6 +15,7 @@ commands:
     python-lint:
         steps:
             - run: mkdir coverage && mkdir coverage/lint || exit 0
+            - run: python3 -m pipenv run lint
             - run: python3 -m pipenv run lint | python3 -m pipenv run pylint_report.py > ./coverage/lint/report.html || exit 0
             - store_artifacts:
                 path: ./coverage/lint/report.html
@@ -76,6 +77,13 @@ jobs:
                 image: docker.elastic.co/elasticsearch/elasticsearch:7.9.0
                 environment:
                     - discovery.type=single-node
+            -
+                image: localstack/localstack-full:latest
+                environment:
+                    - SERVICES=s3
+                    - DEBUG=1
+                    - DEFAULT_REGION=us-east-2
+                    - DATA_DIR=/tmp/localstack/data
         steps:
             - checkout
             - aws-cli/setup

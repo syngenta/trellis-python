@@ -20,6 +20,7 @@ setup(
         'boto3==1.17.26',
         'elasticsearch==7.12.0',
         'jsonref==0.2',
+        'jsonpickle==2.0.0',
         'pyyaml==5.4.1',
         'requests-aws4auth==1.0.1',
         'simplejson==3.17.2'
@@ -30,8 +31,6 @@ setup(
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7'

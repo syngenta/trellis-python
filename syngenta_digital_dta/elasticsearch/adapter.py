@@ -21,6 +21,7 @@ class ElasticsearchAdapter:
         self.user = kwargs.get('user')
         self.password = kwargs.get('password')
         self.connection = None
+        self.sns_publisher = publisher
         self.__connect()
 
     @es_connection
@@ -136,11 +137,11 @@ class ElasticsearchAdapter:
         return mapping
 
     def __publish(self, operation, data):
-        publisher.publish(
-            sns_arn=self.sns_arn,
+        self.sns_publisher.publish(
             model_schema=self.model_schema,
             model_identifier=self.model_identifier,
             author_identifier=self.author_identifier,
+            sns_arn=self.sns_arn,
             data=data,
             operation=operation
         )

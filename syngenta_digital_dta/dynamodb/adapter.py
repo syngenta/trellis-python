@@ -3,7 +3,6 @@ from functools import lru_cache
 import boto3
 from boto3.dynamodb.conditions import Attr
 
-
 from syngenta_digital_dta.common import schema_mapper
 from syngenta_digital_dta.common import dict_merger
 from syngenta_digital_dta.common import publisher
@@ -19,6 +18,7 @@ class DynamodbAdapter:
         self.model_version_key = kwargs['model_version_key']
         self.author_identifier = kwargs.get('author_identifier')
         self.sns_attributes = kwargs.get('sns_attributes')
+        self.publisher = publisher
         self.sns_arn = kwargs.get('sns_arn')
 
     @lru_cache(maxsize=128)
@@ -82,10 +82,10 @@ class DynamodbAdapter:
         return original_data
 
     def _publish(self, operation, data):
-        publisher.publish(
+        self.publisher.publish(
             sns_arn=self.sns_arn,
-            model_schema=self.model_schema,
             model_identifier=self.model_identifier,
+            model_schema=self.model_schema,
             author_identifier=self.author_identifier,
             data=data,
             operation=operation

@@ -1,15 +1,18 @@
 from syngenta_digital_dta.dynamodb.adapter import DynamodbAdapter
 from syngenta_digital_dta.postgres.adapter import PostgresAdapter
 from syngenta_digital_dta.elasticsearch.adapter import ElasticsearchAdapter
+from syngenta_digital_dta.s3.adapter import S3Adapter
 
 
 def adapter(**kwargs):
-    if kwargs['engine'] == 'dynamodb':
+    if kwargs.get('engine') == 'dynamodb':
         return DynamodbAdapter(**kwargs)
-    if kwargs['engine'] == 'redshift':
+    if kwargs.get('engine') == 'redshift':
         return PostgresAdapter(**kwargs)
-    if kwargs['engine'] == 'postgres':
+    if kwargs.get('engine') == 'postgres':
         return PostgresAdapter(**kwargs)
-    if kwargs['engine'] == 'elasticsearch':
+    if kwargs.get('engine') == 'elasticsearch':
         return ElasticsearchAdapter(**kwargs)
-    raise Exception('engine {} not supported; contribute to get it supported :)'.format(kwargs['engine']))
+    if kwargs.get('engine') == 's3':
+        return S3Adapter(**kwargs)
+    raise Exception(f'engine {kwargs.get("engine", "was not supplied, an empty engine kwarg is")} not supported; contribute to get it supported :)')

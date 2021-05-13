@@ -21,6 +21,7 @@ class PostgresAdapter:
         self.autocommit = kwargs.get('autocommit', False)
         self.sns_arn = kwargs.get('sns_arn')
         self.author_identifier = kwargs.get('author_identifier')
+        self.event_publisher = publisher
         self.connection = None
         self.cursor = None
 
@@ -242,11 +243,11 @@ class PostgresAdapter:
         raise Exception(f'Something went wrong and I am not sure how I got here: {error_type}')
 
     def __publish(self, operation, data):
-        publisher.publish(
-            sns_arn=self.sns_arn,
+        self.event_publisher.publish(
             model_schema=self.model_schema,
-            model_identifier=self.model_identifier,
+            sns_arn=self.sns_arn,
             author_identifier=self.author_identifier,
-            data=data,
-            operation=operation
+            model_identifier=self.model_identifier,
+            operation=operation,
+            data=data
         )

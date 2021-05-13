@@ -134,4 +134,5 @@ dmypy.json
 .postgis
 .redshift
 .elasticsearch
+.localstack
 .DS_Store

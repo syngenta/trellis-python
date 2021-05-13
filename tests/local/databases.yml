@@ -1,10 +1,24 @@
 version: '3'
 
 services:
+    s3:
+        image: localstack/localstack-full:latest
+        container_name: s3-local
+        restart: on-failure
+        ports:
+            - '4563-4599:4563-4599'
+            - 8080:8080
+        volumes:
+            - ./.localstack/data:/tmp/localstack
+        environment:
+            - SERVICES=s3
+            - DEBUG=1
+            - DEFAULT_REGION=us-east-2
+            - DATA_DIR=/tmp/localstack/data
     dynamodb:
         image: amazon/dynamodb-local
         container_name: dynamodb-local
-        restart: always
+        restart: on-failure
         command: -jar DynamoDBLocal.jar -inMemory -port 4000
         ports:
             - 4000:4000
@@ -15,7 +29,7 @@ services:
     redshift:
         image: postgres:12.4
         container_name: redshift-local
-        restart: always
+        restart: on-failure
         command: -p 5439
         volumes:
             - ./.redshift/data:/var/lib/postgresql/data
@@ -28,7 +42,7 @@ services:
     postgis:
         image: postgis/postgis:12-2.5
         container_name: postgis-local
-        restart: always
+        restart: on-failure
         volumes:
             - ./.postgis/data:/var/lib/postgresql/data
         ports:
@@ -40,7 +54,7 @@ services:
     elasticsearch:
         image: docker.elastic.co/elasticsearch/elasticsearch:7.9.0
         container_name: elasticsearch-local
-        restart: always
+        restart: on-failure
         volumes:
             - ./.elasticsearch/data:/usr/share/elasticsearch/data
         ports:
