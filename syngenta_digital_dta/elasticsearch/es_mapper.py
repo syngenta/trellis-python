@@ -38,7 +38,7 @@ def __translate_simple_type(property_value):
     elif 'ip' in property_value.get('format', ''):
         mapping_type = {'type': 'ip'}
     elif 'date' in property_value.get('format', ''):
-        mapping_type = {'type': 'date', 'format': "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis||yyyy-MM-dd'T'HH:mm:ssZ", 'ignore_malformed': True}
+        mapping_type = {'type': 'date', 'format': "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis||yyyy-MM-dd'T'HH:mm:ssZ"}
     elif property_value.get('type') == 'number':
         mapping_type = {'type': 'long'}
     elif property_value.get('type') == 'string':
