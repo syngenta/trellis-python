@@ -150,13 +150,11 @@ def get_mapping(company_name_type = 'text'):
             },
             'created': {
                 'type': 'date',
-                'format': "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis||yyyy-MM-dd'T'HH:mm:ssZ",
-                'ignore_malformed': True
+                'format': "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis||yyyy-MM-dd'T'HH:mm:ssZ"
             },
             'modified': {
                 'type': 'date',
-                'format': "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis||yyyy-MM-dd'T'HH:mm:ssZ",
-                'ignore_malformed': True
+                'format': "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis||yyyy-MM-dd'T'HH:mm:ssZ"
             },
             'company_type': {
                 'type': 'text'
