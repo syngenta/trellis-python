@@ -20,6 +20,7 @@ class ElasticsearchAdapter:
         self.port = kwargs.get('port')
         self.user = kwargs.get('user')
         self.password = kwargs.get('password')
+        self.size = kwargs.get('size', 10)
         self.connection = None
         self.sns_publisher = publisher
         self.__connect()
@@ -92,6 +93,7 @@ class ElasticsearchAdapter:
     def query(self, **kwargs):
         response = self.connection.search(
             index=self.index,
+            size=self.size,
             body={'query': kwargs['query']}
         )
         if kwargs.get('normalize'):
