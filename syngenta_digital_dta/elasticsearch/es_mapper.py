@@ -20,7 +20,7 @@ def __walk_schema(properties, mapping, special):
             __walk_schema(property_value['properties'], mapping[property_key]['properties'], special)
         elif property_value.get('type') == 'object' and not property_value.get('properties'):
             mapping[property_key] = {}
-            mapping[property_key]['type'] = 'flattened'
+            mapping[property_key]['type'] = 'object'
         elif property_value.get('items', {}).get('properties'):
             mapping[property_key] = {}
             mapping[property_key]['type'] = 'nested'
