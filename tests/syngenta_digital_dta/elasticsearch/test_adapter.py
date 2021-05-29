@@ -87,6 +87,23 @@ class ElasticsearchAdapterTest(unittest.TestCase):
             print(e)
             self.assertEqual(False, True)
 
+    def test_create_index_no_template(self):
+        try:
+            adapter = syngenta_digital_dta.adapter(
+                engine='elasticsearch',
+                index=uuid.uuid4().hex,
+                endpoint='localhost',
+                model_schema='test-elasticsearch-user-model',
+                model_schema_file='tests/openapi.yml',
+                model_identifier='user_id',
+                model_version_key='modified'
+            )
+            adapter.create_index(template=False)
+            self.assertEqual(True, True)
+        except Exception as e:
+            print(e)
+            self.assertEqual(False, True)
+
     def test_create(self):
         data = {
             'user_id': uuid.uuid4().hex,

@@ -42,7 +42,7 @@ class ElasticsearchAdapter:
         if not self.connection.indices.exists(self.index):
             create_args = {}
             create_args['index'] = self.index
-            if kwargs.get('create_template', True):
+            if kwargs.get('template', True):
                 create_args['body'] = self.__create_template_body(**kwargs)
             self.connection.indices.create(**create_args)
 
