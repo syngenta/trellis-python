@@ -40,10 +40,11 @@ class ElasticsearchAdapter:
 
     def create_index(self, **kwargs):
         if not self.connection.indices.exists(self.index):
-            self.connection.indices.create(
-                index=self.index,
-                body=self.__create_template_body(**kwargs)
-            )
+            create_args = {}
+            create_args['index'] = self.index
+            if kwargs.get('create_template', True):
+                create_args['body'] = self.__create_template_body(**kwargs)
+            self.connection.indices.create(**create_args)
 
     def create(self, **kwargs):
         data = schema_mapper.map_to_schema(kwargs['data'], self.model_schema_file, self.model_schema)
