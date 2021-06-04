@@ -128,7 +128,7 @@ class S3Adapter:
     def __set_body(self, **kwargs):
         data = kwargs['data']
         if kwargs.get('json'):
-            data = jsonpickle.encode(data)
+            data = jsonpickle.dumps(data, unpicklable=False, use_decimal=True)
         if kwargs.get('encode', True):
             data = bytes(data.encode('UTF-8'))
         return data
