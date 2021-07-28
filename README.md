@@ -474,7 +474,7 @@ for piece in iter(file.read(6000000), ''):
 adapter.multipart_upload(chunks=chunks, s3_path='test/test-create.json')
 
 # upload url
-adapter.create_presigned_post_url(s3_path='test/test-create.json', expiration=3600)
+presigned_upload_url = adapter.create_presigned_post_url(s3_path='test/test-create.json', expiration=3600)
 ```
 
 ### S3 Read (In Memory, Download to Disk & With Pre-Signed URLs)
