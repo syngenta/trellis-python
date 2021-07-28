@@ -453,13 +453,12 @@ Option Name              | Required | Type   | Description
 {
     "presigned_url": "https://some-s3-url"
 }
-
 ```
 
 ### S3 Create (Single)
 
 ```python
-# single (automatically converts dicts to json with flag)
+# automatically converts dicts to json with flag
 adapter.create(
     s3_path='test/test-create.json',
     data={'test': True},
@@ -470,7 +469,6 @@ adapter.create(
 ### S3 Create (Multipart)
 
 ```python
-# multipart
 file = open('./tests/mock/example.json')
 chunks = []
 for piece in iter(file.read(6000000), ''):
@@ -481,14 +479,13 @@ adapter.multipart_upload(chunks=chunks, s3_path='test/test-create.json')
 ### S3 Create (Pre-Signed UPLOAD URLs)
 
 ```python
-# upload url
 presigned_upload_url = adapter.create_presigned_post_url(s3_path='test/test-create.json', expiration=3600)
 ```
 
 ### S3 Read (In Memory)
 
 ```python
-# in memory (automatically converts json to dicts with flag)
+# automatically converts json to dict with flag
 result = adapter.read(
     s3_path='test/test-create.json',
     json=True
@@ -498,14 +495,13 @@ result = adapter.read(
 ### S3 Read (Download to Disk)
 
 ```python
-# download to disk (automatically opens directory and child directories)
+# automatically creates directory and child directories
 file_path = adapter.download(s3_path='test/test-create.json', download_path='/tmp/unit-test-download/test.json')
 ```
 
 ### S3 Read (Pre-Signed URLs)
 
 ```python
-# presigned download url
 presigned_url = adapter.create_presigned_read_url(s3_path='test/test-create.json', expiration=3600)
 ```
 
