@@ -4,7 +4,7 @@ A DRY multi-database normalizer.
 ## Features
 
   * Use the same package with multiple database engines
-  * Able to validate your data against predefined schema in code (for no-schems solutions)
+  * Able to validate your data against predefined schema in code (for no-schemas solutions)
   * Creates easy pub-sub architecture based on model changes
   * Local development support
 
@@ -65,8 +65,8 @@ Option Name              | Required | Type   | Description
 `model_version_key`      | true     | string | key that can be used as a version key (modified timestamps often suffice)
 `author_identifier`      | false    | string | unique identifier of the author who made the change (optional)
 `sns_arn`                | false    | string | sns topic arn you want to broadcast the changes to
-`sns_attributes`         | false    | dict   | custom attibutes in dict format; values should only be strings or numbers
-`sns_default_attributes` | false    | boolean| determines if default sns attibutes are included in sns message (model_identifier, model_version_key, model_schema, author_identifier)
+`sns_attributes`         | false    | dict   | custom attributes in dict format; values should only be strings or numbers
+`sns_default_attributes` | false    | boolean| determines if default sns attributes are included in sns message (model_identifier, model_version_key, model_schema, author_identifier)
 
 **Examples**
 
@@ -168,11 +168,11 @@ Option Name              | Required | Type   | Description
 `model_identifier`       | true     | string | unique identifier key on the model
 `model_version_key`      | true     | string | key that can be used as a version key (modified timestamps often suffice)
 `autocommit`             | false    | boolean| will commit transactions automatically without direct call
-`relationships`          | false    | dict   | key is the table with the relationship and value is the foreign key on that table (assumes your primiary key name is equal to that table's foreign key)
+`relationships`          | false    | dict   | key is the table with the relationship and value is the foreign key on that table (assumes your primary key name is equal to that table's foreign key)
 `author_identifier`      | false    | string | unique identifier of the author who made the change (optional)
 `sns_arn`                | false    | string | sns topic arn you want to broadcast the changes to
-`sns_attributes`         | false    | dict   | custom attibutes in dict format; values should only be strings or numbers
-`sns_default_attributes` | false    | boolean| determines if default sns attibutes are included in sns message (model_identifier, model_version_key, model_schema, author_identifier)
+`sns_attributes`         | false    | dict   | custom attributes in dict format; values should only be strings or numbers
+`sns_default_attributes` | false    | boolean| determines if default sns attributes are included in sns message (model_identifier, model_version_key, model_schema, author_identifier)[default: true]
 
 **Examples**
 
@@ -319,8 +319,8 @@ Option Name              | Required | Type   | Description
 `user`                   | false    | string | only needed if authentication is user-password
 `password`               | false    | string | only needed if authentication is user-password
 `sns_arn`                | false    | string | sns topic arn you want to broadcast the changes to
-`sns_attributes`         | false    | dict   | custom attibutes in dict format; values should only be strings or numbers
-`sns_default_attributes` | false    | boolean| determines if default sns attibutes are included in sns message (model_identifier, model_version_key, model_schema, author_identifier)
+`sns_attributes`         | false    | dict   | custom attributes in dict format; values should only be strings or numbers
+`sns_default_attributes` | false    | boolean| determines if default sns attributes are included in sns message (model_identifier, model_version_key, model_schema, author_identifier) [default: true]
 
 
 ### Elasticsearch Connection
@@ -443,9 +443,9 @@ Option Name              | Required | Type   | Description
 :-----------             | :------- | :----- | :----------
 `engine`                 | true     | string | name of supported db engine (s3)
 `bucket`                 | true     | string | name of bucket you are interfacing with
-`endpoint`               | true     | string | url of the postgres cluster
+`endpoint`               | true     | string | url of the s3 endpoint (useful for local development)
 `sns_arn`                | false    | string | sns topic arn you want to broadcast the changes to
-`sns_attributes`         | false    | dict   | custom attibutes in dict format; values should only be strings or numbers
+`sns_attributes`         | false    | dict   | custom attributes in dict format; values should only be strings or numbers
 
 `NOTE`: If you use the SNS functionality, all SNS messages are sent presigned urls for S3, not the actual data itself given the SNS message size limitations. Below is an an example payload:
 
@@ -456,7 +456,7 @@ Option Name              | Required | Type   | Description
 
 ```
 
-### S3 Create (Single, Multipart & With Pre-Signed UPLOAD URLs)
+### S3 Create (Single)
 
 ```python
 # single (automatically converts dicts to json with flag)
@@ -465,19 +465,27 @@ adapter.create(
     data={'test': True},
     json=True
 )
+```
 
+### S3 Create (Multipart)
+
+```python
 # multipart
 file = open('./tests/mock/example.json')
 chunks = []
 for piece in iter(file.read(6000000), ''):
     chunks.append(piece)
 adapter.multipart_upload(chunks=chunks, s3_path='test/test-create.json')
+```
 
+### S3 Create (Pre-Signed UPLOAD URLs)
+
+```python
 # upload url
 presigned_upload_url = adapter.create_presigned_post_url(s3_path='test/test-create.json', expiration=3600)
 ```
 
-### S3 Read (In Memory, Download to Disk & With Pre-Signed URLs)
+### S3 Read (In Memory)
 
 ```python
 # in memory (automatically converts json to dicts with flag)
@@ -485,10 +493,18 @@ result = adapter.read(
     s3_path='test/test-create.json',
     json=True
 )
+```
 
+### S3 Read (Download to Disk)
+
+```python
 # download to disk (automatically opens directory and child directories)
 file_path = adapter.download(s3_path='test/test-create.json', download_path='/tmp/unit-test-download/test.json')
+```
 
+### S3 Read (Pre-Signed URLs)
+
+```python
 # presigned download url
 presigned_url = adapter.create_presigned_read_url(s3_path='test/test-create.json', expiration=3600)
 ```
