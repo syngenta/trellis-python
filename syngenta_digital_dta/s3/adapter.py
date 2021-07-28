@@ -125,7 +125,8 @@ class S3Adapter(BaseAdapter):
 
     def __create_download_directory(self, download_path):
         os.makedirs(os.path.dirname(download_path), exist_ok=True)
-        open(download_path, 'wb').close()
+        with open(download_path, 'wb') as path:
+            path.close()
 
     def __set_results(self, results, **kwargs):
         if kwargs.get('json'):
