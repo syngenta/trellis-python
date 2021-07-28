@@ -54,17 +54,19 @@ adapter = syngenta_digital_dta.adapter(
 
 **Initialize Options**
 
-Option Name        | Required | Type   | Description
-:-----------       | :------- | :----- | :----------
-`engine`           | true     | string | name of supported db engine (dynamodb)
-`table`            | true     | string | name of dynamodb table
-`endpoint`         | false    | string | url of the dynamodb table (useful for local development)
-`model_schema`     | true     | string | key of openapi schema this is being set against
-`model_schema_file`| true     | string | path where your schema file can found (accepts JSON as well)
-`model_identifier` | true     | string | unique identifier key on the model
-`model_version_key`| true     | string | key that can be used as a version key (modified timestamps often suffice)
-`author_identifier`| false    | string | unique identifier of the author who made the change (optional)
-`sns_arn`          | false    | string | sns topic arn you want to broadcast the changes to
+Option Name              | Required | Type   | Description
+:-----------             | :------- | :----- | :----------
+`engine`                 | true     | string | name of supported db engine (dynamodb)
+`table`                  | true     | string | name of dynamodb table
+`endpoint`               | false    | string | url of the dynamodb table (useful for local development)
+`model_schema`           | true     | string | key of openapi schema this is being set against
+`model_schema_file`      | true     | string | path where your schema file can found (accepts JSON as well)
+`model_identifier`       | true     | string | unique identifier key on the model
+`model_version_key`      | true     | string | key that can be used as a version key (modified timestamps often suffice)
+`author_identifier`      | false    | string | unique identifier of the author who made the change (optional)
+`sns_arn`                | false    | string | sns topic arn you want to broadcast the changes to
+`sns_attributes`         | false    | dict   | custom attibutes in dict format; values should only be strings or numbers
+`sns_default_attributes` | false    | boolean| determines if default sns attibutes are included in sns message (model_identifier, model_version_key, model_schema, author_identifier)
 
 **Examples**
 
@@ -152,23 +154,25 @@ adapter = syngenta_digital_dta.adapter(
 
 **Initialize Options**
 
-Option Name        | Required | Type   | Description
-:-----------       | :------- | :----- | :----------
-`engine`           | true     | string | name of supported db engine (dynamodb)
-`table`            | true     | string | name of postgres table to work as primary query point
-`endpoint`         | true     | string | url of the postgres cluster
-`database`         | true     | string | name of the database to connect to
-`port`             | true     | int    | port of database (defaults to 5439)
-`user`             | true     | string | username for database access
-`password`         | true     | string | password for database access
-`model_schema`     | true     | string | key of openapi schema this is being set against
-`model_schema_file`| true     | string | path where your schema file can found (accepts JSON as well)
-`model_identifier` | true     | string | unique identifier key on the model
-`model_version_key`| true     | string | key that can be used as a version key (modified timestamps often suffice)
-`autocommit`       | false    | boolean| will commit transactions automatically without direct call
-`relationships`    | false    | dict   | key is the table with the relationship and value is the foreign key on that table (assumes your primiary key name is equal to that table's foreign key)
-`author_identifier`| false    | string | unique identifier of the author who made the change (optional)
-`sns_arn`          | false    | string | sns topic arn you want to broadcast the changes to
+Option Name              | Required | Type   | Description
+:-----------             | :------- | :----- | :----------
+`engine`                 | true     | string | name of supported db engine (dynamodb)
+`table`                  | true     | string | name of postgres table to work as primary query point
+`endpoint`               | true     | string | url of the postgres cluster
+`database`               | true     | string | name of the database to connect to
+`port`                   | true     | int    | port of database (defaults to 5439)
+`user`                   | true     | string | username for database access
+`password`               | true     | string | password for database access
+`model_schema`           | true     | string | key of openapi schema this is being set against
+`model_schema_file`      | true     | string | path where your schema file can found (accepts JSON as well)
+`model_identifier`       | true     | string | unique identifier key on the model
+`model_version_key`      | true     | string | key that can be used as a version key (modified timestamps often suffice)
+`autocommit`             | false    | boolean| will commit transactions automatically without direct call
+`relationships`          | false    | dict   | key is the table with the relationship and value is the foreign key on that table (assumes your primiary key name is equal to that table's foreign key)
+`author_identifier`      | false    | string | unique identifier of the author who made the change (optional)
+`sns_arn`                | false    | string | sns topic arn you want to broadcast the changes to
+`sns_attributes`         | false    | dict   | custom attibutes in dict format; values should only be strings or numbers
+`sns_default_attributes` | false    | boolean| determines if default sns attibutes are included in sns message (model_identifier, model_version_key, model_schema, author_identifier)
 
 **Examples**
 
@@ -300,21 +304,23 @@ adapter = syngenta_digital_dta.adapter(
 
 **Initialize Options**
 
-Option Name        | Required | Type   | Description
-:-----------       | :------- | :----- | :----------
-`engine`           | true     | string | name of supported db engine (dynamodb)
-`index`            | true     | string | name of postgres table to work as primary query point
-`endpoint`         | true     | string | url of the postgres cluster
-`model_schema`     | true     | string | key of openapi schema this is being set against
-`model_schema_file`| true     | string | path where your schema file can found (accepts JSON as well)
-`model_identifier` | true     | string | unique identifier key on the model
-`model_version_key`| true     | string | key that can be used as a version key (modified timestamps often suffice)
-`port`             | false    | int    | port of database (defaults to 9200 if localhost or 443 if not)
-`author_identifier`| false    | string | unique identifier of the author who made the change (optional)
-`authentication`   | false    | string | either 'lamnbda' or 'user-password'
-`user`             | false    | string | only needed if authentication is user-password
-`password`         | false    | string | only needed if authentication is user-password
-`sns_arn`          | false    | string | sns topic arn you want to broadcast the changes to
+Option Name              | Required | Type   | Description
+:-----------             | :------- | :----- | :----------
+`engine`                 | true     | string | name of supported db engine (dynamodb)
+`index`                  | true     | string | name of postgres table to work as primary query point
+`endpoint`               | true     | string | url of the postgres cluster
+`model_schema`           | true     | string | key of openapi schema this is being set against
+`model_schema_file`      | true     | string | path where your schema file can found (accepts JSON as well)
+`model_identifier`       | true     | string | unique identifier key on the model
+`model_version_key`      | true     | string | key that can be used as a version key (modified timestamps often suffice)
+`port`                   | false    | int    | port of database (defaults to 9200 if localhost or 443 if not)
+`author_identifier`      | false    | string | unique identifier of the author who made the change (optional)
+`authentication`         | false    | string | either 'lamnbda' or 'user-password'
+`user`                   | false    | string | only needed if authentication is user-password
+`password`               | false    | string | only needed if authentication is user-password
+`sns_arn`                | false    | string | sns topic arn you want to broadcast the changes to
+`sns_attributes`         | false    | dict   | custom attibutes in dict format; values should only be strings or numbers
+`sns_default_attributes` | false    | boolean| determines if default sns attibutes are included in sns message (model_identifier, model_version_key, model_schema, author_identifier)
 
 
 ### Elasticsearch Connection
@@ -424,9 +430,75 @@ list_response = self.adapter.query(
 
 ## Common Usage: S3
 ```python
-# more to come
+adapter = syngenta_digital_dta.adapter(
+    engine='s3',
+    endpoint=self.endpoint,
+    bucket=self.bucket
+)
+```
+
+**Initialize Options**
+
+Option Name              | Required | Type   | Description
+:-----------             | :------- | :----- | :----------
+`engine`                 | true     | string | name of supported db engine (s3)
+`bucket`                 | true     | string | name of bucket you are interfacing with
+`endpoint`               | true     | string | url of the postgres cluster
+`sns_arn`                | false    | string | sns topic arn you want to broadcast the changes to
+`sns_attributes`         | false    | dict   | custom attibutes in dict format; values should only be strings or numbers
+
+`NOTE`: If you use the SNS functionality, all SNS messages are sent presigned urls for S3, not the actual data itself given the SNS message size limitations. Below is an an example payload:
+
+```json
+{
+    "presigned_url": "https://some-s3-url"
+}
 
 ```
+
+### S3 Create (Single, Multipart & With Pre-Signed UPLOAD URLs)
+
+```python
+# single (automatically converts dicts to json with flag)
+adapter.create(
+    s3_path='test/test-create.json',
+    data={'test': True},
+    json=True
+)
+
+# multipart
+file = open('./tests/mock/example.json')
+chunks = []
+for piece in iter(file.read(6000000), ''):
+    chunks.append(piece)
+adapter.multipart_upload(chunks=chunks, s3_path='test/test-create.json')
+
+# upload url
+adapter.create_presigned_post_url(s3_path='test/test-create.json', expiration=3600)
+```
+
+### S3 Read (In Memory, Download to Disk & With Pre-Signed URLs)
+
+```python
+# in memory (automatically converts json to dicts with flag)
+result = adapter.read(
+    s3_path='test/test-create.json',
+    json=True
+)
+
+# download to disk (automatically opens directory and child directories)
+file_path = adapter.download(s3_path='test/test-create.json', download_path='/tmp/unit-test-download/test.json')
+
+# presigned download url
+presigned_url = adapter.create_presigned_read_url(s3_path='test/test-create.json', expiration=3600)
+```
+
+### S3 Delete
+
+```python
+adapter.delete(s3_path='test/test-create.json')
+```
+
 
 ## Contributing
 If you would like to contribute please make sure to follow the established patterns and unit test your code:
