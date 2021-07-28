@@ -11,7 +11,7 @@ class DynamoDBAdapterTest(unittest.TestCase):
 
     def setUp(self, *args, **keywargs):
         TABLE_NAME='unittestsort'
-        warnings.simplefilter("ignore", ResourceWarning)
+        warnings.simplefilter('ignore', ResourceWarning)
         self.maxDiff = None
         self.mock_table = MockTable(table_name=TABLE_NAME)
         self.mock_table.setup_test_table()

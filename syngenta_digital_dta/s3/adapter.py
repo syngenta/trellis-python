@@ -3,10 +3,13 @@ import os
 import boto3
 import jsonpickle
 
+from syngenta_digital_dta.common.base_adapter import BaseAdapter
 
-class S3Adapter:
+
+class S3Adapter(BaseAdapter):
 
     def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.endpoint = kwargs.get('endpoint')
         self.sns_attributes = kwargs.get('sns_attributes')
         self.sns_arn = kwargs.get('sns_arn')
@@ -14,13 +17,15 @@ class S3Adapter:
         self.aws_access_key_id = kwargs.get('aws_access_key_id')
         self.aws_secret_access_key = kwargs.get('aws_secret_access_key')
         self.region = kwargs.get('region')
-        self.client = boto3.client('s3',
+        self.client = boto3.client(
+            's3',
             endpoint_url=self.endpoint,
             aws_access_key_id=self.aws_access_key_id,
             aws_secret_access_key=self.aws_secret_access_key,
             region_name=self.region
         )
-        self.resource = boto3.resource('s3',
+        self.resource = boto3.resource(
+            's3',
             endpoint_url=self.endpoint,
             aws_access_key_id=self.aws_access_key_id,
             aws_secret_access_key=self.aws_secret_access_key,
@@ -28,7 +33,9 @@ class S3Adapter:
         )
 
     def create(self, **kwargs):
-        return self.put(**kwargs)
+        result = self.put(**kwargs)
+        super().publish('create', self.__generate_publish_data(**kwargs))
+        return result
 
     def put(self, **kwargs):
         acl = self.__set_acl(kwargs.get('public_read', False))
@@ -42,11 +49,11 @@ class S3Adapter:
         return results
 
     def delete(self, **kwargs):
-        results = self.client.delete_object(
+        result = self.client.delete_object(
             Bucket=self.bucket,
             Key=kwargs['s3_path']
         )
-        return results
+        return result
 
     def read(self, **kwargs):
         return self.get(**kwargs)
@@ -67,10 +74,13 @@ class S3Adapter:
         multipart = self.client.create_multipart_upload(Bucket=self.bucket, Key=kwargs['s3_path'])
         parts = []
         for part, chunk in enumerate(kwargs['chunks']):
-            part_number = part + 1 # @NOTE must be an integer between 1 and 10000, inclusive
-            part_response = self.__upload_part(chunk=chunk, s3_path=kwargs['s3_path'], upload_id=multipart['UploadId'], part_number=part_number)
+            part_number = part + 1  # @NOTE must be an integer between 1 and 10000, inclusive
+            part_response = self.__upload_part(
+                chunk=chunk, s3_path=kwargs['s3_path'], upload_id=multipart['UploadId'], part_number=part_number)
             parts.append({'ETag': part_response['ETag'], 'PartNumber': part_number})
-        complete_response = self.__complete_multipart_upload(s3_path=kwargs['s3_path'], parts=parts, upload_id=multipart['UploadId'])
+        complete_response = self.__complete_multipart_upload(
+            s3_path=kwargs['s3_path'], parts=parts, upload_id=multipart['UploadId'])
+        super().publish('create', self.__generate_publish_data(**kwargs))
         return complete_response
 
     def create_presigned_read_url(self, **kwargs):
@@ -137,3 +147,6 @@ class S3Adapter:
         if public_read:
             return 'public-read'
         return 'private'
+
+    def __generate_publish_data(self, **kwargs):
+        return {'presigned_url': self.create_presigned_read_url(**kwargs)}

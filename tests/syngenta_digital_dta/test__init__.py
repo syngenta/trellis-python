@@ -8,7 +8,7 @@ import syngenta_digital_dta
 class AdapterTest(unittest.TestCase):
 
     def setUp(self, *args, **kwargs):
-        warnings.simplefilter("ignore", ResourceWarning)
+        warnings.simplefilter('ignore', ResourceWarning)
         self.maxDiff = None
 
     def test_dynamodb_adapter(self):

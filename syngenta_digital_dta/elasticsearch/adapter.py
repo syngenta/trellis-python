@@ -1,28 +1,24 @@
-from syngenta_digital_dta.elasticsearch.es_connection import es_connection
-from syngenta_digital_dta.common import publisher
 from syngenta_digital_dta.common import schema_mapper
+from syngenta_digital_dta.common.base_adapter import BaseAdapter
+from syngenta_digital_dta.elasticsearch.es_connection import es_connection
 from syngenta_digital_dta.elasticsearch import es_mapper
 
 
-class ElasticsearchAdapter:
+class ElasticsearchAdapter(BaseAdapter):
 
     def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.index = kwargs['index']
         self.endpoint = kwargs['endpoint']
         self.model_schema_file = kwargs['model_schema_file']
         self.model_schema = kwargs['model_schema']
         self.model_identifier = kwargs['model_identifier']
-        self.model_version_key = kwargs['model_version_key']
         self.authentication = kwargs.get('authentication')
-        self.author_identifier = kwargs.get('author_identifier')
-        self.sns_attributes = kwargs.get('sns_attributes')
-        self.sns_arn = kwargs.get('sns_arn')
         self.port = kwargs.get('port')
         self.user = kwargs.get('user')
         self.password = kwargs.get('password')
         self.size = kwargs.get('size', 10)
         self.connection = None
-        self.sns_publisher = publisher
         self.__connect()
 
     @es_connection
@@ -55,7 +51,7 @@ class ElasticsearchAdapter:
             op_type='create',
             refresh=kwargs.get('refresh', True)
         )
-        self.__publish('create', data)
+        super().publish('create', data)
         return response
 
     def update(self, **kwargs):
@@ -65,7 +61,7 @@ class ElasticsearchAdapter:
             body={'doc': kwargs['data']},
             refresh=kwargs.get('refresh', True)
         )
-        self.__publish('update', kwargs['data'])
+        super().publish('update', kwargs['data'])
         return response
 
     def upsert(self, **kwargs):
@@ -79,7 +75,7 @@ class ElasticsearchAdapter:
             id=identifier_value,
             refresh=kwargs.get('refresh', True)
         )
-        self.__publish('delete', {self.model_identifier: identifier_value})
+        super().publish('delete', {self.model_identifier: identifier_value})
         return response
 
     def get(self, identifier_value, **kwargs):
@@ -138,13 +134,3 @@ class ElasticsearchAdapter:
     def __convert_openapi_mapping(self, schema_file, schema_key, special=None):
         mapping = es_mapper.convert_schema_to_mapping(schema_file, schema_key, special)
         return mapping
-
-    def __publish(self, operation, data):
-        self.sns_publisher.publish(
-            model_schema=self.model_schema,
-            model_identifier=self.model_identifier,
-            author_identifier=self.author_identifier,
-            sns_arn=self.sns_arn,
-            data=data,
-            operation=operation
-        )

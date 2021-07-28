@@ -4,10 +4,14 @@ from syngenta_digital_dta.common import dict_merger
 from syngenta_digital_dta.common import logger
 from syngenta_digital_dta.common import publisher
 from syngenta_digital_dta.common import schema_mapper
+from syngenta_digital_dta.common.base_adapter import BaseAdapter
 from syngenta_digital_dta.postgres.sql_connection import sql_connection
 
-class PostgresAdapter:
+
+class PostgresAdapter(BaseAdapter):
+
     def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.endpoint = kwargs['endpoint']
         self.database = kwargs['database']
         self.table = kwargs['table']
@@ -44,7 +48,7 @@ class PostgresAdapter:
         if exists:
             self.__raise_error('NOT_UNIQUE', **kwargs)
         self.__execute(query, params, **kwargs)
-        self.__publish('create', params['data'])
+        super().publish('create', params['data'])
         return params['data']
 
     def update(self, **kwargs):
@@ -54,7 +58,7 @@ class PostgresAdapter:
         kwargs['data'] = dict_merger.merge(exists, kwargs['data'], **kwargs)
         update = self.__create_update_query(kwargs['data'])
         self.__execute(update['query'], update['params'], **kwargs)
-        self.__publish('update', kwargs['data'])
+        super().publish('update', kwargs['data'])
         return kwargs['data']
 
     def upsert(self, **kwargs):
@@ -67,7 +71,7 @@ class PostgresAdapter:
         query = 'DELETE FROM %(table)s WHERE %(identifier)s = %(identifier_value)s'
         params = self.__compose_params(data={f'{self.model_identifier}': identifier_value})
         self.__execute(query, params, **kwargs)
-        self.__publish('delete', params['data'])
+        super().publish('delete', params['data'])
 
     def read(self, identifier_value, **kwargs):
         return self.get(identifier_value, **kwargs)
@@ -212,7 +216,7 @@ class PostgresAdapter:
             self.commit(kwargs.get('commit', False))
         except Exception as error:
             self.__debug(query, params, True)
-            logger.log(level='ERROR', log={'error':error})
+            logger.log(level='ERROR', log={'error': error})
             raise Exception('error with execution, check logs') from error
 
     def __compose_params(self, data, columns="*", values=None):
@@ -235,19 +239,15 @@ class PostgresAdapter:
         if error_type == 'PARAMS_REQUIRED':
             raise Exception('params kwargs are required to prevent sql inject; send empty dict if not needed')
         if error_type == 'READ_ONLY':
-            raise Exception('query method is for read-only operations; please use another function for destructive operatins')
+            raise Exception(
+                'query method is for read-only operations; please use another function for destructive operatins'
+            )
         if error_type == 'NOT_UNIQUE':
-            raise Exception(f'row already exist with {self.model_identifier} = {kwargs.get("data", {}).get(self.model_identifier)}')
+            raise Exception(
+                f'row already exist with {self.model_identifier} = {kwargs.get("data", {}).get(self.model_identifier)}'
+            )
         if error_type == 'NOT_EXISTS':
-            raise Exception(f'row does not exist with {self.model_identifier} = {kwargs.get("data", {}).get(self.model_identifier)}')
+            raise Exception(
+                f'row does not exist with {self.model_identifier} = {kwargs.get("data", {}).get(self.model_identifier)}'
+            )
         raise Exception(f'Something went wrong and I am not sure how I got here: {error_type}')
-
-    def __publish(self, operation, data):
-        self.event_publisher.publish(
-            model_schema=self.model_schema,
-            sns_arn=self.sns_arn,
-            author_identifier=self.author_identifier,
-            model_identifier=self.model_identifier,
-            operation=operation,
-            data=data
-        )

@@ -8,7 +8,7 @@ import syngenta_digital_dta
 class PostgresAdapterTest(unittest.TestCase):
 
     def setUp(self, *args, **kwargs):
-        warnings.simplefilter("ignore", ResourceWarning)
+        warnings.simplefilter('ignore', ResourceWarning)
         self.maxDiff = None
         ADDRESSES_TABLE='addresses'
         self.user_adapter = syngenta_digital_dta.adapter(
