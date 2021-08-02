@@ -18,7 +18,7 @@ class BaseAdapter:
     def publish(self, operation, data):
         attributes = self.create_format_attibutes(operation)
         self.publisher.publish(
-            sns_arn=self.sns_arn,
+            arn=self.sns_arn,
             attributes=attributes,
             data=data
         )
