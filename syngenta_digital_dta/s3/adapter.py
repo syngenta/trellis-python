@@ -34,7 +34,6 @@ class S3Adapter(BaseAdapter):
 
     def create(self, **kwargs):
         result = self.put(**kwargs)
-        super().publish('create', self.__generate_publish_data(**kwargs))
         return result
 
     def put(self, **kwargs):
@@ -46,6 +45,7 @@ class S3Adapter(BaseAdapter):
             Bucket=self.bucket,
             Key=kwargs['s3_path']
         )
+        super().publish('create', self.__generate_publish_data(**kwargs))
         return results
 
     def delete(self, **kwargs):
