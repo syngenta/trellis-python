@@ -13,7 +13,7 @@ class PublisherTest(unittest.TestCase):
 
     def test_publish_basic(self):
         publisher.publish(
-            sns_arn=self.mock_sns_arn,
+            arn=self.mock_sns_arn,
             data={'key': 'value'},
             model_schema='unit-test',
             model_identifier='unit_test_id',
