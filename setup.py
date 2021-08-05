@@ -18,7 +18,7 @@ setup(
     install_requires=[
         'aws-psycopg2',
         'boto3',
-        'elasticsearch',
+        'elasticsearch==7.13.4',
         'jsonref',
         'jsonpickle',
         'pyyaml',
