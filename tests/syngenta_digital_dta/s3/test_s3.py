@@ -80,6 +80,25 @@ class S3AdapterTest(unittest.TestCase):
         self.assertEqual(True, os.path.exists(download_path))
         self.assertDictEqual(json_dict, data)
 
+    def test_is_exist(self):
+        s3_path = 'test/test-is-exist.json'
+        self.adapter.create(
+            s3_path=s3_path,
+            data={'test': True},
+            json=True
+        )
+
+        result = self.adapter.is_exist(s3_path)
+
+        self.assertEqual(result, True)
+
+    def test_is_exist_not_found(self):
+        s3_path = 'test/test-is-exist.json'
+
+        result = self.adapter.is_exist(s3_path)
+
+        self.assertEqual(result, False)
+
     def __read_in_chunks(self):
         return self.file.read(6000000)
 

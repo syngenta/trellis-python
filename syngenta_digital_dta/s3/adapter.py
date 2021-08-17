@@ -104,6 +104,15 @@ class S3Adapter(BaseAdapter):
         )
         return results
 
+    def is_exist(self, s3_path):
+        results = self.client.list_objects_v2(Bucket=self.bucket, Prefix=s3_path, MaxKeys=1)
+        if 'Contents' in results:
+            contents = results['Contents']
+            if len(contents) > 0:
+                return 'Key' in contents[0]
+
+        return False
+
     def __upload_part(self, **kwargs):
         response = self.client.upload_part(
             Body=kwargs['chunk'],
