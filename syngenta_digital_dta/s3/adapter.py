@@ -104,8 +104,8 @@ class S3Adapter(BaseAdapter):
         )
         return results
 
-    def is_exist(self, s3_path):
-        results = self.client.list_objects_v2(Bucket=self.bucket, Prefix=s3_path, MaxKeys=1)
+    def object_exist(self, **kwargs):
+        results = self.client.list_objects_v2(Bucket=self.bucket, Prefix=kwargs['s3_path'], MaxKeys=1)
         if 'Contents' in results:
             contents = results['Contents']
             if len(contents) > 0:
