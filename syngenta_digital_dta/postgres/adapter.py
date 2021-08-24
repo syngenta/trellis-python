@@ -249,7 +249,7 @@ class PostgresAdapter(BaseAdapter):
                 'query method is for read-only operations; please use another function for destructive operatins'
             )
         if error_type == 'TABLE_WRITE_ONLY':
-            raise Exception(
+            raise CreateTableException(
                 'create table query-string must start with "create table"'
             )
         if error_type == 'NOT_UNIQUE':
@@ -261,3 +261,7 @@ class PostgresAdapter(BaseAdapter):
                 f'row does not exist with {self.model_identifier} = {kwargs.get("data", {}).get(self.model_identifier)}'
             )
         raise Exception(f'Something went wrong and I am not sure how I got here: {error_type}')
+
+
+class CreateTableException(Exception):
+    pass
