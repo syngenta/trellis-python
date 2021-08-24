@@ -110,8 +110,7 @@ class S3Adapter(BaseAdapter):
         except ClientError as error:
             if error.response['Error']['Code'] == "404":
                 return False
-            else:
-                raise
+            raise
 
         return True
 
