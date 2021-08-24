@@ -2,7 +2,7 @@ import os
 
 import boto3
 import jsonpickle
-
+from botocore.exceptions import ClientError
 from syngenta_digital_dta.common.base_adapter import BaseAdapter
 
 
@@ -103,6 +103,16 @@ class S3Adapter(BaseAdapter):
             ExpiresIn=kwargs.get('expiration', 3600)
         )
         return results
+
+    def object_exist(self, **kwargs):
+        try:
+            self.resource.Object(self.bucket, kwargs['s3_path']).load()
+        except ClientError as error:
+            if error.response['Error']['Code'] == "404":
+                return False
+            raise
+
+        return True
 
     def __upload_part(self, **kwargs):
         response = self.client.upload_part(
