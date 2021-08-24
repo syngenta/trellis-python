@@ -2,7 +2,7 @@ import os
 
 import boto3
 import jsonpickle
-
+from botocore.exceptions import ClientError
 from syngenta_digital_dta.common.base_adapter import BaseAdapter
 
 
@@ -105,13 +105,15 @@ class S3Adapter(BaseAdapter):
         return results
 
     def object_exist(self, **kwargs):
-        results = self.client.list_objects_v2(Bucket=self.bucket, Prefix=kwargs['s3_path'], MaxKeys=1)
-        if 'Contents' in results:
-            contents = results['Contents']
-            if len(contents) > 0:
-                return 'Key' in contents[0]
+        try:
+            self.resource.Object(self.bucket, kwargs['s3_path']).load()
+        except ClientError as error:
+            if error.response['Error']['Code'] == "404":
+                return False
+            else:
+                raise
 
-        return False
+        return True
 
     def __upload_part(self, **kwargs):
         response = self.client.upload_part(
