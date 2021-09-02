@@ -305,7 +305,7 @@ class PostgresAdapterTest(unittest.TestCase):
         self.user_adapter.cursor = mock.MagicMock()
         self.user_adapter.cursor.execute.return_value = mock.MagicMock(autospec=Exception('error'))
 
-        self.user_adapter.run(query='select 1')
+        self.user_adapter.run(query='select 1', rollback=True)
 
         self.assertTrue(self.user_adapter.connection.rollback.called_once())
 
@@ -323,4 +323,5 @@ class PostgresAdapterTest(unittest.TestCase):
             actual
         )
 
+        self.assertTrue(self.user_adapter.connection.rollback.has_calls([]))
 

@@ -106,7 +106,7 @@ class PostgresAdapter(BaseAdapter):
         return self.__get_data(all=True)
 
     def run(self, **kwargs):
-        self.__execute(query=kwargs['query'], params={})
+        self.__execute(query=kwargs['query'], params={}, rollback=True)
 
         results = []
         if kwargs.get('fetchall'):
@@ -116,7 +116,9 @@ class PostgresAdapter(BaseAdapter):
             for result_array in values:
                 results.append(
                     dict(
-                        zip(columns, result_array)
+                        zip(
+                            columns, result_array
+                        )
                     )
                 )
 
