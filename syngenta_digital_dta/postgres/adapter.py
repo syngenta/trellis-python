@@ -107,22 +107,8 @@ class PostgresAdapter(BaseAdapter):
 
     def run(self, **kwargs):
         self.__execute(query=kwargs['query'], params={}, rollback=True)
-
-        results = []
         if kwargs.get('fetchall'):
-            values = self.__get_data(all=True)
-            columns = [desc[0] for desc in self.cursor.description]
-
-            for result_array in values:
-                results.append(
-                    dict(
-                        zip(
-                            columns, result_array
-                        )
-                    )
-                )
-
-        return results
+            return self.__get_data(all=True)
 
     def __create_join_query(self, relationship, **kwargs):
         params = {
