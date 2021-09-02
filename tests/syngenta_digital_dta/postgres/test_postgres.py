@@ -1,7 +1,7 @@
 import uuid
 import unittest
 import warnings
-
+from unittest import mock
 import syngenta_digital_dta
 
 
@@ -300,3 +300,27 @@ class PostgresAdapterTest(unittest.TestCase):
             results = self.user_adapter.query(query='SELECT * FROM users WHERE user_id =1')
         except Exception as error:
             self.assertEqual(str(error), 'params kwargs are required to prevent sql inject; send empty dict if not needed')
+
+    def test_run_rollback(self):
+        self.user_adapter.cursor = mock.MagicMock()
+        self.user_adapter.cursor.execute.return_value = mock.MagicMock(autospec=Exception('error'))
+
+        self.user_adapter.run(query='select 1')
+
+        self.assertTrue(self.user_adapter.connection.rollback.called_once())
+
+    def test_run_fetch_all(self):
+        self.user_adapter.cursor = mock.MagicMock()
+        self.user_adapter.cursor.fetchall.return_value = [
+            "1"
+        ]
+        self.user_adapter.cursor.description = [['column?']]
+
+        actual = self.user_adapter.run(query='select 1', fetchall=True)
+
+        self.assertDictEqual(
+            {'column?': 1},
+            actual
+        )
+
+

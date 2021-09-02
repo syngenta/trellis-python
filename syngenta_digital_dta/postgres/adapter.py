@@ -105,6 +105,23 @@ class PostgresAdapter(BaseAdapter):
         self.__execute(query, params, **kwargs)
         return self.__get_data(all=True)
 
+    def run(self, **kwargs):
+        self.__execute(query=kwargs['query'], params={})
+
+        results = []
+        if kwargs.get('fetchall'):
+            values = self.__get_data(all=True)
+            columns = [desc[0] for desc in self.cursor.description]
+
+            for result_array in values:
+                results.append(
+                    dict(
+                        zip(columns, result_array)
+                    )
+                )
+
+        return results
+
     def __create_join_query(self, relationship, **kwargs):
         params = {
             'table': AsIs(self.table),
@@ -217,7 +234,10 @@ class PostgresAdapter(BaseAdapter):
         except Exception as error:
             self.__debug(query, params, True)
             logger.log(level='ERROR', log={'error': error})
-            raise Exception('error with execution, check logs') from error
+            if kwargs.get('rollback'):
+                self.connection.rollback()
+            else:
+                raise Exception('error with execution, check logs') from error
 
     def __compose_params(self, data, columns="*", values=None):
         if not values:
