@@ -224,8 +224,7 @@ class PostgresAdapter(BaseAdapter):
             logger.log(level='ERROR', log={'error': error})
             if kwargs.get('rollback'):
                 self.connection.rollback()
-            else:
-                raise Exception('error with execution, check logs') from error
+            raise Exception(f'error with execution, check logs - {error}') from error
 
     def __compose_params(self, data, columns="*", values=None):
         if not values:
