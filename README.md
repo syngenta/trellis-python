@@ -515,8 +515,7 @@ adapter.delete(s3_path='test/test-create.json')
 ## Contributing
 If you would like to contribute please make sure to follow the established patterns and unit test your code:
 
-### Unit Testing
-To run unit test, enter command:
-```bash
-RUN_MODE=unittest python -m unittest discover
-```
+### Local Unit Testing
+
+- In one tab, run `pipenv run local`
+- In a second tab, run `RUN_MODE=unittest python -m unittest discover`
