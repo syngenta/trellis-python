@@ -2,7 +2,7 @@ from typing import OrderedDict
 
 from psycopg2.extensions import AsIs
 
-import json_formatting
+from syngenta_digital_dta.postgres import json_formatting
 from syngenta_digital_dta.common import dict_merger
 from syngenta_digital_dta.common import logger
 from syngenta_digital_dta.common import publisher
