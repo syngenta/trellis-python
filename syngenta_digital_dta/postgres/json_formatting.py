@@ -5,7 +5,7 @@ def insert_json_into_table(
         json_column_map,
         function_map=None,
 ):
-    [target_key] = {v.split(".")[0] for v in json_column_map.values()]}
+    [target_key] = {v.split(".")[0] for v in json_column_map.values()}
 
     return (
         f"""{_build_json_cte(json)}
