@@ -3,14 +3,14 @@ def insert_json_into_table(
         table_name,
         column_map,
         json_column_map,
-        function_map={},
+        function_map=None,
 ):
-    [target_key] = set([v.split(".")[0] for v in json_column_map.values()])
+    [target_key] = {v.split(".")[0] for v in json_column_map.values()]}
 
     return (
         f"""{_build_json_cte(json)}
         {_build_insert_statement(table_name, column_map, json_column_map)}
-        {_build_select_statement(column_map, json_columns, function_map)}
+        {_build_select_statement(column_map, json_column_map, function_map or {})}
         FROM ({_build_json_array_subquery(target_key)}
 """
     )
@@ -28,10 +28,10 @@ def _build_json_array_subquery(target_key):
     return f"SELECT json_array_elements(_json->'{target_key}') AS _jsondict FROM _json_cte"
 
 
-def _build_select_statement(other_columns, json_columns, function_map):
+def _build_select_statement(column_map, json_column_map, function_map):
     lines = []
 
-    for alias, definition in other_columns.items():
+    for alias, definition in column_map.items():
         if alias in function_map:
             result = _apply_function(alias, definition, function_map)
             result = f"{result} AS {alias}"
@@ -41,7 +41,7 @@ def _build_select_statement(other_columns, json_columns, function_map):
 
         lines.append(result)
 
-    for alias, definition in json_columns.items():
+    for alias, definition in json_column_map.items():
         result = _parse_json_line(alias, definition)
 
         if alias in function_map:
