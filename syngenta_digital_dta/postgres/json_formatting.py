@@ -68,9 +68,6 @@ def _parse_json_line(k, v):
     elif len(parts) == 3:
         statement = f"_jsondict -> '{parts[1]}' ->> '{parts[2]}' AS {k}"
 
-    else:
-        raise
-
     return statement
 
 
