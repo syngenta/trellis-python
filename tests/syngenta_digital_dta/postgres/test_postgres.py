@@ -10,7 +10,7 @@ class PostgresAdapterTest(unittest.TestCase):
     def setUp(self, *args, **kwargs):
         warnings.simplefilter('ignore', ResourceWarning)
         self.maxDiff = None
-        ADDRESSES_TABLE='addresses'
+        ADDRESSES_TABLE = 'addresses'
         self.user_adapter = syngenta_digital_dta.adapter(
             engine='postgres',
             table='users',
@@ -215,7 +215,7 @@ class PostgresAdapterTest(unittest.TestCase):
             'first': 'Get',
             'last': 'Cruse III'
         }
-        for count in [0,1,2,3]:
+        for count in [0, 1, 2, 3]:
             data['user_id'] = 0
             data['user_id'] = str(data['user_id'] + count)
             data['last'] = last
@@ -288,7 +288,6 @@ class PostgresAdapterTest(unittest.TestCase):
 
         self.assertRaises(Exception, self.user_adapter.create_table, query=failing_create_string)
 
-
     def test_query(self):
         user_data = {
             'user_id': 'some-query-relationship-guid',
@@ -300,7 +299,7 @@ class PostgresAdapterTest(unittest.TestCase):
         results = self.user_adapter.query(
             query='SELECT * FROM users WHERE user_id = %(identifier_value)s',
             params={
-                'identifier_value':'some-query-relationship-guid'
+                'identifier_value': 'some-query-relationship-guid'
             }
         )
         self.assertEqual('some-query-relationship-guid', results[0]['user_id'])
@@ -310,11 +309,12 @@ class PostgresAdapterTest(unittest.TestCase):
             results = self.user_adapter.query(
                 query='DELETE FROM users WHERE user_id = %(identifier_value)s',
                 params={
-                    'identifier_value':'some-query-relationship-guid'
+                    'identifier_value': 'some-query-relationship-guid'
                 }
             )
         except Exception as error:
-            self.assertEqual(str(error), 'query method is for read-only operations; please use another function for destructive operatins')
+            self.assertEqual(
+                str(error), 'query method is for read-only operations; please use another function for destructive operatins')
 
     def test_query_no_params_constraint(self):
         try:

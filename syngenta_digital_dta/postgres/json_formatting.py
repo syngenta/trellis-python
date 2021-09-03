@@ -15,6 +15,7 @@ def insert_json_into_table(
 """
     )
 
+
 def _build_json_cte(json):
     return f"WITH _json_cte AS (SELECT '{json}'::json AS _json)"
 
@@ -51,12 +52,12 @@ def _build_select_statement(other_columns, json_columns, function_map):
     return f"SELECT {', '.join(lines)}"
 
 
-
 def _get_column_order(column_map, json_column_map):
     return [
         *column_map.keys(),
         *json_column_map.keys()
     ]
+
 
 def _parse_json_line(k, v):
     parts = v.split('.')
@@ -71,6 +72,7 @@ def _parse_json_line(k, v):
         raise
 
     return statement
+
 
 def _apply_function(k, statement, function_map):
     statement, alias = statement.split(' AS ')

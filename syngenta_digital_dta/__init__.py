@@ -15,4 +15,5 @@ def adapter(**kwargs):
         return ElasticsearchAdapter(**kwargs)
     if kwargs.get('engine') == 's3':
         return S3Adapter(**kwargs)
-    raise Exception(f'engine {kwargs.get("engine", "was not supplied, an empty engine kwarg is")} not supported; contribute to get it supported :)')
+    raise Exception(
+        f'engine {kwargs.get("engine", "was not supplied, an empty engine kwarg is")} not supported; contribute to get it supported :)')
