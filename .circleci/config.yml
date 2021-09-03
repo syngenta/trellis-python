@@ -17,10 +17,15 @@ commands:
             - run: python3 -m pipenv run lint | python3 -m pipenv run pylint_report.py > ./coverage/lint/report.html || exit 0
             - store_artifacts:
                 path: ./coverage/lint/report.html
-    python-test:
+python-test:
         steps:
             - run: sudo rm -f /etc/boto.cfg
-            - run: pipenv run test
+            - run:
+                command: pipenv run test
+                environment:
+                    AWS_ACCESS_KEY_ID: 0
+                    AWS_SECRET_ACCESS_KEY: 0
+                    AWS_DEFAULT_REGION: us-east-2
     python-report:
         steps:
             - run: sudo rm -f /etc/boto.cfg
