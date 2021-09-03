@@ -29,7 +29,12 @@ commands:
     python-report:
         steps:
             - run: sudo rm -f /etc/boto.cfg
-            - run: pipenv run coverage
+            - run:
+                command: pipenv run coverage
+                environment:
+                    AWS_ACCESS_KEY_ID: 0
+                    AWS_SECRET_ACCESS_KEY: 0
+                    AWS_DEFAULT_REGION: us-east-2
             - store_test_results:
                 path: ./coverage/reports
             - store_artifacts:
