@@ -1,5 +1,8 @@
+from typing import OrderedDict
+
 from psycopg2.extensions import AsIs
 
+from syngenta_digital_dta.postgres import json_formatting
 from syngenta_digital_dta.common import dict_merger
 from syngenta_digital_dta.common import logger
 from syngenta_digital_dta.common import publisher
@@ -99,7 +102,7 @@ class PostgresAdapter(BaseAdapter):
         if not kwargs['query'].lower().startswith('create table'):
             self.__raise_error('TABLE_WRITE_ONLY', **kwargs)
         query = kwargs.pop('query')
-        self.__execute(query, params={}, commit=True)
+        self.__execute(query, params={}, commit=True, rollback=True)
 
     def query(self, **kwargs):
         if 'params' not in kwargs:
@@ -110,6 +113,33 @@ class PostgresAdapter(BaseAdapter):
         params = kwargs.pop('params')
         self.__execute(query, params, **kwargs)
         return self.__get_data(all=True)
+
+    def bulk_insert_json(
+            self,
+            json: str,
+            table_name: str,
+            column_map: OrderedDict,
+            json_column_map: OrderedDict,
+            function_map=None,
+    ):
+
+        statement = json_formatting.insert_json_into_table(
+            json=json,
+            table_name=table_name,
+            column_map=column_map,
+            json_column_map=json_column_map,
+            function_map=function_map or {}
+        )
+
+        self.__execute(query=statement, params={})
+
+    def create_index(self, table_name, index_columns):
+        index_name = f"index_{'_'.join(index_columns)}"
+        index_cols = f"({', '.join(index_columns)})"
+
+        statement = f"CREATE INDEX {index_name} ON {table_name} {index_cols}"
+
+        self.__execute(query=statement, params={})
 
     def __create_join_query(self, relationship, **kwargs):
         params = {
@@ -223,7 +253,9 @@ class PostgresAdapter(BaseAdapter):
         except Exception as error:
             self.__debug(query, params, True)
             logger.log(level='ERROR', log={'error': error})
-            raise Exception('error with execution, check logs') from error
+            if kwargs.get('rollback'):
+                self.connection.rollback()
+            raise Exception(f'error with execution, check logs - {error}') from error
 
     def __compose_params(self, data, columns="*", values=None):
         if not values:
