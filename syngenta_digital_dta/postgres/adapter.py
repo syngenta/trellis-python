@@ -95,6 +95,12 @@ class PostgresAdapter(BaseAdapter):
         self.__execute(join['query'], join['params'], **kwargs)
         return self.__get_data(all=True)
 
+    def create_table(self, **kwargs):
+        if not kwargs['query'].lower().startswith('create table'):
+            self.__raise_error('TABLE_WRITE_ONLY', **kwargs)
+        query = kwargs.pop('query')
+        self.__execute(query, params={}, commit=True)
+
     def query(self, **kwargs):
         if 'params' not in kwargs:
             self.__raise_error('PARAMS_REQUIRED', **kwargs)
@@ -249,6 +255,10 @@ class PostgresAdapter(BaseAdapter):
             raise Exception(
                 'query method is for read-only operations; please use another function for destructive operatins'
             )
+        if error_type == 'TABLE_WRITE_ONLY':
+            raise CreateTableException(
+                'create table query-string must start with "create table"'
+            )
         if error_type == 'NOT_UNIQUE':
             raise Exception(
                 f'row already exist with {self.model_identifier} = {kwargs.get("data", {}).get(self.model_identifier)}'
@@ -258,3 +268,7 @@ class PostgresAdapter(BaseAdapter):
                 f'row does not exist with {self.model_identifier} = {kwargs.get("data", {}).get(self.model_identifier)}'
             )
         raise Exception(f'Something went wrong and I am not sure how I got here: {error_type}')
+
+
+class CreateTableException(Exception):
+    pass
