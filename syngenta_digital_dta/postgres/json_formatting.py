@@ -1,25 +1,3 @@
-from collections import OrderedDict
-
-columns = OrderedDict(
-    [
-        ('guuid', 'generate_uuid_v4()'),
-        ('created_at', 'now()'),
-        ('updated_at', 'now()'),
-    ]
-)
-
-json_columns = OrderedDict(
-    [
-        ('time', 'feature.properties.Time'),
-        ('machine', 'feature.properties.Machine'),
-        ('secID', 'feature.properties.SecID')
-    ]
-)
-
-function_map = {
-    'guuid': "cast({} as varchar)"
-}
-
 def insert_json_into_table(
         json,
         table_name,
