@@ -75,10 +75,3 @@ def _parse_json_line(k, v):
 def _apply_function(k, statement, function_map):
     statement, alias = statement.split(' AS ')
     return f"{function_map[k].format(statement)} as {alias}"
-
-
-
-
-
-
-
