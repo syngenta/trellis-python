@@ -136,3 +136,6 @@ dmypy.json
 .elasticsearch
 .localstack
 .DS_Store
+
+#pycharm
+.idea/

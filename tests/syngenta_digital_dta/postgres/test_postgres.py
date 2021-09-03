@@ -268,6 +268,27 @@ class PostgresAdapterTest(unittest.TestCase):
         results = self.user_adapter.get_relationship('addresses', where={'user_id': 'some-user-relationship-guid'})
         self.assertEqual('some-user-relationship-guid', results[0]['user_id'])
 
+    def test_create_table(self):
+        random = str(uuid.uuid4()).split('-')[0]
+        table_name = f'test_create_table_{random}'
+        create_string = f"CREATE TABLE {table_name} (operation_id varchar PRIMARY KEY, field_id varchar)"
+
+        self.user_adapter.create_table(query=create_string)
+
+        check_str = f"SELECT EXISTS (SELECT 1 FROM   information_schema.tables WHERE  table_schema = 'public' AND table_name = '{table_name}');"
+        results = self.user_adapter.query(
+            query=check_str,
+            params={}
+        )[0]['exists']
+        self.assertTrue(results)
+
+    def test_create_table_fail(self):
+        table_name = 'test_create_table'
+        failing_create_string = f"INSERT INTO {table_name} (operation_id, field_id) VALUES ('op_id', 'field_id')"
+
+        self.assertRaises(Exception, self.user_adapter.create_table, query=failing_create_string)
+
+
     def test_query(self):
         user_data = {
             'user_id': 'some-query-relationship-guid',
