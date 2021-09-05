@@ -63,7 +63,7 @@ def _parse_json_line(k, v):
     parts = v.split('.')
 
     if len(parts) == 2:
-        statement = f"_jsondict -> '{parts[1]}' AS {k}"
+        statement = f"_jsondict ->> '{parts[1]}' AS {k}"
 
     elif len(parts) == 3:
         statement = f"_jsondict -> '{parts[1]}' ->> '{parts[2]}' AS {k}"
