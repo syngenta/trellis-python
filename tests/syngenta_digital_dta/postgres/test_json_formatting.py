@@ -129,7 +129,7 @@ class TestJsonFormatting(unittest.TestCase):
         expected = """WITH _json_cte AS (SELECT '{}'::json AS _json)
         INSERT INTO my_table (guuid, created_at, updated_at, time, machine, secID)
         SELECT generate_uuid_v4() AS guuid, now() AS created_at, now() AS updated_at, _jsondict -> 'properties' ->> 'Time' AS time, _jsondict -> 'properties' ->> 'Machine' AS machine, _jsondict -> 'properties' ->> 'SecID' AS secID
-        FROM (SELECT json_array_elements(_json->'feature') AS _jsondict FROM _json_cte
+        FROM (SELECT json_array_elements(_json->'feature') AS _jsondict FROM _json_cte)x
 """
 
         self.assertEqual(expected, actual)
@@ -164,7 +164,7 @@ class TestJsonFormatting(unittest.TestCase):
         expected = """WITH _json_cte AS (SELECT '{}'::json AS _json)
         INSERT INTO my_table (guuid, created_at, updated_at, time, machine, secID)
         SELECT generate_uuid_v4() AS guuid, now() AS created_at, now() AS updated_at, _jsondict -> 'properties' ->> 'Time' AS time, _jsondict -> 'properties' ->> 'Machine' AS machine, cast(_jsondict -> 'properties' ->> 'SecID' as varchar) as secID
-        FROM (SELECT json_array_elements(_json->'feature') AS _jsondict FROM _json_cte
+        FROM (SELECT json_array_elements(_json->'feature') AS _jsondict FROM _json_cte)x
 """
 
         self.assertEqual(expected, actual)
