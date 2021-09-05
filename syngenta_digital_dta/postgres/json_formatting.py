@@ -11,8 +11,7 @@ def insert_json_into_table(
         f"""{_build_json_cte(json)}
         {_build_insert_statement(table_name, column_map, json_column_map)}
         {_build_select_statement(column_map, json_column_map, function_map or {})}
-        FROM ({_build_json_array_subquery(target_key)}
-"""
+        FROM ({_build_json_array_subquery(target_key)})x"""
     )
 
 
