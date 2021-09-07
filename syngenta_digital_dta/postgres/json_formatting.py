@@ -11,7 +11,7 @@ def insert_json_into_table(
         f"""{_build_json_cte(json)}
         {_build_insert_statement(table_name, column_map, json_column_map)}
         {_build_select_statement(column_map, json_column_map, function_map or {})}
-        FROM ({_build_json_array_subquery(target_key)}
+        FROM ({_build_json_array_subquery(target_key)})x
 """
     )
 
@@ -63,7 +63,7 @@ def _parse_json_line(k, v):
     parts = v.split('.')
 
     if len(parts) == 2:
-        statement = f"_jsondict -> '{parts[1]}' AS {k}"
+        statement = f"_jsondict ->> '{parts[1]}' AS {k}"
 
     elif len(parts) == 3:
         statement = f"_jsondict -> '{parts[1]}' ->> '{parts[2]}' AS {k}"

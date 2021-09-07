@@ -131,7 +131,7 @@ class PostgresAdapter(BaseAdapter):
             function_map=function_map or {}
         )
 
-        self.__execute(query=statement, params={})
+        self.__execute(query=statement, params={}, commit=True, rollback=True)
 
     def create_index(self, table_name, index_columns):
         index_name = f"index_{'_'.join(index_columns)}"
