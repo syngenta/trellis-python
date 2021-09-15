@@ -1,5 +1,3 @@
-from typing import OrderedDict
-
 from psycopg2.extensions import AsIs
 
 from syngenta_digital_dta.postgres import json_formatting
@@ -114,21 +112,16 @@ class PostgresAdapter(BaseAdapter):
         self.__execute(query, params, **kwargs)
         return self.__get_data(all=True)
 
-    def bulk_insert_json(
-            self,
-            json: str,
-            table_name: str,
-            column_map: OrderedDict,
-            json_column_map: OrderedDict,
-            function_map=None,
-    ):
+    def bulk_insert_json(self, **kwargs):
 
         statement = json_formatting.insert_json_into_table(
-            json=json,
-            table_name=table_name,
-            column_map=column_map,
-            json_column_map=json_column_map,
-            function_map=function_map or {}
+            json=kwargs['json'],
+            table_name=kwargs['table_name'],
+            column_map=kwargs['column_map'],
+            json_column_map=kwargs['json_column_map'],
+            function_map=kwargs.get('function_map', {}),
+            conflict_cols=kwargs.get('conflict_cols'),
+            update_cols=kwargs.get('update_cols')
         )
 
         self.__execute(query=statement, params={}, commit=True, rollback=True)
