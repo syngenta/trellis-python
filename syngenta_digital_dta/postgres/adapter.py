@@ -121,6 +121,8 @@ class PostgresAdapter(BaseAdapter):
             column_map: OrderedDict,
             json_column_map: OrderedDict,
             function_map=None,
+            conflict_cols=None,
+            update_cols=None
     ):
 
         statement = json_formatting.insert_json_into_table(
@@ -128,7 +130,9 @@ class PostgresAdapter(BaseAdapter):
             table_name=table_name,
             column_map=column_map,
             json_column_map=json_column_map,
-            function_map=function_map or {}
+            function_map=function_map or {},
+            conflict_cols=conflict_cols,
+            update_cols=update_cols
         )
 
         self.__execute(query=statement, params={}, commit=True, rollback=True)
