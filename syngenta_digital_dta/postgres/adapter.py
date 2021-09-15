@@ -1,5 +1,3 @@
-from typing import OrderedDict
-
 from psycopg2.extensions import AsIs
 
 from syngenta_digital_dta.postgres import json_formatting
