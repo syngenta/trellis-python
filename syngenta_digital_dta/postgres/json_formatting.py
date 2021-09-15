@@ -30,11 +30,13 @@ def _build_on_conflict(conflict_cols, update_cols):
     if conflict_cols and update_cols:
         sql = f"ON CONFLICT ({', '.join(conflict_cols)}) "
         update = f"DO UPDATE SET ({','.join(update_cols)}) = ({','.join(map(lambda x: 'excluded.' + x, update_cols))})"
-        return sql + update
+        sql = sql + update
     elif conflict_cols:
-        return "ON CONFLICT DO NOTHING"
+        sql = "ON CONFLICT DO NOTHING"
     else:
-        return ''
+        sql = ''
+
+    return sql
 
 
 def _build_json_array_subquery(target_key):
