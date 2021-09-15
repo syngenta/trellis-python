@@ -4,6 +4,8 @@ def insert_json_into_table(
         column_map,
         json_column_map,
         function_map=None,
+        conflict_cols=None,
+        update_cols=None
 ):
     [target_key] = {v.split(".")[0] for v in json_column_map.values()}
 
@@ -11,7 +13,7 @@ def insert_json_into_table(
         f"""{_build_json_cte(json)}
         {_build_insert_statement(table_name, column_map, json_column_map)}
         {_build_select_statement(column_map, json_column_map, function_map or {})}
-        FROM ({_build_json_array_subquery(target_key)})x
+        FROM ({_build_json_array_subquery(target_key)})x {_build_on_conflict(conflict_cols, update_cols)}
 """
     )
 
@@ -22,6 +24,19 @@ def _build_json_cte(json):
 
 def _build_insert_statement(table, column_map, json_column_map):
     return f"INSERT INTO {table} ({', '.join(_get_column_order(column_map, json_column_map))})"
+
+
+def _build_on_conflict(conflict_cols, update_cols):
+    if conflict_cols and update_cols:
+        sql = f"ON CONFLICT ({', '.join(conflict_cols)}) "
+        update = f"DO UPDATE SET ({','.join(update_cols)}) = ({','.join(map(lambda x: 'excluded.' + x, update_cols))})"
+        sql = sql + update
+    elif conflict_cols:
+        sql = "ON CONFLICT DO NOTHING"
+    else:
+        sql = ''
+
+    return sql
 
 
 def _build_json_array_subquery(target_key):
