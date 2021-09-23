@@ -8,7 +8,7 @@ def publish(**kwargs):
     if not kwargs.get('arn') or not kwargs.get('data'):
         return
     try:
-        publisher = boto3.client('sns', region_name=kwargs.get('region'))
+        publisher = boto3.client('sns', region_name=kwargs.get('region'), endpoint_url=kwargs.get('endpoint'))
         publisher.publish(
             TopicArn=kwargs['arn'],
             Message=json.dumps(kwargs['data']),

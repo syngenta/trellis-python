@@ -7,6 +7,7 @@ class BaseAdapter:
         self.sns_arn = kwargs.get('sns_arn')
         self.sns_custom = kwargs.get('sns_attributes', {})
         self.sns_defaults = kwargs.get('sns_default_attributes', True)
+        self.sns_endpoint = kwargs.get('sns_endpoint')
         self.publisher = publisher
         self.default_attributes = {
             'model_schema': kwargs.get('model_schema'),
@@ -18,6 +19,7 @@ class BaseAdapter:
     def publish(self, operation, data):
         attributes = self.create_format_attibutes(operation)
         self.publisher.publish(
+            endpoint=self.sns_endpoint,
             arn=self.sns_arn,
             attributes=attributes,
             data=data
