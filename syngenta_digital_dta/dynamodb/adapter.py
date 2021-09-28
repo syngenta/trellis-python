@@ -59,7 +59,7 @@ class DynamodbAdapter(BaseAdapter):
         data = kwargs['data']
         batch_size = kwargs.get('batch_size', 25)
 
-        if type(data) is not list:
+        if not isinstance(data, list):
             raise Exception('Batched data must be contained within a list')
 
         batched_data = (data[pos:pos + batch_size] for pos in range(0, len(data), batch_size))
