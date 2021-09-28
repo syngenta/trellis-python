@@ -84,6 +84,11 @@ class DynamoDBAdapterTest(unittest.TestCase):
         data = self.adapter.scan()
         self.assertDictEqual(data[0], self.mock_table.mock_data)
 
+    def test_adapter_raw_scan(self):
+        data = self.adapter.scan(**{'raw_scan': True})
+        print(data)
+        self.assertDictEqual(data['Items'][0], self.mock_table.mock_data)
+
     def test_adapter_create(self):
         new_data = {
             'test_id': 'abc456',
