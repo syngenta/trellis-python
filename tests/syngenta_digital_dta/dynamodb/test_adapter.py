@@ -5,6 +5,7 @@ import boto3
 
 import syngenta_digital_dta
 from tests.syngenta_digital_dta.dynamodb.mock_table import MockTable
+from syngenta_digital_dta.dynamodb.adapter import BatchItemException
 
 
 class DynamoDBAdapterTest(unittest.TestCase):
@@ -113,7 +114,7 @@ class DynamoDBAdapterTest(unittest.TestCase):
 
     def test_adapter_batch_insert_fail(self):
         item_tuple = {'data': (1,2,3)}
-        self.assertRaises(Exception, self.adapter.batch_insert, **item_tuple)
+        self.assertRaises(BatchItemException, self.adapter.batch_insert, **item_tuple)
 
     def test_adapter_overwrite(self):
         new_data = {
