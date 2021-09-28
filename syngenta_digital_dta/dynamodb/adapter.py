@@ -39,6 +39,8 @@ class DynamodbAdapter(BaseAdapter):
         return self.get(**kwargs)
 
     def scan(self, **kwargs):
+        if kwargs.get('raw_scan'):
+            return self.table.scan(**kwargs.get('query', {}))
         return self.table.scan(**kwargs.get('query', {})).get('Items', [])
 
     def get(self, **kwargs):
