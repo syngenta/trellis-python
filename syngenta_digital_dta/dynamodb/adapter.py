@@ -8,6 +8,10 @@ from syngenta_digital_dta.common import dict_merger
 from syngenta_digital_dta.common.base_adapter import BaseAdapter
 
 
+class BatchItemException(Exception):
+    pass
+
+
 class DynamodbAdapter(BaseAdapter):
 
     def __init__(self, **kwargs):
@@ -54,6 +58,19 @@ class DynamodbAdapter(BaseAdapter):
         self.table.put_item(Item=new_item, ConditionExpression=Attr(self.model_identifier).not_exists())
         super().publish('create', new_item)
         return new_item
+
+    def batch_insert(self, **kwargs):
+        data = kwargs['data']
+        batch_size = kwargs.get('batch_size', 25)
+
+        if not isinstance(data, list):
+            raise BatchItemException('Batched data must be contained within a list')
+
+        batched_data = (data[pos:pos + batch_size] for pos in range(0, len(data), batch_size))
+        with self.table.batch_writer() as writer:
+            for batch in batched_data:
+                for item in batch:
+                    writer.put_item(Item=item)
 
     def delete(self, **kwargs):
         kwargs['query']['ReturnValues'] = 'ALL_OLD'
