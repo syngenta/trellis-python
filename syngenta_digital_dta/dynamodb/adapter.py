@@ -55,6 +55,19 @@ class DynamodbAdapter(BaseAdapter):
         super().publish('create', new_item)
         return new_item
 
+    def batch_insert(self, **kwargs):
+        data = kwargs['data']
+        batch_size = kwargs.get('batch_size', 25)
+
+        if type(data) is not list:
+            raise Exception('Batched data must be contained within a list')
+
+        batched_data = (data[pos:pos + batch_size] for pos in range(0, len(data), batch_size))
+        with self.table.batch_writer() as writer:
+            for batch in batched_data:
+                for item in batch:
+                    writer.put_item(Item=item)
+
     def delete(self, **kwargs):
         kwargs['query']['ReturnValues'] = 'ALL_OLD'
         result = self.table.delete_item(**kwargs['query']).get('Attributes', {})
@@ -78,3 +91,22 @@ class DynamodbAdapter(BaseAdapter):
         if not original_data:
             raise Exception('update: no data found to update')
         return original_data
+
+
+
+def batch_insert(**kwargs):
+    data = kwargs['data']
+    batch_size = kwargs.get('batch_size', 25)
+    if type(data) is not list:
+        raise Exception('Batched data must be contained within a list')
+    grouped = (data[pos:pos + batch_size] for pos in range(0, len(data), batch_size))
+    return grouped
+if __name__ == '__main__':
+    test_list = [x for x in range(100)]
+    test_tuple = (1,2,3)
+    kwargs = {
+        'data': test_list,
+        'batch_size': 25
+    }
+    for item in batch_insert(**kwargs):
+        print(item)
