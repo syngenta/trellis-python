@@ -100,7 +100,7 @@ class PostgresAdapter(BaseAdapter):
         if not kwargs['query'].lower().startswith('create table'):
             self.__raise_error('TABLE_WRITE_ONLY', **kwargs)
         query = kwargs.pop('query')
-        self.__execute(query, params={}, commit=True, rollback=True)
+        self.__execute(query, params=[], commit=True, rollback=True)
 
     def query(self, **kwargs):
         if 'params' not in kwargs:
@@ -124,7 +124,7 @@ class PostgresAdapter(BaseAdapter):
             update_cols=kwargs.get('update_cols')
         )
 
-        self.__execute(query=statement, params={}, commit=True, rollback=True)
+        self.__execute(query=statement, params=[], commit=True, rollback=True)
 
     def create_index(self, table_name, index_columns):
         index_name = f"index_{'_'.join(index_columns)}"
@@ -132,7 +132,7 @@ class PostgresAdapter(BaseAdapter):
 
         statement = f"CREATE INDEX {index_name} ON {table_name} {index_cols}"
 
-        self.__execute(query=statement, params={})
+        self.__execute(query=statement, params=[])
 
     def __create_join_query(self, relationship, **kwargs):
         params = {
