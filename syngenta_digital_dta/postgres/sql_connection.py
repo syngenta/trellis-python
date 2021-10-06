@@ -15,12 +15,6 @@ def sql_connection(func):
             if any([closed_connection, closed_cursor]):
                 __connections[obj.database] = SQLConnector(obj)
 
-        try:
-            return func(obj, __connections[obj.database])
-        except Exception as err:
-            if 'already closed' in str(err):
-                __connections[obj.database] = SQLConnector(obj)
-                return func(obj, __connections[obj.database])
-            raise err
+        return func(obj, __connections[obj.database])
 
     return decorator
