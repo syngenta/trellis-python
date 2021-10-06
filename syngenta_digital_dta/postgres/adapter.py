@@ -244,11 +244,16 @@ class PostgresAdapter(BaseAdapter):
             self.cursor.execute(query, params)
             self.commit(kwargs.get('commit', False))
         except Exception as error:
-            self.__debug(query, params, True)
-            logger.log(level='ERROR', log={'error': error})
-            if kwargs.get('rollback'):
-                self.connection.rollback()
-            raise Exception(f'error with execution, check logs - {error}') from error
+            if 'already closed' in str(error):
+                self.connect()
+                self.cursor.execute(query, params)
+                self.commit(kwargs.get('commit', False))
+            else:
+                self.__debug(query, params, True)
+                logger.log(level='ERROR', log={'error': error})
+                if kwargs.get('rollback'):
+                    self.connection.rollback()
+                raise Exception(f'error with execution, check logs - {error}') from error
 
     def __compose_params(self, data, columns="*", values=None):
         if not values:
