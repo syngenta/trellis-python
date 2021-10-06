@@ -321,3 +321,23 @@ class PostgresAdapterTest(unittest.TestCase):
             results = self.user_adapter.query(query='SELECT * FROM users WHERE user_id =1')
         except Exception as error:
             self.assertEqual(str(error), 'params kwargs are required to prevent sql inject; send empty dict if not needed')
+
+    def test_execute_reconnect_on_error(self):
+        self.user_adapter.connection = mock.MagicMock()
+        self.user_adapter.cursor = mock.MagicMock()
+
+        self.user_adapter.connect = mock.MagicMock()
+        self.user_adapter.connect.return_value = mock.MagicMock()
+
+        self.user_adapter.cursor.execute.side_effect = [Exception('already closed'), []]
+
+        self.user_adapter._PostgresAdapter__execute('select 1', [])
+
+        self.assertEqual(
+            self.user_adapter.cursor.execute.call_count, 2
+        )
+
+        self.assertEqual(
+            self.user_adapter.connect.call_count,
+            1
+        )

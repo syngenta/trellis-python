@@ -5,15 +5,17 @@ def sql_connection(func):
     __connections = {}
     def decorator(obj):
 
-        if not __connections.get(obj.database):
-            __connections[obj.database] = SQLConnector(obj)
+        if obj.connection:
+            if __connections.get(obj.database):
+                closed_connection = obj.connection.closed
+                closed_cursor = obj.cursor.closed
 
-        else:
-            closed_connection = obj.connection.closed
-            closed_cursor = obj.cursor.closed
+                if any([closed_connection, closed_cursor]):
+                    __connections[obj.database] = SQLConnector(obj)
 
-            if any([closed_connection, closed_cursor]):
-                __connections[obj.database] = SQLConnector(obj)
+                return func(obj, __connections[obj.database])
+
+        __connections[obj.database] = SQLConnector(obj)
 
         return func(obj, __connections[obj.database])
 
