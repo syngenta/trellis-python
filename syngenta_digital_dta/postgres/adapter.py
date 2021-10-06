@@ -245,7 +245,7 @@ class PostgresAdapter(BaseAdapter):
             self.commit(kwargs.get('commit', False))
         except Exception as error:
             if 'already closed' in str(error):
-                self.connect()
+                self.connect()  # pylint: disable=no-value-for-parameter
                 self.cursor.execute(query, params)
                 self.commit(kwargs.get('commit', False))
             else:
