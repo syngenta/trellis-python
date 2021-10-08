@@ -1,3 +1,5 @@
+from functools import lru_cache
+
 import psycopg2
 from psycopg2.extras import RealDictCursor
 
@@ -13,6 +15,7 @@ class SQLConnector:
         self.autocommit = cls.autocommit
         self.connection = None
 
+    @lru_cache(maxsize=128)
     def connect(self):
         try:
             if not self.connection:
@@ -30,5 +33,6 @@ class SQLConnector:
             print(error)
             raise error
 
+    @lru_cache(maxsize=128)
     def cursor(self):
         return self.connection.cursor(cursor_factory=RealDictCursor)
