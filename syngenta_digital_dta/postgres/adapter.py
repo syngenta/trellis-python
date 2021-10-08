@@ -7,6 +7,7 @@ from syngenta_digital_dta.common import publisher
 from syngenta_digital_dta.common import schema_mapper
 from syngenta_digital_dta.common.base_adapter import BaseAdapter
 from syngenta_digital_dta.postgres.sql_connection import sql_connection
+from syngenta_digital_dta.postgres.sql_connector import SQLConnector
 
 
 class PostgresAdapter(BaseAdapter):
@@ -31,7 +32,7 @@ class PostgresAdapter(BaseAdapter):
         self.cursor = None
 
     @sql_connection
-    def connect(self, connector):
+    def connect(self, connector: SQLConnector):
         self.connection = connector.connect()
         self.cursor = connector.cursor()
 
