@@ -1,5 +1,6 @@
-from syngenta_digital_dta.postgres.sql_connector import SQLConnector
 import typing
+
+from syngenta_digital_dta.postgres.sql_connector import SQLConnector
 
 
 def sql_connection(func: typing.Callable) -> typing.Callable:
