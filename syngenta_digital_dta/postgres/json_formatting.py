@@ -10,10 +10,13 @@ def insert_json_into_table(
     [target_key] = {v.split(".")[0] for v in json_column_map.values()}
 
     return (
-        f"""{_build_json_cte(json)}
+        f"""BEGIN Transaction;
+        {_build_json_cte(json)}
         {_build_insert_statement(table_name, column_map, json_column_map)}
         {_build_select_statement(column_map, json_column_map, function_map or {})}
-        FROM ({_build_json_array_subquery(target_key)})x {_build_on_conflict(conflict_cols, update_cols)}
+        FROM ({_build_json_array_subquery(target_key)})x {_build_on_conflict(conflict_cols, update_cols)};
+        COMMIT;
+        END Transaction;
 """
     )
 
