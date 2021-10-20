@@ -45,7 +45,8 @@ class S3Adapter(BaseAdapter):
             Bucket=self.bucket,
             Key=kwargs['s3_path']
         )
-        super().publish('create', self.__generate_publish_data(**kwargs))
+        if kwargs.get('publish', True):
+            super().publish('create', self.__generate_publish_data(**kwargs))
         return results
 
     def delete(self, **kwargs):
