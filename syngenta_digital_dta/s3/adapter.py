@@ -81,7 +81,9 @@ class S3Adapter(BaseAdapter):
             parts.append({'ETag': part_response['ETag'], 'PartNumber': part_number})
         complete_response = self.__complete_multipart_upload(
             s3_path=kwargs['s3_path'], parts=parts, upload_id=multipart['UploadId'])
-        super().publish('create', self.__generate_publish_data(**kwargs))
+
+        if kwargs.get('publish', True):
+            super().publish('create', self.__generate_publish_data(**kwargs))
         return complete_response
 
     def create_presigned_read_url(self, **kwargs):
