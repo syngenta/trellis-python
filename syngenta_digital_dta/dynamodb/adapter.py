@@ -91,7 +91,7 @@ class DynamodbAdapter(BaseAdapter):
         with self.table.batch_writer() as writer:
             for batch in batched_data:
                 for item in batch:
-                    writer.delete_item(Item=item)
+                    writer.delete_item(Key=item)
 
     def update(self, **kwargs):
         original_data = self._get_original_data(**kwargs)
