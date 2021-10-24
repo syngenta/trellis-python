@@ -121,6 +121,18 @@ class DynamoDBAdapterTest(unittest.TestCase):
         item_tuple = {'data': (1,2,3)}
         self.assertRaises(BatchItemException, self.adapter.batch_insert, **item_tuple)
 
+    def test_adapter_batch_delete(self):
+        item_list = {'data': [{'test_id': str(x), 'test_query_id': str(x)} for x in range(100)]}
+        self.adapter.batch_insert(**item_list)
+
+        self.adapter.batch_delete(**item_list)
+        data = self.adapter.scan()
+        self.assertTrue(len(data) == 1)  # Table comes initialized with one test record
+
+    def test_adapter_batch_delete_fail(self):
+        item_tuple = {'data': (1, 2, 3)}
+        self.assertRaises(BatchItemException, self.adapter.batch_delete, **item_tuple)
+
     def test_adapter_overwrite(self):
         new_data = {
             'test_id': 'abc456',
