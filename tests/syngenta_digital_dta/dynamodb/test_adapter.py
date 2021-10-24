@@ -124,10 +124,11 @@ class DynamoDBAdapterTest(unittest.TestCase):
     def test_adapter_batch_delete(self):
         item_list = {'data': [{'test_id': str(x), 'test_query_id': str(x)} for x in range(100)]}
         self.adapter.batch_insert(**item_list)
-
+        data = self.adapter.scan()
+        count_before_delete = len(data)
         self.adapter.batch_delete(**item_list)
         data = self.adapter.scan()
-        self.assertTrue(len(data) == 1)  # Table comes initialized with one test record
+        self.assertTrue(count_before_delete == 101 and len(data) == 1)
 
     def test_adapter_batch_delete_fail(self):
         item_tuple = {'data': (1, 2, 3)}
