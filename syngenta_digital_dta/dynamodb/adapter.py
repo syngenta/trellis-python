@@ -110,4 +110,3 @@ class DynamodbAdapter(BaseAdapter):
         if not original_data:
             raise Exception('update: no data found to update')
         return original_data
-
