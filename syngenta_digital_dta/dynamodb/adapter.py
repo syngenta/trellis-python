@@ -80,6 +80,16 @@ class DynamodbAdapter(BaseAdapter):
         super().publish('delete', result)
         return result
 
+    def batch_delete(self, **kwargs):
+        batch_size = kwargs.get('batch_size', 25)
+        if not isinstance(kwargs['data'], list):
+            raise BatchItemException('Batched data must be contained within a list')
+        batched_data = (kwargs['data'][pos:pos + batch_size] for pos in range(0, len(kwargs['data']), batch_size))
+        with self.table.batch_writer() as writer:
+            for batch in batched_data:
+                for item in batch:
+                    writer.delete_item(Key=item)
+
     def update(self, **kwargs):
         original_data = self._get_original_data(**kwargs)
         merged_data = dict_merger.merge(original_data, kwargs['data'], **kwargs)
