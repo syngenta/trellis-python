@@ -321,3 +321,11 @@ class PostgresAdapterTest(unittest.TestCase):
             results = self.user_adapter.query(query='SELECT * FROM users WHERE user_id =1')
         except Exception as error:
             self.assertEqual(str(error), 'params kwargs are required to prevent sql inject; send empty dict if not needed')
+
+    def test_sql_connector(self):
+        id_conn_first = id(self.user_adapter.connection)
+        self.user_adapter.connection.close()
+        self.user_adapter.connect()
+        id_conn_second = id(self.user_adapter.connection)
+
+        self.assertNotEqual(id_conn_first, id_conn_second)
