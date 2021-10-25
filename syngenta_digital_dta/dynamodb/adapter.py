@@ -81,13 +81,10 @@ class DynamodbAdapter(BaseAdapter):
         return result
 
     def batch_delete(self, **kwargs):
-        data = kwargs['data']
         batch_size = kwargs.get('batch_size', 25)
-
-        if not isinstance(data, list):
+        if not isinstance(kwargs['data'], list):
             raise BatchItemException('Batched data must be contained within a list')
-
-        batched_data = (data[pos:pos + batch_size] for pos in range(0, len(data), batch_size))
+        batched_data = (kwargs['data'][pos:pos + batch_size] for pos in range(0, len(kwargs['data']), batch_size))
         with self.table.batch_writer() as writer:
             for batch in batched_data:
                 for item in batch:
