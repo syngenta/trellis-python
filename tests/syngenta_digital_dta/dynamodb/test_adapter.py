@@ -80,6 +80,22 @@ class DynamoDBAdapterTest(unittest.TestCase):
         )
         self.assertDictEqual(data[0], self.mock_table.mock_data)
 
+    def test_adapter_raw_query(self):
+        data = self.adapter.query(
+            raw_query=True,
+            query={
+                'IndexName': 'test_query_id',
+                'Limit': 1,
+                'KeyConditionExpression': 'test_query_id = :test_query_id',
+                'ExpressionAttributeValues': {
+                    ':test_query_id': 'def345'
+                }
+            }
+        )
+
+        passed = data['Items'][0] == self.mock_table.mock_data and data.get('LastEvaluatedKey')
+        self.assertTrue(passed)
+
     def test_adapter_scan(self):
         data = self.adapter.scan()
         self.assertDictEqual(data[0], self.mock_table.mock_data)

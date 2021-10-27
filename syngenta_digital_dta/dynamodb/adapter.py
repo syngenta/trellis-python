@@ -47,6 +47,9 @@ class DynamodbAdapter(BaseAdapter):
         return self.table.get_item(**kwargs.get('query', {})).get('Item', {})
 
     def query(self, **kwargs):
+        if kwargs.get('raw_query'):
+            return self.table.query(**kwargs.get('query', {}))
+
         return self.table.query(**kwargs.get('query', {})).get('Items', [])
 
     def overwrite(self, **kwargs):
