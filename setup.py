@@ -7,8 +7,8 @@ with open('README.md', 'r') as fh:
 setup(
     name='syngenta_digital_dta',
     version=os.getenv('CIRCLE_TAG'),
-    url='https://github.com/syngenta-digital/dta-python.git',
-    author='Paul Cruse III, Technical Lead, Syngenta Digital',
+    url='https://github.com/syngenta-digital/package-python-dta.git',
+    author='Paul Cruse III, Engineering Lead, Syngenta Digital',
     author_email='paul.cruse@syngenta.com',
     description='A DRY multi-database normalizer.',
     long_description=long_description,

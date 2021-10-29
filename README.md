@@ -100,6 +100,18 @@ result = adapter.get(
 	   }
     }
 )
+
+results = adapter.read(
+    operation='query',
+    query={
+        'IndexName': 'test_query_id',
+        'Limit': 1,
+        'KeyConditionExpression': 'test_query_id = :test_query_id',
+        'ExpressionAttributeValues': {
+            ':test_query_id': 'def345'
+        }
+    }
+)
 ```
 
 ### DynamoDB Update
@@ -474,6 +486,13 @@ chunks = []
 for piece in iter(file.read(6000000), ''):
     chunks.append(piece)
 adapter.multipart_upload(chunks=chunks, s3_path='test/test-create.json')
+```
+
+### S3 Create (Stream)
+```python
+url = 'https://github.com/syngenta-digital/package-python-dta/archive/refs/heads/master.zip'
+response = requests.get(url, stream=True)
+self.adapter.upload_stream(data=response.content, s3_path='test/code-clone.zip')
 ```
 
 ### S3 Create (Pre-Signed UPLOAD URLs)

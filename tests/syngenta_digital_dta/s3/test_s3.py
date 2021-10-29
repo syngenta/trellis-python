@@ -5,6 +5,8 @@ import unittest
 import warnings
 
 import boto3
+import requests
+
 import syngenta_digital_dta
 
 
@@ -41,6 +43,17 @@ class S3AdapterTest(unittest.TestCase):
         )
         self.assertEqual(results['ResponseMetadata']['HTTPStatusCode'], 200)
 
+    def test_put_stream(self):
+        url = 'https://github.com/syngenta-digital/package-python-dta/archive/refs/heads/master.zip'
+        response = requests.get(url, stream=True)
+        self.adapter.upload_stream(data=response.content, s3_path='test/code-clone-stream.zip')
+        results = self.adapter.read(
+            s3_path='test/code-clone-stream.zip',
+            json=False,
+            decode=False
+        )
+        self.assertEqual(results['ResponseMetadata']['HTTPStatusCode'], 200)
+
     def test_read(self):
         data = {'test': True}
         s3_path = 'test/test-read.json'
@@ -73,7 +86,7 @@ class S3AdapterTest(unittest.TestCase):
             data=data,
             json=True
         )
-        download_path='/tmp/unit-test-download/test.json'
+        download_path = '/tmp/unit-test-download/test.json'
         self.adapter.download(s3_path=s3_path, download_path=download_path)
         with open(download_path) as json_file:
             json_dict = json.load(json_file)
@@ -94,9 +107,7 @@ class S3AdapterTest(unittest.TestCase):
 
     def test_object_exist_false(self):
         s3_path = 'test/test_is_exist_false.json'
-
         result = self.adapter.object_exist(s3_path=s3_path)
-
         self.assertEqual(result, False)
 
     def __read_in_chunks(self):

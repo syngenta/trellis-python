@@ -1,3 +1,4 @@
+from io import BytesIO
 import os
 
 import boto3
@@ -48,6 +49,17 @@ class S3Adapter(BaseAdapter):
         if kwargs.get('publish', True):
             super().publish('create', self.__generate_publish_data(**kwargs))
         return results
+
+    def upload_stream(self, **kwargs):
+        conf = boto3.s3.transfer.TransferConfig(
+            multipart_threshold=kwargs.get('threshold', 10000),
+            max_concurrency=kwargs.get('concurrency', 4)
+        )
+        bytesIO = BytesIO(bytes(kwargs['data']))
+        with bytesIO as data:
+            self.client.upload_fileobj(data, self.bucket, kwargs['s3_path'], Config=conf)
+        if kwargs.get('publish', True):
+            super().publish('create', self.__generate_publish_data(**kwargs))
 
     def delete(self, **kwargs):
         result = self.client.delete_object(
