@@ -15,4 +15,4 @@ def publish(**kwargs):
             MessageAttributes=kwargs.get('attributes', {})
         )
     except Exception as e:
-        logger.log(level='WARN', log={'error': 'publish_sns_error: {}'.format(e)})
+        logger.log(level='WARN', log={'error': f'publish_sns_error: {e}'})

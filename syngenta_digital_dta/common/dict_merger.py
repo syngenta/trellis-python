@@ -14,7 +14,8 @@ def _walk_dict(old_data, new_data, **kwargs):
         if old_data.get(new_key) and isinstance(new_data[new_key], dict):
             _walk_dict(old_data[new_key], new_data[new_key], **kwargs)
         elif isinstance(old_data.get(new_key), list) and isinstance(new_data[new_key], list):
-            old_data[new_key] = _merge_lists(old_data[new_key], new_data[new_key], kwargs.get('update_list_operation', 'add'))
+            old_data[new_key] = _merge_lists(old_data[new_key], new_data[new_key],
+                                             kwargs.get('update_list_operation', 'add'))
         else:
             _merge_dicts(new_key, old_data, new_data, kwargs.get('update_dict_operation', 'upsert'))
 
