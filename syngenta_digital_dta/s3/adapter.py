@@ -129,6 +129,9 @@ class S3Adapter(BaseAdapter):
 
         return True
 
+    def list_files(self, **kwargs):
+        return [file['Key'] for file in self.client.list_objects(Bucket=self.bucket, Prefix=kwargs.get('dir_name'))['Contents']]
+
     def __upload_part(self, **kwargs):
         response = self.client.upload_part(
             Body=kwargs['chunk'],
