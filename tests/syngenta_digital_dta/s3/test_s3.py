@@ -138,6 +138,6 @@ class S3AdapterTest(unittest.TestCase):
         self.assertEqual(True, self.bucket in result['url'])
 
     def test_list_files(self):
-        file = 'test-read.json'
+        file = 'test/test-create.json'
         result = self.adapter.list_files(dir_name='test/')
         self.assertIn(file, result)
