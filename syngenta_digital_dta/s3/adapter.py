@@ -129,8 +129,14 @@ class S3Adapter(BaseAdapter):
 
         return True
 
-    def list_dir_contents(self, **kwargs):
-        return [file['Key'] for file in self.client.list_objects(Bucket=self.bucket, Prefix=kwargs.get('dir_name'))['Contents']]
+    def list_dir_subfolders(self, **kwargs):
+        result = self.client.list_objects(Bucket=self.bucket, Prefix=kwargs.get('dir_name'), Delimiter='/')
+        return [obj['Prefix'] for obj in result['CommonPrefixes']]
+
+    def list_dir_files(self, **kwargs):
+        paginator = self.client.get_paginator('list_objects_v2')
+        pages = paginator.paginate(Bucket=self.bucket, Prefix=kwargs.get('dir_name'))
+        return [obj['Key'] for page in pages for obj in page['Contents']]
 
     def __upload_part(self, **kwargs):
         response = self.client.upload_part(
