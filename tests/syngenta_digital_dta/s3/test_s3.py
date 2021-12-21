@@ -137,7 +137,7 @@ class S3AdapterTest(unittest.TestCase):
         result = self.adapter.create_presigned_post_url(s3_path=s3_path, expiration=3600)
         self.assertEqual(True, self.bucket in result['url'])
 
-    def test_list_files(self):
+    def test_list_dir_contents(self):
         file = 'test/test-create.json'
-        result = self.adapter.list_files(dir_name='test/')
+        result = self.adapter.list_dir_contents(dir_name='test/')
         self.assertIn(file, result)
