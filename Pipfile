@@ -9,7 +9,7 @@ python_version = "3.8"
 [packages]
 aws-psycopg2 = "*"
 boto3 = "*"
-elasticsearch = "==7.13.4"
+elasticsearch = "==7.16.2"
 jsonref = "*"
 pyyaml = "*"
 requests-aws4auth = "*"
