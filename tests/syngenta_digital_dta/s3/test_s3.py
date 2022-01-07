@@ -156,6 +156,3 @@ class S3AdapterTest(unittest.TestCase):
     def test_rename_object(self):
         old_file = 'test/test-create.json'
         self.adapter.rename_object(old_file_name=old_file, new_file_name='test/test-new.json')
-        self.assertTrue(
-            self.adapter.delete.called
-        )

@@ -136,14 +136,12 @@ class S3Adapter(BaseAdapter):
     def list_dir_files_by_date(self, **kwargs):
         paginator = self.client.get_paginator('list_objects_v2')
         pages = paginator.paginate(Bucket=self.bucket, Prefix=kwargs.get('dir_name'))
-        return [obj['Key'] for page in pages for obj in page['Contents'] if obj['LastModified'] > kwargs.get('date')]
+        return [obj['Key'] for page in pages for obj in page['Contents'] if obj['LastModified'].replace(tzinfo=None) > kwargs.get('date')]
 
     def rename_object(self, **kwargs):
         old_file_key = kwargs.get('old_file_name')
         self.resource.Object(self.bucket, kwargs.get('new_file_name')).copy_from(CopySource=f'{self.bucket}/{old_file_key}')
         self.delete(s3_path=old_file_key)
-        # old_file_name = raw/agintegrated/account_id/job/old_file_name.json
-        # new_file_name = raw/agintegrated/account_id/job/new_file_name.json
 
     def __upload_part(self, **kwargs):
         response = self.client.upload_part(
