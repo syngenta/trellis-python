@@ -1,6 +1,5 @@
 from io import BytesIO
 import os
-from datetime import datetime
 
 import boto3
 import jsonpickle
@@ -142,7 +141,7 @@ class S3Adapter(BaseAdapter):
     def rename_object(self, **kwargs):
         old_file_key = kwargs.get('old_file_name')
         self.resource.Object(self.bucket, kwargs.get('new_file_name')).copy_from(CopySource=f'{self.bucket}/{old_file_key}')
-        self.delete(s3_path=old_file_key) 
+        self.delete(s3_path=old_file_key)
         # old_file_name = raw/agintegrated/account_id/job/old_file_name.json
         # new_file_name = raw/agintegrated/account_id/job/new_file_name.json
 
