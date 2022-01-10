@@ -133,10 +133,13 @@ class S3Adapter(BaseAdapter):
         result = self.client.list_objects(Bucket=self.bucket, Prefix=kwargs.get('dir_name'), Delimiter='/')
         return [obj['Prefix'] for obj in result['CommonPrefixes']]
 
-    def list_dir_files_since_date(self, **kwargs):
+    def list_dir_files(self, **kwargs):
         paginator = self.client.get_paginator('list_objects_v2')
         pages = paginator.paginate(Bucket=self.bucket, Prefix=kwargs.get('dir_name'))
-        return [obj['Key'] for page in pages for obj in page['Contents'] if obj['LastModified'].replace(tzinfo=None) > kwargs.get('date')]
+        if kwargs.get('date'):
+            return [obj['Key'] for page in pages for obj in page['Contents'] if obj['LastModified'].replace(tzinfo=None) > kwargs.get('date')]
+
+        return [obj['Key'] for page in pages for obj in page['Contents']]
 
     def rename_object(self, **kwargs):
         old_file_key = kwargs.get('old_file_name')

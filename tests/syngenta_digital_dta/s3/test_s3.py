@@ -148,9 +148,9 @@ class S3AdapterTest(unittest.TestCase):
         result = self.adapter.list_dir_subfolders(dir_name='first_level/')
         self.assertIn(folder, result)
 
-    def test_list_dir_files_since_date(self):
+    def test_list_dir_files(self):
         file = 'test/test-create.json'
-        result = self.adapter.list_dir_files_since_date(dir_name='test/', date=datetime(2000,1,1))
+        result = self.adapter.list_dir_files(dir_name='test/', date=datetime(2000,1,1))
         self.assertIn(file, result)
 
     def test_rename_object(self):
