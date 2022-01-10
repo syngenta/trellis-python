@@ -150,6 +150,11 @@ class S3AdapterTest(unittest.TestCase):
 
     def test_list_dir_files(self):
         file = 'test/test-create.json'
+        result = self.adapter.list_dir_files(dir_name='test/')
+        self.assertIn(file, result)
+
+    def test_list_dir_files_with_date(self):
+        file = 'test/test-create.json'
         result = self.adapter.list_dir_files(dir_name='test/', date=datetime(2000,1,1))
         self.assertIn(file, result)
 
