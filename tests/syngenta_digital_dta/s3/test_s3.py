@@ -3,6 +3,7 @@ import os
 import uuid
 import unittest
 import warnings
+from datetime import datetime
 
 import boto3
 import requests
@@ -151,3 +152,12 @@ class S3AdapterTest(unittest.TestCase):
         file = 'test/test-create.json'
         result = self.adapter.list_dir_files(dir_name='test/')
         self.assertIn(file, result)
+
+    def test_list_dir_files_with_date(self):
+        file = 'test/test-create.json'
+        result = self.adapter.list_dir_files(dir_name='test/', date=datetime(2000,1,1))
+        self.assertIn(file, result)
+
+    def test_rename_object(self):
+        old_file = 'test/test-create.json'
+        self.adapter.rename_object(old_file_name=old_file, new_file_name='test/test-new.json')
