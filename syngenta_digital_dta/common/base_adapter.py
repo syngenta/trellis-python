@@ -32,18 +32,12 @@ class BaseAdapter:
         custom_attributes = self.get_attributes()
         formatted_attributes = {}
         for key, value in custom_attributes.items():
-            if value is not None:
-                if isinstance(value, dict):
-                    formatted_attributes[key] = {
-                        'DataType': 'String',
-                        'StringValue': json.dumps(value)
-                    }
-                else:
-                    data_type = 'String' if isinstance(value, str) else 'Number'
-                    formatted_attributes[key] = {
-                        'DataType': data_type,
-                        'StringValue': value
-                    }
+            if value is not None and not isinstance(value, dict):
+                data_type = 'String' if isinstance(value, str) else 'Number'
+                formatted_attributes[key] = {
+                    'DataType': data_type,
+                    'StringValue': value
+                }
         return formatted_attributes
 
     def get_attributes(self):
