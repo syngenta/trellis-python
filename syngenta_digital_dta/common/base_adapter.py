@@ -1,3 +1,5 @@
+import json
+
 from syngenta_digital_dta.common import publisher
 
 
@@ -31,11 +33,17 @@ class BaseAdapter:
         formatted_attributes = {}
         for key, value in custom_attributes.items():
             if value is not None:
-                data_type = 'String' if isinstance(value, str) else 'Number'
-                formatted_attributes[key] = {
-                    'DataType': data_type,
-                    'StringValue': value
-                }
+                if isinstance(value, dict):
+                    formatted_attributes[key] = {
+                        'DataType': 'String',
+                        'StringValue': json.dumps(value)
+                    }
+                else:
+                    data_type = 'String' if isinstance(value, str) else 'Number'
+                    formatted_attributes[key] = {
+                        'DataType': data_type,
+                        'StringValue': value
+                    }
         return formatted_attributes
 
     def get_attributes(self):
