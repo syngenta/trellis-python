@@ -1,5 +1,3 @@
-import json
-
 from syngenta_digital_dta.common import publisher
 
 
