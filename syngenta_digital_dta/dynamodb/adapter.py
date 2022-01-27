@@ -21,6 +21,7 @@ class DynamodbAdapter(BaseAdapter):
         self.model_schema = kwargs['model_schema']
         self.model_identifier = kwargs['model_identifier']
         self.model_version_key = kwargs['model_version_key']
+        self.data_as_attributes = kwargs.get('data_as_attributes', False)
 
     @lru_cache(maxsize=128)
     def _get_dynamo_table(self, table, endpoint=None):
@@ -55,12 +56,16 @@ class DynamodbAdapter(BaseAdapter):
     def overwrite(self, **kwargs):
         overwrite_item = schema_mapper.map_to_schema(kwargs['data'], self.model_schema_file, self.model_schema)
         self.table.put_item(Item=overwrite_item)
+        if self.data_as_attributes:
+            self.sns_custom = overwrite_item
         super().publish('create', overwrite_item)
         return overwrite_item
 
     def insert(self, **kwargs):
         new_item = schema_mapper.map_to_schema(kwargs['data'], self.model_schema_file, self.model_schema)
         self.table.put_item(Item=new_item, ConditionExpression=Attr(self.model_identifier).not_exists())
+        if self.data_as_attributes:
+            self.sns_custom = new_item
         super().publish('create', new_item)
         return new_item
 
@@ -99,6 +104,8 @@ class DynamodbAdapter(BaseAdapter):
         updated_data = schema_mapper.map_to_schema(merged_data, self.model_schema_file, self.model_schema)
         self.table.put_item(Item=updated_data, ConditionExpression=Attr(
             self.model_version_key).eq(original_data[self.model_version_key]))
+        if self.data_as_attributes:
+            self.sns_custom = updated_data
         super().publish('update', updated_data)
         return updated_data
 
