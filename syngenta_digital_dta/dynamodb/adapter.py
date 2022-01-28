@@ -21,7 +21,7 @@ class DynamodbAdapter(BaseAdapter):
         self.model_schema = kwargs['model_schema']
         self.model_identifier = kwargs['model_identifier']
         self.model_version_key = kwargs['model_version_key']
-        self.data_attributes = kwargs.get('data_as_attributes', [])
+        self.data_attributes = kwargs.get('data_attributes', [])
 
     def _pull_attributes_from_data(self, new_item):
         if self.data_attributes:
