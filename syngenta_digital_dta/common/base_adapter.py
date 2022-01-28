@@ -30,7 +30,7 @@ class BaseAdapter:
         custom_attributes = self.get_attributes()
         formatted_attributes = {}
         for key, value in custom_attributes.items():
-            if value is not None and not isinstance(value, dict):
+            if value is not None:
                 data_type = 'String' if isinstance(value, str) else 'Number'
                 formatted_attributes[key] = {
                     'DataType': data_type,
