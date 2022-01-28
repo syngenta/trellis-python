@@ -25,7 +25,8 @@ class DynamodbAdapter(BaseAdapter):
 
     def _pull_attributes_from_data(self, new_item):
         for attribute in self.data_attributes:
-            self.sns_custom[attribute] = new_item[attribute]
+            if new_item.get(attribute):
+                self.sns_custom[attribute] = new_item[attribute]
 
     @lru_cache(maxsize=128)
     def _get_dynamo_table(self, table, endpoint=None):
