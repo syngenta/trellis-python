@@ -24,8 +24,8 @@ class DynamodbAdapter(BaseAdapter):
         self.data_attributes = kwargs.get('data_as_attributes', [])
 
     def _pull_attributes_from_data(self, new_item):
-        if self.data_attributes:
-            self.sns_custom = {attribute: new_item[attribute] for attribute in self.data_attributes}
+        for attribute in self.data_attributes:
+            self.sns_custom[attribute] = new_item[attribute]
 
     @lru_cache(maxsize=128)
     def _get_dynamo_table(self, table, endpoint=None):
