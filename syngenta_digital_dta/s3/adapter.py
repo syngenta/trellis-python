@@ -1,9 +1,11 @@
-from io import BytesIO
 import os
-import botocore
+from io import BytesIO
+
 import boto3
+import botocore
 import jsonpickle
 from botocore.exceptions import ClientError
+
 from syngenta_digital_dta.common.base_adapter import BaseAdapter
 
 
