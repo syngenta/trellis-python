@@ -55,9 +55,13 @@ class S3Adapter(BaseAdapter):
             multipart_threshold=kwargs.get('threshold', 10000),
             max_concurrency=kwargs.get('concurrency', 4)
         )
-        bytesIO = BytesIO(bytes(kwargs['data']))
-        with bytesIO as data:
-            self.client.upload_fileobj(data, self.bucket, kwargs['s3_path'], Config=conf)
+
+        if kwargs.get('io'):
+            self.client.upload_fileobj(kwargs['io'], self.bucket, kwargs['s3_path'], Config=conf)
+        else:
+            with BytesIO(bytes(kwargs['data'])) as data:
+                self.client.upload_fileobj(data, self.bucket, kwargs['s3_path'], Config=conf)
+
         if kwargs.get('publish', True):
             super().publish('create', self.__generate_publish_data(**kwargs))
 
