@@ -1,9 +1,9 @@
 import json
 import os
-import uuid
 import unittest
 import warnings
 from datetime import datetime
+from unittest import mock
 
 import boto3
 import requests
@@ -18,7 +18,7 @@ class S3AdapterTest(unittest.TestCase):
         self.maxDiff = None
         self.bucket = 'unit-test'
         self.endpoint = 'http://localhost:4566'
-        self.file = open('./tests/mock/example.json')
+        self.file = open('../../../tests/mock/example.json')
         self.__create_unit_test_bucket()
         self.adapter = syngenta_digital_dta.adapter(
             engine='s3',
@@ -161,3 +161,53 @@ class S3AdapterTest(unittest.TestCase):
     def test_rename_object(self):
         old_file = 'test/test-create.json'
         self.adapter.rename_object(old_file_name=old_file, new_file_name='test/test-new.json')
+
+    def test_upload_fileobj_public_read_true(self):
+        s3_path = 'my_s3_path'
+        public_read = True
+        data = "my_s3_data".encode()
+
+        adapter = syngenta_digital_dta.adapter(
+            engine='s3',
+            endpoint=self.endpoint,
+            bucket=self.bucket
+        )
+
+        adapter.client = mock.MagicMock()
+        adapter.upload_stream(data=data, s3_path=s3_path, public_read=public_read)
+        adapter.client.upload_fileobj.assert_called_with(
+            mock.ANY,
+           'unit-test',
+           'my_s3_path',
+            ExtraArgs={'ACL': 'public-read'},
+            Config=mock.ANY
+        )
+
+    def test_upload_fileobj_public_read_false(self):
+        s3_path = 'my_s3_path'
+        public_read = False
+        data = "my_s3_data".encode()
+
+        adapter = syngenta_digital_dta.adapter(
+            engine='s3',
+            endpoint=self.endpoint,
+            bucket=self.bucket
+        )
+
+        adapter.client = mock.MagicMock()
+        adapter.upload_stream(data=data, s3_path=s3_path, public_read=public_read)
+        adapter.client.upload_fileobj.assert_called_with(
+            mock.ANY,
+            'unit-test',
+            'my_s3_path',
+            ExtraArgs={'ACL': 'private'},
+            Config=mock.ANY
+        )
+
+    def test_public_url(self):
+        s3_path = 'my_s3_dir/my_s3_folder/my_s3_file.txt'
+        url = self.adapter.create_public_url(s3_path=s3_path)
+        self.assertEqual(
+            "http://localhost:4566/unit-test/my_s3_dir/my_s3_folder/my_s3_file.txt",
+            url
+        )
