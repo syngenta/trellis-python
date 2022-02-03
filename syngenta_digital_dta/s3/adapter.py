@@ -3,8 +3,8 @@ from io import BytesIO
 
 import boto3
 import botocore
-from botocore.config import Config
 import jsonpickle
+from botocore.config import Config
 from botocore.exceptions import ClientError
 
 from syngenta_digital_dta.common.base_adapter import BaseAdapter
