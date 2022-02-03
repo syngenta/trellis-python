@@ -4,6 +4,7 @@ from io import BytesIO
 import boto3
 import botocore
 import jsonpickle
+from botocore.config import Config
 from botocore.exceptions import ClientError
 
 from syngenta_digital_dta.common.base_adapter import BaseAdapter
@@ -23,22 +24,24 @@ class S3Adapter(BaseAdapter):
         self.client = self.__make_client()
         self.resource = self.__make_resource()
 
-    def __make_client(self):
+    def __make_client(self, config=None):
         return boto3.client(
             's3',
             endpoint_url=self.endpoint,
             aws_access_key_id=self.aws_access_key_id,
             aws_secret_access_key=self.aws_secret_access_key,
-            region_name=self.region
+            region_name=self.region,
+            config=config
         )
 
-    def __make_resource(self):
+    def __make_resource(self, config=None):
         return boto3.resource(
             's3',
             endpoint_url=self.endpoint,
             aws_access_key_id=self.aws_access_key_id,
             aws_secret_access_key=self.aws_secret_access_key,
-            region_name=self.region
+            region_name=self.region,
+            config=config
         )
 
     def create(self, **kwargs):
@@ -65,10 +68,26 @@ class S3Adapter(BaseAdapter):
         )
 
         if kwargs.get('io'):
-            self.client.upload_fileobj(kwargs['io'], self.bucket, kwargs['s3_path'], Config=conf)
+            self.client.upload_fileobj(
+                kwargs['io'],
+                self.bucket,
+                kwargs['s3_path'],
+                ExtraArgs={
+                    'ACL': self.__set_acl(kwargs.get('public_read'))
+                },
+                Config=conf
+            )
         else:
             with BytesIO(bytes(kwargs['data'])) as data:
-                self.client.upload_fileobj(data, self.bucket, kwargs['s3_path'], Config=conf)
+                self.client.upload_fileobj(
+                    data,
+                    self.bucket,
+                    kwargs['s3_path'],
+                    ExtraArgs={
+                        'ACL': self.__set_acl(kwargs.get('public_read'))
+                    },
+                    Config=conf
+                )
 
         if kwargs.get('publish', True):
             super().publish('create', self.__generate_publish_data(**kwargs))
@@ -112,10 +131,15 @@ class S3Adapter(BaseAdapter):
 
     def create_public_url(self, **kwargs):
         # we create a new client here to not modify other method calls
-        client = self.__make_client()
-        client._client_config.signature_version = botocore.UNSIGNED
+        config = Config(signature_version=botocore.UNSIGNED)
+        client = self.__make_client(config=config)
         return client.generate_presigned_url(
-            'get_object', ExpiresIn=0, Params={'Bucket': self.bucket, 'Key': kwargs['s3_path']}
+            'get_object',
+            Params={
+                'Bucket': self.bucket,
+                'Key': kwargs['s3_path']
+            },
+            ExpiresIn=0,
         )
 
     def create_presigned_read_url(self, **kwargs):
