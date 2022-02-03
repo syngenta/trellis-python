@@ -34,13 +34,14 @@ class S3Adapter(BaseAdapter):
             config=config
         )
 
-    def __make_resource(self):
+    def __make_resource(self, config=None):
         return boto3.resource(
             's3',
             endpoint_url=self.endpoint,
             aws_access_key_id=self.aws_access_key_id,
             aws_secret_access_key=self.aws_secret_access_key,
-            region_name=self.region
+            region_name=self.region,
+            config=config
         )
 
     def create(self, **kwargs):
