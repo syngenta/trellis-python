@@ -1,9 +1,11 @@
-from io import BytesIO
 import os
+from io import BytesIO
 
 import boto3
+import botocore
 import jsonpickle
 from botocore.exceptions import ClientError
+
 from syngenta_digital_dta.common.base_adapter import BaseAdapter
 
 
@@ -18,14 +20,20 @@ class S3Adapter(BaseAdapter):
         self.aws_access_key_id = kwargs.get('aws_access_key_id')
         self.aws_secret_access_key = kwargs.get('aws_secret_access_key')
         self.region = kwargs.get('region')
-        self.client = boto3.client(
+        self.client = self.__make_client()
+        self.resource = self.__make_resource()
+
+    def __make_client(self):
+        return boto3.client(
             's3',
             endpoint_url=self.endpoint,
             aws_access_key_id=self.aws_access_key_id,
             aws_secret_access_key=self.aws_secret_access_key,
             region_name=self.region
         )
-        self.resource = boto3.resource(
+
+    def __make_resource(self):
+        return boto3.resource(
             's3',
             endpoint_url=self.endpoint,
             aws_access_key_id=self.aws_access_key_id,
@@ -101,6 +109,14 @@ class S3Adapter(BaseAdapter):
         if kwargs.get('publish', True):
             super().publish('create', self.__generate_publish_data(**kwargs))
         return complete_response
+
+    def create_public_url(self, **kwargs):
+        # we create a new client here to not modify other method calls
+        client = self.__make_client()
+        client._client_config.signature_version = botocore.UNSIGNED
+        return client.generate_presigned_url(
+            'get_object', ExpiresIn=0, Params={'Bucket': self.bucket, 'Key': kwargs['s3_path']}
+        )
 
     def create_presigned_read_url(self, **kwargs):
         results = self.client.generate_presigned_url(
