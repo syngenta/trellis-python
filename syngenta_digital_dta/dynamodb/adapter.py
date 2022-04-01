@@ -49,19 +49,18 @@ class DynamodbAdapter(BaseAdapter):
     def query(self, **kwargs):
         if kwargs.get('raw_query'):
             return self.table.query(**kwargs.get('query', {}))
-
         return self.table.query(**kwargs.get('query', {})).get('Items', [])
 
     def overwrite(self, **kwargs):
         overwrite_item = schema_mapper.map_to_schema(kwargs['data'], self.model_schema_file, self.model_schema)
         self.table.put_item(Item=overwrite_item)
-        super().publish('create', overwrite_item)
+        super().publish('create', overwrite_item, **kwargs)
         return overwrite_item
 
     def insert(self, **kwargs):
         new_item = schema_mapper.map_to_schema(kwargs['data'], self.model_schema_file, self.model_schema)
         self.table.put_item(Item=new_item, ConditionExpression=Attr(self.model_identifier).not_exists())
-        super().publish('create', new_item)
+        super().publish('create', new_item, **kwargs)
         return new_item
 
     def batch_insert(self, **kwargs):
@@ -80,7 +79,7 @@ class DynamodbAdapter(BaseAdapter):
     def delete(self, **kwargs):
         kwargs['query']['ReturnValues'] = 'ALL_OLD'
         result = self.table.delete_item(**kwargs['query']).get('Attributes', {})
-        super().publish('delete', result)
+        super().publish('delete', result, **kwargs)
         return result
 
     def batch_delete(self, **kwargs):
@@ -99,7 +98,7 @@ class DynamodbAdapter(BaseAdapter):
         updated_data = schema_mapper.map_to_schema(merged_data, self.model_schema_file, self.model_schema)
         self.table.put_item(Item=updated_data, ConditionExpression=Attr(
             self.model_version_key).eq(original_data[self.model_version_key]))
-        super().publish('update', updated_data)
+        super().publish('update', updated_data, **kwargs)
         return updated_data
 
     def _get_original_data(self, **kwargs):

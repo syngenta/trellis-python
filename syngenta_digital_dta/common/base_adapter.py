@@ -16,14 +16,15 @@ class BaseAdapter:
             'author_identifier': kwargs.get('author_identifier')
         }
 
-    def publish(self, operation, data, **kwargs):
-        attributes = self.create_format_attibutes(operation)
+    def publish(self, db_operation, db_data, **kwargs):
+        attributes = self.create_format_attibutes(db_operation)
         self.publisher.publish(
             endpoint=self.sns_endpoint,
             arn=self.sns_arn,
             attributes=attributes,
-            data=data,
-            **kwargs
+            data=db_data,
+            fifo_group_id=kwargs.get('fifo_group_id'),
+            fifo_duplication_id=kwargs.get('fifo_duplication_id')
         )
 
     def create_format_attibutes(self, operation):

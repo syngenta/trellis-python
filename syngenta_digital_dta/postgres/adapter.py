@@ -50,7 +50,7 @@ class PostgresAdapter(BaseAdapter):
         if exists:
             self.__raise_error('NOT_UNIQUE', **kwargs)
         self.__execute(query, params, **kwargs)
-        super().publish('create', params['data'])
+        super().publish('create', params['data'], **kwargs)
         return params['data']
 
     def update(self, **kwargs):
@@ -60,7 +60,7 @@ class PostgresAdapter(BaseAdapter):
         kwargs['data'] = dict_merger.merge(exists, kwargs['data'], **kwargs)
         update = self.__create_update_query(kwargs['data'])
         self.__execute(update['query'], update['params'], **kwargs)
-        super().publish('update', kwargs['data'])
+        super().publish('update', kwargs['data'], **kwargs)
         return kwargs['data']
 
     def upsert(self, **kwargs):
@@ -73,7 +73,7 @@ class PostgresAdapter(BaseAdapter):
         query = 'DELETE FROM %(table)s WHERE %(identifier)s = %(identifier_value)s'
         params = self.__compose_params(data={f'{self.model_identifier}': identifier_value})
         self.__execute(query, params, **kwargs)
-        super().publish('delete', params['data'])
+        super().publish('delete', params['data'], **kwargs)
 
     def read(self, identifier_value, **kwargs):
         return self.get(identifier_value, **kwargs)

@@ -58,7 +58,7 @@ class S3Adapter(BaseAdapter):
             Key=kwargs['s3_path']
         )
         if kwargs.get('publish', True):
-            super().publish('create', self.__generate_publish_data(**kwargs))
+            super().publish('create', self.__generate_publish_data(**kwargs), **kwargs)
         return results
 
     def upload_stream(self, **kwargs):
@@ -90,7 +90,7 @@ class S3Adapter(BaseAdapter):
                 )
 
         if kwargs.get('publish', True):
-            super().publish('create', self.__generate_publish_data(**kwargs))
+            super().publish('create', self.__generate_publish_data(**kwargs), **kwargs)
 
     def delete(self, **kwargs):
         result = self.client.delete_object(
@@ -126,7 +126,7 @@ class S3Adapter(BaseAdapter):
             s3_path=kwargs['s3_path'], parts=parts, upload_id=multipart['UploadId'])
 
         if kwargs.get('publish', True):
-            super().publish('create', self.__generate_publish_data(**kwargs))
+            super().publish('create', self.__generate_publish_data(**kwargs), **kwargs)
         return complete_response
 
     def create_public_url(self, **kwargs):
@@ -187,7 +187,8 @@ class S3Adapter(BaseAdapter):
 
     def rename_object(self, **kwargs):
         old_file_key = kwargs.get('old_file_name')
-        self.resource.Object(self.bucket, kwargs.get('new_file_name')).copy_from(CopySource={'Bucket': self.bucket, 'Key': old_file_key})
+        self.resource.Object(self.bucket, kwargs.get('new_file_name')).copy_from(
+            CopySource={'Bucket': self.bucket, 'Key': old_file_key})
         self.delete(s3_path=old_file_key)
 
     def __upload_part(self, **kwargs):

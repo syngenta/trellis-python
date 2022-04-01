@@ -51,7 +51,7 @@ class ElasticsearchAdapter(BaseAdapter):
             op_type='create',
             refresh=kwargs.get('refresh', True)
         )
-        super().publish('create', data)
+        super().publish('create', data, **kwargs)
         return response
 
     def update(self, **kwargs):
@@ -61,7 +61,7 @@ class ElasticsearchAdapter(BaseAdapter):
             body={'doc': kwargs['data']},
             refresh=kwargs.get('refresh', True)
         )
-        super().publish('update', kwargs['data'])
+        super().publish('update', kwargs['data'], **kwargs)
         return response
 
     def upsert(self, **kwargs):
@@ -75,7 +75,7 @@ class ElasticsearchAdapter(BaseAdapter):
             id=identifier_value,
             refresh=kwargs.get('refresh', True)
         )
-        super().publish('delete', {self.model_identifier: identifier_value})
+        super().publish('delete', {self.model_identifier: identifier_value}, **kwargs)
         return response
 
     def get(self, identifier_value, **kwargs):
