@@ -103,7 +103,7 @@ jobs:
             - sonarcloud/scan
     install-build-deploy:
         docker:
-            - image: cimg/python:3.8
+            - image: cimg/python:3.8.6
         steps:
             - checkout
             - pipenv-install
