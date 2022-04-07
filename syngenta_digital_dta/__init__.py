@@ -1,3 +1,4 @@
+from syngenta_digital_dta.common.base_adapter import BaseAdapter
 from syngenta_digital_dta.dynamodb.adapter import DynamodbAdapter
 from syngenta_digital_dta.postgres.adapter import PostgresAdapter
 from syngenta_digital_dta.elasticsearch.adapter import ElasticsearchAdapter
@@ -15,5 +16,7 @@ def adapter(**kwargs):
         return ElasticsearchAdapter(**kwargs)
     if kwargs.get('engine') == 's3':
         return S3Adapter(**kwargs)
+    if kwargs.get('engine') == 'common':
+        return BaseAdapter(**kwargs)
     raise Exception(
         f'engine {kwargs.get("engine", "was not supplied, an empty engine kwarg is")} not supported; contribute to get it supported :)')
