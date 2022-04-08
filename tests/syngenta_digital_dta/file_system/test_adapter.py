@@ -47,5 +47,6 @@ class TestFileSystemAdapter(TestCase):
         age = self.adapter.get_age(path=destination_path)
         self.assertEqual(float, type(age))
 
+        self.adapter.delete(path=destination_path)
         self.adapter.delete(path='tmp', recursive=True)
         self.assertEqual(False, os.path.exists(destination_path))
