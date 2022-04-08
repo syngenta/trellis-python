@@ -5,7 +5,7 @@ import jsonpickle
 import requests
 
 from syngenta_digital_dta.common.base_adapter import BaseAdapter
-from syngenta_digital_dta import S3Adapter
+from syngenta_digital_dta.s3.adapter import S3Adapter
 
 
 class FileSystemAdapter(BaseAdapter):
@@ -71,7 +71,7 @@ class FileSystemAdapter(BaseAdapter):
         os.makedirs(os.path.dirname(destination_path), exist_ok=True)
 
     def __download_file(self, **kwargs) -> bytes:
-        link = kwargs.get['http_link']
+        link = kwargs['http_link']
         headers = kwargs.get('headers')
 
         response = requests.request('GET', link, headers=headers)
