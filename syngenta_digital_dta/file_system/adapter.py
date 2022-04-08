@@ -1,8 +1,8 @@
 import os
 import shutil
-import requests
 
 import jsonpickle
+import requests
 
 from syngenta_digital_dta.common.base_adapter import BaseAdapter
 
@@ -20,18 +20,18 @@ class FileSystemAdapter(BaseAdapter):
 
         self.__create_destination_directory(destination_path)
 
-        with open(destination_path, 'w') as file:
+        with open(destination_path, 'wb') as file:
             file.write(body)
 
         if publish:
             data = {'file_path': destination_path}
             super().publish('create', data)
 
-    def read(self, **kwargs):
+    def read(self, **kwargs) -> bytes:
         file_path = kwargs['file_path']
         json = kwargs.get('json', False)
 
-        with open(file_path, 'r') as file:
+        with open(file_path, 'rb') as file:
             body = file.read()
 
         if json:
@@ -57,11 +57,11 @@ class FileSystemAdapter(BaseAdapter):
         else:
             os.remove(path)
 
-    def get_age(self, **kwargs):
+    def get_age(self, **kwargs) -> float:
         path = kwargs['path']
         return os.stat(path).st_ctime
 
-    def __set_body(self, **kwargs):
+    def __set_body(self, **kwargs) -> bytes:
         if kwargs.get('file_object'):
             return kwargs['file_object']
         if kwargs.get('file_path'):
@@ -73,7 +73,7 @@ class FileSystemAdapter(BaseAdapter):
     def __create_destination_directory(self, destination_path):
         os.makedirs(os.path.dirname(destination_path), exist_ok=True)
 
-    def __download_file(self, **kwargs):
+    def __download_file(self, **kwargs) -> bytes:
         link = kwargs.get('http_link', kwargs['s3_link'])
         headers = kwargs.get('headers')
 

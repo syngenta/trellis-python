@@ -16,7 +16,7 @@ class TestFileSystemAdapter(TestCase):
     @mock.patch.object(base_adapter.publisher, 'publish')    
     def test_operations(self, mock_publish):
         destination_path = 'tmp/test.txt'
-        file_object = 'This is a test\n'
+        file_object = b'This is a test\n'
         self.adapter.create(
             destination_path=destination_path,
             file_object=file_object
@@ -35,7 +35,7 @@ class TestFileSystemAdapter(TestCase):
         results = self.adapter.read(file_path=destination_path)
         self.assertEqual(results, file_object)
 
-        updated_object = 'Updating the test\n'
+        updated_object = b'Updating the test\n'
         self.adapter.update(
             destination_path=destination_path,
             file_object=updated_object
