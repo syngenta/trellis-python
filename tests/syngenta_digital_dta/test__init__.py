@@ -73,6 +73,14 @@ class AdapterTest(unittest.TestCase):
         )
         self.assertIsInstance(ps, syngenta_digital_dta.PostgresAdapter)
 
+    def test_file_system_adapter(self):
+        ps = syngenta_digital_dta.adapter(
+            engine='file_system',
+            sns_arn='test_sns_arn',
+            sns_attributes={}
+        )
+        self.assertIsInstance(ps, syngenta_digital_dta.FileSystemAdapter)
+
     def test_adapter_exception(self):
         try:
             syngenta_digital_dta.adapter(
