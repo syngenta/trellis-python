@@ -18,7 +18,6 @@ class S3AdapterTest(unittest.TestCase):
         self.maxDiff = None
         self.bucket = 'unit-test'
         self.endpoint = 'http://localhost:4566'
-        # self.endpoint = 'http://localhost:4000'
         self.file = open('./tests/mock/example.json')
         self.__create_unit_test_bucket()
         self.adapter = syngenta_digital_dta.adapter(
@@ -29,30 +28,17 @@ class S3AdapterTest(unittest.TestCase):
 
     def __create_unit_test_bucket(self):
         try:
-        # boto3.Session.client(endpoint_url=)
             s3_client = boto3.client(
                 "s3",
                 endpoint_url=self.endpoint,
                 region_name="us-east-2",
-                # aws_access_key_id="fake_access_key",
-                # aws_secret_access_key="fake_secret_key"
             )
-        # s3_client = boto3.client(service_name='s3', aws_access_key_id='test-access-key', aws_secret_access_key='test-secret-key', endpoint_url=self.endpoint)
-            # s3_client = boto3.client('s3', endpoint_url=self.endpoint, region='us-east-2')
-            response = s3_client.list_buckets()
-            print('Existing buckets:')
-            for bucket in response['Buckets']:
-                print(f'  {bucket["Name"]}')
             s3_client.create_bucket(
                 Bucket=self.bucket, 
                 CreateBucketConfiguration={
                     'LocationConstraint': 'us-east-2'
                 }
             )
-            response = s3_client.list_buckets()
-            print('Existing buckets after creation:')
-            for bucket in response['Buckets']:
-                print(f'  {bucket["Name"]}')
         except:
             pass
 
