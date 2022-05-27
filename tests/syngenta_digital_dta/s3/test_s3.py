@@ -27,11 +27,19 @@ class S3AdapterTest(unittest.TestCase):
         )
 
     def __create_unit_test_bucket(self):
-        try:
-            s3_client = boto3.client('s3', endpoint_url=self.endpoint)
-            s3_client.create_bucket(Bucket=self.bucket)
-        except:
-            pass
+        # try:
+        # boto3.Session.client(endpoint_url=)
+        s3_client = boto3.client(
+            "s3",
+            region_name="us-east-2",
+            aws_access_key_id="fake_access_key",
+            aws_secret_access_key="fake_secret_key"
+        )
+        # s3_client = boto3.client(service_name='s3', aws_access_key_id='test-access-key', aws_secret_access_key='test-secret-key', endpoint_url=self.endpoint)
+            # s3_client = boto3.client('s3', endpoint_url=self.endpoint, region='us-east-2')
+        s3_client.create_bucket(Bucket=self.bucket)
+        # except:
+            # pass
 
     def test_init(self):
         self.assertIsInstance(self.adapter, syngenta_digital_dta.S3Adapter)
