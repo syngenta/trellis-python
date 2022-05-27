@@ -17,7 +17,8 @@ class S3AdapterTest(unittest.TestCase):
         warnings.simplefilter('ignore', ResourceWarning)
         self.maxDiff = None
         self.bucket = 'unit-test'
-        self.endpoint = 'http://localhost:4566'
+        # self.endpoint = 'http://localhost:4566'
+        self.endpoint = 'http://localhost:4001'
         self.file = open('./tests/mock/example.json')
         self.__create_unit_test_bucket()
         self.adapter = syngenta_digital_dta.adapter(
@@ -31,9 +32,10 @@ class S3AdapterTest(unittest.TestCase):
         # boto3.Session.client(endpoint_url=)
         s3_client = boto3.client(
             "s3",
-            region_name="us-east-2",
-            aws_access_key_id="fake_access_key",
-            aws_secret_access_key="fake_secret_key"
+            endpoint_url=self.endpoint,
+            # region_name="us-east-2",
+            # aws_access_key_id="fake_access_key",
+            # aws_secret_access_key="fake_secret_key"
         )
         # s3_client = boto3.client(service_name='s3', aws_access_key_id='test-access-key', aws_secret_access_key='test-secret-key', endpoint_url=self.endpoint)
             # s3_client = boto3.client('s3', endpoint_url=self.endpoint, region='us-east-2')
