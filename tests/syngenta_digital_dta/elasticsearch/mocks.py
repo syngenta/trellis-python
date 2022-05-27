@@ -111,7 +111,7 @@ def get_schema():
     }
 
 
-def get_mapping(company_name_type = 'text'):
+def get_mapping(company_name_type = 'keyword'):
     return {
         'properties': {
             'company_name': {
@@ -122,28 +122,28 @@ def get_mapping(company_name_type = 'text'):
                 'analyzer': 'url_email_analyzer'
             },
             'address1': {
-                'type': 'text'
+                'type': 'keyword'
             },
             'address2': {
-                'type': 'text'
+                'type': 'keyword'
             },
             'city': {
-                'type': 'text'
+                'type': 'keyword'
             },
             'state': {
-                'type': 'text'
+                'type': 'keyword'
             },
             'zipcode': {
-                'type': 'text'
+                'type': 'keyword'
             },
             'phone': {
-                'type': 'text'
+                'type': 'keyword'
             },
             'salesforce_id': {
-                'type': 'text'
+                'type': 'keyword'
             },
             'sap_id': {
-                'type': 'text'
+                'type': 'keyword'
             },
             'active': {
                 'type': 'boolean'
@@ -157,7 +157,7 @@ def get_mapping(company_name_type = 'text'):
                 'format': "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis||strict_date_optional_time"
             },
             'company_type': {
-                'type': 'text'
+                'type': 'keyword'
             },
             'details': {
                 'type': 'nested'
