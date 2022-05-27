@@ -18,7 +18,7 @@ class S3AdapterTest(unittest.TestCase):
         self.maxDiff = None
         self.bucket = 'unit-test'
         # self.endpoint = 'http://localhost:4566'
-        self.endpoint = 'http://localhost:4001'
+        self.endpoint = 'http://localhost:4000'
         self.file = open('./tests/mock/example.json')
         self.__create_unit_test_bucket()
         self.adapter = syngenta_digital_dta.adapter(
