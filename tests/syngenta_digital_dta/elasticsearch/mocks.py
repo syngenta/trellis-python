@@ -111,7 +111,7 @@ def get_schema():
     }
 
 
-def get_mapping(company_name_type = 'keyword'):
+def get_mapping(company_name_type = 'text'):
     return {
         'properties': {
             'company_name': {
