@@ -122,28 +122,28 @@ def get_mapping(company_name_type = 'keyword'):
                 'analyzer': 'url_email_analyzer'
             },
             'address1': {
-                'type': 'keyword'
+                'type': 'text'
             },
             'address2': {
-                'type': 'keyword'
+                'type': 'text'
             },
             'city': {
-                'type': 'keyword'
+                'type': 'text'
             },
             'state': {
-                'type': 'keyword'
+                'type': 'text'
             },
             'zipcode': {
-                'type': 'keyword'
+                'type': 'text'
             },
             'phone': {
-                'type': 'keyword'
+                'type': 'text'
             },
             'salesforce_id': {
-                'type': 'keyword'
+                'type': 'text'
             },
             'sap_id': {
-                'type': 'keyword'
+                'type': 'text'
             },
             'active': {
                 'type': 'boolean'
@@ -157,7 +157,7 @@ def get_mapping(company_name_type = 'keyword'):
                 'format': "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis||strict_date_optional_time"
             },
             'company_type': {
-                'type': 'keyword'
+                'type': 'text'
             },
             'details': {
                 'type': 'nested'
