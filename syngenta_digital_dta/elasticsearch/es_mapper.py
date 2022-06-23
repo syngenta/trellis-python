@@ -42,7 +42,10 @@ def __translate_simple_type(property_value):
     elif property_value.get('type') == 'number':
         mapping_type = {'type': 'long'}
     elif property_value.get('type') == 'string':
-        mapping_type = {'type': 'text'}
+        if property_value.get('format', '') == 'byte':
+            mapping_type = {'type': 'binary'}
+        else:
+            mapping_type = {'type': 'text'}
     elif property_value.get('type') == 'array':
         mapping_type = None
     else:

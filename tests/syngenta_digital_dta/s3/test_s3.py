@@ -28,8 +28,17 @@ class S3AdapterTest(unittest.TestCase):
 
     def __create_unit_test_bucket(self):
         try:
-            s3_client = boto3.client('s3', endpoint_url=self.endpoint)
-            s3_client.create_bucket(Bucket=self.bucket)
+            s3_client = boto3.client(
+                "s3",
+                endpoint_url=self.endpoint,
+                region_name="us-east-2",
+            )
+            s3_client.create_bucket(
+                Bucket=self.bucket, 
+                CreateBucketConfiguration={
+                    'LocationConstraint': 'us-east-2'
+                }
+            )
         except:
             pass
 
