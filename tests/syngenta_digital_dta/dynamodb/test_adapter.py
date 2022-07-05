@@ -27,7 +27,7 @@ class DynamoDBAdapterTest(unittest.TestCase):
         )
 
     def test_init(self):
-        self.assertIsInstance(self.adapter, syngenta_digital_dta.s3.adapter.DynamodbAdapter)
+        self.assertIsInstance(self.adapter, syngenta_digital_dta.dynamodb.adapter.DynamodbAdapter)
 
     def test_adapter_read(self):
         data = self.adapter.read(

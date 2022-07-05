@@ -6,6 +6,9 @@ from syngenta_digital_dta.postgres import json_formatting
 
 class TestJsonFormatting(unittest.TestCase):
 
+    def setUp(self, *args, **kwargs):
+        self.maxDiff = None
+
     def test_build_json_cte(self):
         actual = json_formatting._build_json_cte(
             json={}
