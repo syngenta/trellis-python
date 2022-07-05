@@ -128,10 +128,10 @@ class PostgresAdapter(BaseAdapter):
         self.__execute(query=statement, params={}, commit=True, rollback=True)
 
     def create_index(self, table_name, index_columns):
-        index_name = f"index_{'_'.join(index_columns)}"
-        index_cols = f"({', '.join(index_columns)})"
+        index_name = f'index_{"_".join(index_columns)}'
+        index_cols = f'({", ".join(index_columns)})'
 
-        statement = f"CREATE INDEX {index_name} ON {table_name} {index_cols}"
+        statement = f'CREATE INDEX {index_name} ON {table_name} {index_cols}'
 
         self.__execute(query=statement, params={})
 
@@ -251,7 +251,7 @@ class PostgresAdapter(BaseAdapter):
                 self.connection.rollback()
             raise Exception(f'error with execution, check logs - {error}') from error
 
-    def __compose_params(self, data, columns="*", values=None):
+    def __compose_params(self, data, columns='*', values=None):
         if not values:
             values = []
         return {

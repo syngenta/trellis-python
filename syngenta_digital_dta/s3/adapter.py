@@ -167,7 +167,7 @@ class S3Adapter(BaseAdapter):
         try:
             self.resource.Object(self.bucket, kwargs['s3_path']).load()
         except ClientError as error:
-            if error.response['Error']['Code'] == "404":
+            if error.response['Error']['Code'] == '404':
                 return False
             raise
 

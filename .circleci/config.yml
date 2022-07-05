@@ -13,10 +13,9 @@ commands:
     python-lint:
         steps:
             - run: mkdir coverage && mkdir coverage/lint || exit 0
-            - run: python3 -m pipenv run lint
-            - run: python3 -m pipenv run lint | python3 -m pipenv run pylint_report.py > ./coverage/lint/report.html || exit 0
+            - run: pipenv run lint --output-format=text:./coverage/lint/report.txt,colorized
             - store_artifacts:
-                path: ./coverage/lint/report.html
+                path: ./coverage/lint/report.txt
     python-test:
             steps:
                 - run: sudo rm -f /etc/boto.cfg

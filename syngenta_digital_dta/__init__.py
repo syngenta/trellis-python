@@ -1,21 +1,21 @@
-    def adapter(**kwargs):
+def adapter(**kwargs):
     if kwargs.get('engine') == 'dynamodb':
-        from syngenta_digital_dta.dynamodb.adapter import DynamodbAdapter
+        from syngenta_digital_dta.dynamodb.adapter import DynamodbAdapter  # pylint: disable=C
         return DynamodbAdapter(**kwargs)
     if kwargs.get('engine') == 'redshift':
-        from syngenta_digital_dta.postgres.adapter import PostgresAdapter
+        from syngenta_digital_dta.postgres.adapter import PostgresAdapter  # pylint: disable=C
         return PostgresAdapter(**kwargs)
     if kwargs.get('engine') == 'postgres':
-        from syngenta_digital_dta.postgres.adapter import PostgresAdapter
+        from syngenta_digital_dta.postgres.adapter import PostgresAdapter  # pylint: disable=C
         return PostgresAdapter(**kwargs)
     if kwargs.get('engine') == 'elasticsearch':
-        from syngenta_digital_dta.elasticsearch.adapter import ElasticsearchAdapter
+        from syngenta_digital_dta.elasticsearch.adapter import ElasticsearchAdapter  # pylint: disable=C
         return ElasticsearchAdapter(**kwargs)
     if kwargs.get('engine') == 's3':
-        from syngenta_digital_dta.s3.adapter import S3Adapter
+        from syngenta_digital_dta.s3.adapter import S3Adapter  # pylint: disable=C
         return S3Adapter(**kwargs)
     if kwargs.get('engine') == 'file_system':
-        from syngenta_digital_dta.file_system.adapter import FileSystemAdapter
+        from syngenta_digital_dta.file_system.adapter import FileSystemAdapter  # pylint: disable=C
         return FileSystemAdapter(**kwargs)
     raise Exception(
         f'engine {kwargs.get("engine", "was not supplied, an empty engine kwarg is")} not supported; contribute to get it supported :)')

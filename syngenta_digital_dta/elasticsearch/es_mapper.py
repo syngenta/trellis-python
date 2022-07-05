@@ -33,12 +33,13 @@ def __walk_schema(properties, mapping, special):
 
 
 def __translate_simple_type(property_value):
-    if property_value.get('format', '') in ['email','idn-email','hostname','uri', 'uri-reference','iri', 'iri-reference']:
+    if property_value.get('format', '') in ['email', 'idn-email', 'hostname', 'uri', 'uri-reference', 'iri', 'iri-reference']:
         mapping_type = {'type': 'text', 'analyzer': 'url_email_analyzer'}
     elif 'ip' in property_value.get('format', ''):
         mapping_type = {'type': 'ip'}
     elif 'date' in property_value.get('format', ''):
-        mapping_type = {'type': 'date', 'format': "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis||strict_date_optional_time"}
+        mapping_type = {'type': 'date',
+                        'format': 'yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis||strict_date_optional_time'}
     elif property_value.get('type') == 'number':
         mapping_type = {'type': 'long'}
     elif property_value.get('type') == 'string':

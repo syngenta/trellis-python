@@ -120,11 +120,11 @@ class ElasticsearchAdapter(BaseAdapter):
         settings = {
             'number_of_replicas': 1,
             'number_of_shards': 1,
-            "analysis": {
-                "analyzer": {
-                    "url_email_analyzer": {
-                        "type": "custom",
-                        "tokenizer": "uax_url_email"
+            'analysis': {
+                'analyzer': {
+                    'url_email_analyzer': {
+                        'type': 'custom',
+                        'tokenizer': 'uax_url_email'
                     }
                 }
             }
