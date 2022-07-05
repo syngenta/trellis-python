@@ -21,6 +21,7 @@ setup(
         'elasticsearch==7.13.4',
         'jsonref',
         'jsonpickle',
+        'psycopg2-binary',
         'pyyaml',
         'requests-aws4auth',
         'simplejson'

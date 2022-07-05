@@ -11,10 +11,11 @@ aws-psycopg2 = "*"
 boto3 = "*"
 elasticsearch = "==7.13.4"
 jsonref = "*"
+jsonpickle = "*"
+psycopg2-binary = "*"
 pyyaml = "*"
 requests-aws4auth = "*"
 simplejson = "*"
-jsonpickle = "*"
 
 [dev-packages]
 autopep8 = "*"
@@ -23,7 +24,6 @@ pylint-report = "*"
 pytest = "*"
 pytest-html = "*"
 pytest-cov = "*"
-requests = "*"
 
 [scripts]
 test = "python -m unittest discover"
