@@ -72,7 +72,7 @@ class PostgresAdapterTest(unittest.TestCase):
         self.user_adapter.commit()
 
     def test_init(self):
-        self.assertIsInstance(self.user_adapter, syngenta_digital_dta.PostgresAdapter)
+        self.assertIsInstance(self.adapter, syngenta_digital_dta.postgres.adapter.PostgresAdapter)
 
     def test_connected(self):
         self.assertEqual(self.user_adapter.connection.closed, 0)

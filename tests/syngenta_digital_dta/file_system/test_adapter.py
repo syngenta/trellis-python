@@ -19,7 +19,10 @@ class TestFileSystemAdapter(TestCase):
             sns_attributes={}
         )
 
-    @mock.patch.object(base_adapter.publisher, 'publish')    
+    def test_init(self):
+        self.assertIsInstance(self.adapter, syngenta_digital_dta.file_system.adapter.FileSystemAdapter)
+
+    @mock.patch.object(base_adapter.publisher, 'publish')
     def test_create_update_read_and_delete_with_file_object(self, mock_publish):
         destination_path = 'tmp/test.txt'
         file_object = b'This is a test\n'
@@ -37,7 +40,7 @@ class TestFileSystemAdapter(TestCase):
             fifo_group_id=None,
             fifo_duplication_id=None
         )
-        
+
         results = self.adapter.read(file_path=destination_path)
         self.assertEqual(results, file_object)
 
@@ -59,7 +62,7 @@ class TestFileSystemAdapter(TestCase):
 
     @mock.patch.object(s3_adapter, 'boto3')
     @mock.patch.object(s3_adapter.S3Adapter, 'get')
-    @mock.patch.object(base_adapter.publisher, 'publish')    
+    @mock.patch.object(base_adapter.publisher, 'publish')
     def test_create_update_read_and_delete_with_s3_path(self, mock_publish, mock_get, mock_boto):
         destination_path = 'tmp/test.txt'
         mock_get.return_value = {
@@ -82,7 +85,7 @@ class TestFileSystemAdapter(TestCase):
             fifo_group_id=None,
             fifo_duplication_id=None
         )
-        
+
         results = self.adapter.read(file_path=destination_path)
         self.assertEqual(results, b'mock data')
 

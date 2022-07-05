@@ -5,6 +5,7 @@ import warnings
 
 import syngenta_digital_dta
 
+
 class AdapterTest(unittest.TestCase):
 
     def setUp(self, *args, **kwargs):
@@ -21,7 +22,7 @@ class AdapterTest(unittest.TestCase):
             model_identifier='test_id',
             model_version_key='modified'
         )
-        self.assertIsInstance(ddb, syngenta_digital_dta.DynamodbAdapter)
+        self.assertIsInstance(ddb, syngenta_digital_dta.dynamodb.adapter.DynamodbAdapter)
 
     def test_elasticseach_adapter(self):
         es = syngenta_digital_dta.adapter(
@@ -33,7 +34,7 @@ class AdapterTest(unittest.TestCase):
             model_identifier='user_id',
             model_version_key='modified'
         )
-        self.assertIsInstance(es, syngenta_digital_dta.ElasticsearchAdapter)
+        self.assertIsInstance(es, syngenta_digital_dta.elasticsearch.adapter.ElasticsearchAdapter)
 
     def test_postgres_adapter(self):
         ps = syngenta_digital_dta.adapter(
@@ -52,7 +53,7 @@ class AdapterTest(unittest.TestCase):
                 'ADDRESSES_TABLE': 'user_id'
             }
         )
-        self.assertIsInstance(ps, syngenta_digital_dta.PostgresAdapter)
+        self.assertIsInstance(ps, syngenta_digital_dta.postgres.adapter.PostgresAdapter)
 
     def test_redshift_adapter(self):
         ps = syngenta_digital_dta.adapter(
@@ -71,7 +72,7 @@ class AdapterTest(unittest.TestCase):
                 'ADDRESSES_TABLE': 'user_id'
             }
         )
-        self.assertIsInstance(ps, syngenta_digital_dta.PostgresAdapter)
+        self.assertIsInstance(ps, syngenta_digital_dta.postgres.adapter.PostgresAdapter)
 
     def test_file_system_adapter(self):
         ps = syngenta_digital_dta.adapter(
@@ -79,7 +80,7 @@ class AdapterTest(unittest.TestCase):
             sns_arn='test_sns_arn',
             sns_attributes={}
         )
-        self.assertIsInstance(ps, syngenta_digital_dta.FileSystemAdapter)
+        self.assertIsInstance(ps, syngenta_digital_dta.file_system.adapter.FileSystemAdapter)
 
     def test_adapter_exception(self):
         try:

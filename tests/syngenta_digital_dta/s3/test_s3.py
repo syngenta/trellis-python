@@ -34,7 +34,7 @@ class S3AdapterTest(unittest.TestCase):
                 region_name="us-east-2",
             )
             s3_client.create_bucket(
-                Bucket=self.bucket, 
+                Bucket=self.bucket,
                 CreateBucketConfiguration={
                     'LocationConstraint': 'us-east-2'
                 }
@@ -43,7 +43,7 @@ class S3AdapterTest(unittest.TestCase):
             pass
 
     def test_init(self):
-        self.assertIsInstance(self.adapter, syngenta_digital_dta.S3Adapter)
+        self.assertIsInstance(self.adapter, syngenta_digital_dta.s3.adapter.S3Adapter)
 
     def test_create(self):
         results = self.adapter.create(
@@ -164,7 +164,7 @@ class S3AdapterTest(unittest.TestCase):
 
     def test_list_dir_files_with_date(self):
         file = 'test/test-create.json'
-        result = self.adapter.list_dir_files(dir_name='test/', date=datetime(2000,1,1))
+        result = self.adapter.list_dir_files(dir_name='test/', date=datetime(2000, 1, 1))
         self.assertIn(file, result)
 
     def test_rename_object(self):
@@ -186,8 +186,8 @@ class S3AdapterTest(unittest.TestCase):
         adapter.upload_stream(data=data, s3_path=s3_path, public_read=public_read)
         adapter.client.upload_fileobj.assert_called_with(
             mock.ANY,
-           'unit-test',
-           'my_s3_path',
+            'unit-test',
+            'my_s3_path',
             ExtraArgs={'ACL': 'public-read'},
             Config=mock.ANY
         )

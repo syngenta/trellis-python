@@ -11,7 +11,7 @@ from syngenta_digital_dta.dynamodb.adapter import BatchItemException
 class DynamoDBAdapterTest(unittest.TestCase):
 
     def setUp(self, *args, **keywargs):
-        TABLE_NAME='unittestsort'
+        TABLE_NAME = 'unittestsort'
         warnings.simplefilter('ignore', ResourceWarning)
         self.maxDiff = None
         self.mock_table = MockTable(table_name=TABLE_NAME)
@@ -25,6 +25,9 @@ class DynamoDBAdapterTest(unittest.TestCase):
             model_identifier='test_id',
             model_version_key='modified'
         )
+
+    def test_init(self):
+        self.assertIsInstance(self.adapter, syngenta_digital_dta.s3.adapter.DynamodbAdapter)
 
     def test_adapter_read(self):
         data = self.adapter.read(
@@ -134,7 +137,7 @@ class DynamoDBAdapterTest(unittest.TestCase):
         self.assertTrue(len(data) == 101)  # Table comes initialized with one test record
 
     def test_adapter_batch_insert_fail(self):
-        item_tuple = {'data': (1,2,3)}
+        item_tuple = {'data': (1, 2, 3)}
         self.assertRaises(BatchItemException, self.adapter.batch_insert, **item_tuple)
 
     def test_adapter_batch_delete(self):

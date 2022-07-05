@@ -10,7 +10,7 @@ class RedshiftAdapterTest(unittest.TestCase):
     def setUp(self, *args, **kwargs):
         warnings.simplefilter('ignore', ResourceWarning)
         self.maxDiff = None
-        ADDRESSES_TABLE='addresses'
+        ADDRESSES_TABLE = 'addresses'
         self.user_adapter = syngenta_digital_dta.adapter(
             engine='redshift',
             table='users',
@@ -72,7 +72,7 @@ class RedshiftAdapterTest(unittest.TestCase):
         self.user_adapter.commit()
 
     def test_init(self):
-        self.assertIsInstance(self.user_adapter, syngenta_digital_dta.PostgresAdapter)
+        self.assertIsInstance(self.adapter, syngenta_digital_dta.postgres.adapter.PostgresAdapter)
 
     def test_connected(self):
         self.assertEqual(self.user_adapter.connection.closed, 0)
@@ -215,7 +215,7 @@ class RedshiftAdapterTest(unittest.TestCase):
             'first': 'Get',
             'last': 'Cruse III'
         }
-        for count in [0,1,2,3]:
+        for count in [0, 1, 2, 3]:
             data['user_id'] = 0
             data['user_id'] = str(data['user_id'] + count)
             data['last'] = last
@@ -279,7 +279,7 @@ class RedshiftAdapterTest(unittest.TestCase):
         results = self.user_adapter.query(
             query='SELECT * FROM users WHERE user_id = %(identifier_value)s',
             params={
-                'identifier_value':'some-query-relationship-guid'
+                'identifier_value': 'some-query-relationship-guid'
             }
         )
         self.assertEqual('some-query-relationship-guid', results[0]['user_id'])
@@ -289,11 +289,12 @@ class RedshiftAdapterTest(unittest.TestCase):
             results = self.user_adapter.query(
                 query='DELETE FROM users WHERE user_id = %(identifier_value)s',
                 params={
-                    'identifier_value':'some-query-relationship-guid'
+                    'identifier_value': 'some-query-relationship-guid'
                 }
             )
         except Exception as error:
-            self.assertEqual(str(error), 'query method is for read-only operations; please use another function for destructive operatins')
+            self.assertEqual(
+                str(error), 'query method is for read-only operations; please use another function for destructive operatins')
 
     def test_query_no_params_constraint(self):
         try:

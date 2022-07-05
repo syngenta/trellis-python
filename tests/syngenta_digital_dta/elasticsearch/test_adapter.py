@@ -4,6 +4,7 @@ import warnings
 
 import syngenta_digital_dta
 
+
 class ElasticsearchAdapterTest(unittest.TestCase):
 
     def setUp(self, *args, **kwargs):
@@ -20,7 +21,7 @@ class ElasticsearchAdapterTest(unittest.TestCase):
         )
 
     def test_init(self):
-        self.assertIsInstance(self.adapter, syngenta_digital_dta.ElasticsearchAdapter)
+        self.assertIsInstance(self.adapter, syngenta_digital_dta.elasticsearch.adapter.ElasticsearchAdapter)
 
     def test_connected(self):
         self.assertEqual(self.adapter.connection.ping(), True)
@@ -169,9 +170,9 @@ class ElasticsearchAdapterTest(unittest.TestCase):
             'phone': 1112224444
         }
         try:
-            self.adapter.upsert(data=data) # should create
+            self.adapter.upsert(data=data)  # should create
             updated_data = {'user_id': upsert_id, 'first': 'Patrick'}
-            self.adapter.upsert(data=updated_data) # should update
+            self.adapter.upsert(data=updated_data)  # should update
             self.assertEqual(True, True)
         except Exception as e:
             self.assertEqual(False, True)
