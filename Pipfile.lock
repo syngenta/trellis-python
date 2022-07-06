@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "0276153cb342798bed8174806efe3a9bbe19272a4ed00e6161510341daf7916e"
+            "sha256": "31d638d641ef9eaca7e85862992bc67fdb528fa886f159cbe864965d88c651ba"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -34,11 +34,11 @@
         },
         "botocore": {
             "hashes": [
-                "sha256:7145d9b7cae87999a9f074de700d02a1b3222ee7d1863aa631ff56c5fc868035",
-                "sha256:f57cb33446deef92e552b0be0e430d475c73cf64bc9e46cdb4783cdfe39cb6bb"
+                "sha256:18227ab1c4646f54cd5deb8cdf6f096ce9867b2354416f6becaea45bb12c028a",
+                "sha256:e3038a19cc442c16bdf05afd34a2b7717b3fe2ed50b3847472eb9e730cf4691a"
             ],
             "markers": "python_version >= '3.7'",
-            "version": "==1.27.22"
+            "version": "==1.27.24"
         },
         "certifi": {
             "hashes": [
@@ -56,13 +56,21 @@
             "markers": "python_version >= '3.6'",
             "version": "==2.1.0"
         },
+        "elastic-transport": {
+            "hashes": [
+                "sha256:10914d0c5c268d9dcfee02cfbef861382d098309ba4eedab820062841bd214b3",
+                "sha256:869f7d668fb7738776639053fc87499caacbd1bdc7819f0de8025ac0e6cb29ce"
+            ],
+            "markers": "python_version >= '3.6'",
+            "version": "==8.1.2"
+        },
         "elasticsearch": {
             "hashes": [
-                "sha256:52dda85f76eeb85ec873bf9ffe0ba6849e544e591f66d4048a5e48016de268e0",
-                "sha256:5920df0ab2630778680376d86bea349dc99860977eec9b6d2bd0860f337313f2"
+                "sha256:bd6c3b8c751114f42c0265646a202da0f00f6337a9e334b4abc60ef03d1aad7c",
+                "sha256:c29e9e59bfbe345f4a03877e5087aa93fdf7556ef538f52ebdfc26a89bbcdbb1"
             ],
             "index": "pypi",
-            "version": "==7.13.4"
+            "version": "==8.3.1"
         },
         "idna": {
             "hashes": [
@@ -487,7 +495,7 @@
                 "sha256:fc431493df245f3c627c0c05c2bd134535e7929dbe2e602b80e42bf52ff760bc",
                 "sha256:fe8b9683eb26d2c4d5db32cd29b38fdcf8381324ab48313b5b69088e0e355379"
             ],
-            "markers": "python_version < '3.10' and platform_machine == 'arm64'",
+            "markers": "python_version < '3.10' and platform_machine != 'aarch64' and platform_machine != 'arm64'",
             "version": "==1.23.0"
         },
         "packaging": {
