@@ -52,6 +52,7 @@ class MongoAdapterTest(unittest.TestCase):
         result = self.adapter.read(query={'test_id': data['test_id']})
         result.pop('_id')
         self.assertDictEqual(result, data)
+        self.adapter.delete(query={'test_id': data['test_id']}) # clean up
 
     def test_read_many(self):
         count = 0
