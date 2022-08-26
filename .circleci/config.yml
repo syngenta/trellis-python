@@ -87,6 +87,11 @@ jobs:
                 environment:
                     - discovery.type=single-node
             -
+                image: mongo
+                environment:
+                    MONGO_INITDB_ROOT_USERNAME: root
+                    MONGO_INITDB_ROOT_PASSWORD: Lq4nKg&&TRhHv%7z
+            -
                 image: localstack/localstack-full:latest
                 environment:
                     - SERVICES=s3

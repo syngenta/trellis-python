@@ -62,3 +62,12 @@ services:
             - 9300:9300
         environment:
             - discovery.type=single-node
+    mongo:
+        image: mongo
+        container_name: mongo-local
+        restart: on-failure
+        ports:
+            - 27017:27017
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: root
+            MONGO_INITDB_ROOT_PASSWORD: Lq4nKg&&TRhHv%7z
