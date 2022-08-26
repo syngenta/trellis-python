@@ -74,7 +74,7 @@ class FileSystemAdapter(BaseAdapter):
         link = kwargs['http_link']
         headers = kwargs.get('headers')
 
-        response = requests.request('GET', link, headers=headers)
+        response = requests.request('GET', link, headers=headers, timeout=kwargs.get('timeout'))
         return response.content
 
     def __init_s3_adapter(self, **kwargs):
