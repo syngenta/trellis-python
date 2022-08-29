@@ -26,19 +26,19 @@
         },
         "boto3": {
             "hashes": [
-                "sha256:9d2dab8abe90d4afaced79a10476642dc7b3755a2bdc1f871927f8d21af25777",
-                "sha256:de7d5d66292c4f8e0000755117cec047adf1f0c78e192f7061ac1c54a2389968"
+                "sha256:b72496c7eaa45afbdfa48a7c648c3211342582d91c8c1b7330d09c18242132d1",
+                "sha256:ec1aa3f4c2b68da1a9c01e175086f5f6b1b8b67780fa569ab8875be5bb3fd5ae"
             ],
             "index": "pypi",
-            "version": "==1.24.60"
+            "version": "==1.24.61"
         },
         "botocore": {
             "hashes": [
-                "sha256:5063d504698f379289249c5c27d9395ec72f445f0ac2ec4e0ed00135e76e5cac",
-                "sha256:5f9ddf144c7fe025a877dd31c9225563172769e9597013f50a226248f05ff6a8"
+                "sha256:535c8e97ed28a38fd09dd8f4735195e761bbee54e4c6021f3a709a97b1287dd6",
+                "sha256:99012965e2409665c7d86706862c5a141e01e1c4d2c81cb9409a44200ee59631"
             ],
             "markers": "python_version >= '3.7'",
-            "version": "==1.27.60"
+            "version": "==1.27.61"
         },
         "certifi": {
             "hashes": [
@@ -388,11 +388,11 @@
     "develop": {
         "astroid": {
             "hashes": [
-                "sha256:39fa822c82dc112f5072a208ddf01c58184043aa90e3e469786fa0520c71aaa7",
-                "sha256:af71cdc0775b6e4d88076746620e2c8cd1bf4533a9977cfdd00eeea97d95530c"
+                "sha256:396c88d0a58d7f8daadf730b2ce90838bf338c6752558db719ec6f99c18ec20e",
+                "sha256:d612609242996c4365aeb0345e61edba34363eaaba55f1c0addf6a98f073bef6"
             ],
             "markers": "python_full_version >= '3.7.2'",
-            "version": "==2.12.4"
+            "version": "==2.12.5"
         },
         "attrs": {
             "hashes": [
@@ -574,7 +574,7 @@
                 "sha256:e603ca1fb47b913942f3e660a15e55a9ebca906857edfea476ae5f0fe9b457d5",
                 "sha256:ecfdd68d334a6b97472ed032b5b37a30d8217c097acfff15e8452c710e775524"
             ],
-            "markers": "python_version < '3.10' and platform_machine == 'arm64'",
+            "markers": "python_version < '3.10' and platform_machine != 'aarch64' and platform_machine != 'arm64'",
             "version": "==1.23.2"
         },
         "packaging": {
@@ -744,7 +744,7 @@
                 "sha256:939de3e7a6161af0c887ef91b7d41a53e7c5a1ca976325f429cb46ea9bc30ecc",
                 "sha256:de526c12914f0c550d15924c62d72abc48d6fe7364aa87328337a31007fe8a4f"
             ],
-            "markers": "python_version >= '3.7'",
+            "markers": "python_version < '3.11'",
             "version": "==2.0.1"
         },
         "tomlkit": {
