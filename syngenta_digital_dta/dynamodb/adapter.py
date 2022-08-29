@@ -96,8 +96,7 @@ class DynamodbAdapter(BaseAdapter):
         original_data = self._get_original_data(**kwargs)
         merged_data = dict_merger.merge(original_data, kwargs['data'], **kwargs)
         updated_data = schema_mapper.map_to_schema(merged_data, self.model_schema_file, self.model_schema)
-        self.table.put_item(Item=updated_data, ConditionExpression=Attr(
-            self.model_version_key).eq(original_data[self.model_version_key]))
+        self.table.put_item(Item=updated_data, ConditionExpression=Attr(self.model_version_key).eq(original_data[self.model_version_key]))
         super().publish('update', updated_data, **kwargs)
         return updated_data
 
