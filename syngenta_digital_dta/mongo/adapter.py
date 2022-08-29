@@ -71,7 +71,12 @@ class MongoAdapter(BaseAdapter):
         return self.connection.find_one(kwargs['query'])
 
     def find(self, **kwargs):
-        results = self.connection.find(kwargs['query'])
+        if kwargs.get('page_size') and kwargs.get('page_number'):
+            skips = kwargs['page_size'] * (kwargs['page_number'] - 1)
+            results = self.connection.find(kwargs['query']).skip(skips).limit(kwargs['page_size'])
+        else:
+            results = self.connection.find(kwargs['query'])
+
         return list(results)
 
     def update(self, **kwargs):

@@ -53,7 +53,7 @@ class MongoAdapterTest(unittest.TestCase):
             self.assertTrue(False)
         except:
             self.assertTrue(True)
-        self.adapter.delete(query={'test_id': data['test_id']}) # clean up
+        self.adapter.delete(query={'test_id': data['test_id']})  # clean up
 
     def test_read(self):
         data = mock_data.get_standard()
@@ -61,14 +61,14 @@ class MongoAdapterTest(unittest.TestCase):
         result = self.adapter.read(query={'test_id': data['test_id']})
         result.pop('_id')
         self.assertDictEqual(result, data)
-        self.adapter.delete(query={'test_id': data['test_id']}) # clean up
+        self.adapter.delete(query={'test_id': data['test_id']})  # clean up
 
     def test_query_allowed(self):
         data = mock_data.get_standard()
         self.adapter.create(data=data)
         result = self.adapter.query(operation='find', query={'test_id': data['test_id']})
         self.assertTrue(len(list(result)) == 1)
-        self.adapter.delete(query={'test_id': data['test_id']}) # clean up
+        self.adapter.delete(query={'test_id': data['test_id']})  # clean up
 
     def test_not_query_allowed(self):
         data = mock_data.get_standard()
@@ -88,16 +88,28 @@ class MongoAdapterTest(unittest.TestCase):
             count += 1
         results = self.adapter.read(query={'test_query_id': 'some-query'}, operation='query')
         for result in results:
-            self.adapter.delete(query={'test_id': result['test_id']}) # clean up
+            self.adapter.delete(query={'test_id': result['test_id']})  # clean up
         self.assertTrue(len(results) >= 3)
+
+    def test_read_many_pagination(self):
+        count = 0
+        while count < 10:
+            data = mock_data.get_standard()
+            data['test_query_id'] = 'some-query'
+            self.adapter.create(data=data)
+            count += 1
+        results = self.adapter.read(query={'test_query_id': 'some-query'}, operation='query', page_number=2, page_size=5)
+        for result in results:
+            self.adapter.delete(query={'test_id': result['test_id']})  # clean up
+        self.assertEqual(len(results), 5)
 
     def test_update_success(self):
         data = mock_data.get_standard()
         self.adapter.create(data=data)
-        data['array_number'] = [4,5,6]
+        data['array_number'] = [4, 5, 6]
         result = self.adapter.update(query={'test_id': data['test_id']}, data=data, update_list_operation='replace')
         self.assertDictEqual(result, data)
-        self.adapter.delete(query={'test_id': data['test_id']}) # clean up
+        self.adapter.delete(query={'test_id': data['test_id']})  # clean up
 
     def test_update_fail(self):
         data = mock_data.get_standard()
@@ -112,7 +124,7 @@ class MongoAdapterTest(unittest.TestCase):
         result = self.adapter.upsert(query={'test_id': data['test_id']}, data=data)
         result.pop('_id')
         self.assertDictEqual(result, data)
-        self.adapter.delete(query={'test_id': data['test_id']}) # clean up
+        self.adapter.delete(query={'test_id': data['test_id']})  # clean up
 
     def test_delete(self):
         data = mock_data.get_standard()
