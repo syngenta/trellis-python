@@ -632,7 +632,7 @@ result = self.adapter.update(query={'test_id': data['test_id']}, data=data, upda
 # - replace (replace the entire list)
 ```
 
-### Mongo delete
+### Mongo Delete
 
 ```python
 self.adapter.delete(query={'test_id': data['test_id']})
