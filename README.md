@@ -530,11 +530,121 @@ presigned_url = adapter.create_presigned_read_url(s3_path='test/test-create.json
 adapter.delete(s3_path='test/test-create.json')
 ```
 
+## Common Usage: Mongo
+
+```python
+import os
+import syngenta_digital_dta
+
+adapter = syngenta_digital_dta.adapter(
+    engine='mongo',
+    endpoint=os.getenv('MONGO_URI'),
+    database=os.getenv('MONGO_DB'),
+    collection=os.getenv('MONGO_COLLECTION'),
+    user=os.getenv('MONGO_USER'),
+    password=os.getenv('MONGO_PASSWORD'),
+    model_schema='v1-collection-model',
+    model_schema_file='application/openapi.yml',
+    model_identifier='test_id',
+    model_version_key='modified'
+)
+```
+
+**Initialize Options**
+
+Option Name              | Required | Type   | Description
+:-----------             | :------- | :----- | :----------
+`engine`                 | true     | string | name of supported db engine (mongo)
+`endpoint`               | true     | string | uri of the mongo database (ex: `mongodb://localhost:27017/`)
+`database`               | true     | string | name of mongo database
+`collection`             | true     | string | name of mongo collection
+`user`                   | true     | string | name of mongo authentication user
+`password`               | true     | string | name of mongo authentication password
+`model_schema`           | true     | string | key of openapi schema this is being set against
+`model_schema_file`      | true     | string | path where your schema file can found (accepts JSON as well)
+`model_identifier`       | true     | string | unique identifier key on the model
+`model_version_key`      | true     | string | key that can be used as a version key (modified timestamps often suffice)
+`sns_arn`                | false    | string | sns topic arn you want to broadcast the changes to
+`sns_attributes`         | false    | dict   | custom attributes in dict format; values should only be strings or numbers
+`sns_default_attributes` | false    | boolean| determines if default sns attributes are included in sns message (model_identifier, model_version_key, model_schema, author_identifier)
+
+**Examples**
+
+### Mongo Create
+
+```python
+result = adapter.create(data=data) # must be a unique model_identifier
+print(result) # will contain a new key (_id)
+```
+
+### Mongo Read
+
+```python
+result = adapter.read(
+    operation='get',
+    query={'test_id': data['test_id']}
+)
+print(result) # will contain a new key (_id)
+```
+
+### Mongo Read Many
+
+```python
+results = adapter.read(
+    operation='query',
+    query={'test_id': data['test_id']}
+)
+print(results) # will be array of dicts with contain a new key (_id)
+```
+
+### Mongo Query
+
+```python
+pipeline = [
+    {'$unwind': '$tags'},
+    {'$group': {'_id': '$tags', 'count': {'$sum': 1}}}
+]
+results = adapter.read(
+    operation='aggregate', # able to dynamically call a variety of read-only operations; see list below
+    query=pipeline
+)
+# available operations:
+# - find
+# - find_one
+# - aggregate
+# - aggregate_raw_batches
+# - find_raw_batches
+# - count_documents
+# - estimated_document_count
+# - distinct
+# - list_indexes
+```
+
+### Mongo Update
+
+```python
+# will throw an error if document doesn't exists
+result = self.adapter.update(query={'test_id': data['test_id']}, data=data, update_list_operation='replace')
+
+# available update_list_operation:
+# - add (adds items to list) [default]
+# - remove (removes item from list, if duplicate)
+# - replace (replace the entire list)
+```
+
+### Mongo delete
+
+```python
+self.adapter.delete(query={'test_id': data['test_id']})
+```
+
 
 ## Contributing
 If you would like to contribute please make sure to follow the established patterns and unit test your code:
 
 ### Local Unit Testing
 
+Requires two tabs to test (uses docker containers for localized db versions)
+
 - In one tab, run `pipenv run local`
-- In a second tab, run `RUN_MODE=unittest python -m unittest discover`
+- In a second tab, run `pipenv run test`
