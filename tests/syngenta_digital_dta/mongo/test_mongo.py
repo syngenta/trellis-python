@@ -17,7 +17,7 @@ class MongoAdapterTest(unittest.TestCase):
             database='unit',
             collection='test',
             user='root',
-            password='Abc123456',
+            password='Lq4nKg&&TRhHv%7z',
             endpoint='mongodb://localhost:27017/',
             model_schema='test-mongo-model',
             model_schema_file='tests/openapi.yml',
