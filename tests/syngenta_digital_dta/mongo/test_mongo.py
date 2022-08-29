@@ -37,7 +37,7 @@ class MongoAdapterTest(unittest.TestCase):
 
     def test_batch_create_succeed(self):
         data = mock_data.get_items()
-        result = self.adapter.create(data=data)
+        result = self.adapter.batch_create(data=data)
         for item in result:
             item.pop('_id')
         self.assertDictEqual(result, data)
