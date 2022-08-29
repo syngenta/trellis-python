@@ -17,7 +17,7 @@ class MongoAdapterTest(unittest.TestCase):
             database='unit',
             collection='test',
             user='root',
-            password='Lq4nKg&&TRhHv%7z',
+            password='Abc123456',
             endpoint='mongodb://localhost:27017/',
             model_schema='test-mongo-model',
             model_schema_file='tests/openapi.yml',
@@ -40,7 +40,7 @@ class MongoAdapterTest(unittest.TestCase):
         result = self.adapter.batch_create(data=data)
         for item in result:
             item.pop('_id')
-        self.assertDictEqual(result, data)
+        self.assertListEqual(result, data)
         for item in result:
             self.adapter.delete(query={'test_id': item['test_id']})
 
