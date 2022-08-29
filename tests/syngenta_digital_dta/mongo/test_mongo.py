@@ -35,6 +35,15 @@ class MongoAdapterTest(unittest.TestCase):
         self.assertDictEqual(result, data)
         self.adapter.delete(query={'test_id': result['test_id']})
 
+    def test_batch_create_succeed(self):
+        data = mock_data.get_items()
+        result = self.adapter.create(data=data)
+        for item in result:
+            item.pop('_id')
+        self.assertDictEqual(result, data)
+        for item in result:
+            self.adapter.delete(query={'test_id': item['test_id']})
+
     def test_create_fail_non_unique(self):
         data = mock_data.get_standard()
         data['test_id'] = 'fail-non-unique'
