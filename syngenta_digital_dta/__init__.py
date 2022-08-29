@@ -1,4 +1,4 @@
-def adapter(**kwargs):
+def adapter(**kwargs): # pylint: disable=R0911
     if kwargs.get('engine') == 'dynamodb':
         from syngenta_digital_dta.dynamodb.adapter import DynamodbAdapter  # pylint: disable=C
         return DynamodbAdapter(**kwargs)
@@ -17,5 +17,8 @@ def adapter(**kwargs):
     if kwargs.get('engine') == 'file_system':
         from syngenta_digital_dta.file_system.adapter import FileSystemAdapter  # pylint: disable=C
         return FileSystemAdapter(**kwargs)
+    if kwargs.get('engine') == 'mongo':
+        from syngenta_digital_dta.mongo.adapter import MongoAdapter  # pylint: disable=C
+        return MongoAdapter(**kwargs)
     raise Exception(
         f'engine {kwargs.get("engine", "was not supplied, an empty engine kwarg is")} not supported; contribute to get it supported :)')
