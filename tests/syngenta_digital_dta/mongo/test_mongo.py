@@ -98,7 +98,7 @@ class MongoAdapterTest(unittest.TestCase):
             data['test_query_id'] = 'some-query'
             self.adapter.create(data=data)
             count += 1
-        results = self.adapter.read(query={'test_query_id': 'some-query'}, operation='query', page_number=2, page_size=5)
+        results = self.adapter.read(query={'test_query_id': 'some-query'}, operation='query', params={'skip': 5, 'limit': 5})
         for result in results:
             self.adapter.delete(query={'test_id': result['test_id']})  # clean up
         self.assertEqual(len(results), 5)

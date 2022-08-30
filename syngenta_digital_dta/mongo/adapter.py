@@ -53,7 +53,7 @@ class MongoAdapter(BaseAdapter):
             item['_id'] = item[self.model_identifier]
             items.append(item)
         self.connection.insert_many(items)
-        super().publish('create', items, **kwargs)
+        super().publish('batch_create', items, **kwargs)
         return items
 
     def read(self, **kwargs):
@@ -71,12 +71,7 @@ class MongoAdapter(BaseAdapter):
         return self.connection.find_one(kwargs['query'])
 
     def find(self, **kwargs):
-        if kwargs.get('page_size') and kwargs.get('page_number'):
-            skips = kwargs['page_size'] * (kwargs['page_number'] - 1)
-            results = self.connection.find(kwargs['query']).skip(skips).limit(kwargs['page_size'])
-        else:
-            results = self.connection.find(kwargs['query'])
-
+        results = self.connection.find(kwargs['query'], **kwargs.get('params', {}))
         return list(results)
 
     def update(self, **kwargs):
