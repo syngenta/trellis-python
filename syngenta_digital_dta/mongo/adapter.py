@@ -46,6 +46,16 @@ class MongoAdapter(BaseAdapter):
         super().publish('create', data, **kwargs)
         return data
 
+    def batch_create(self, **kwargs):
+        items = []
+        for item in kwargs['data']:
+            item = schema_mapper.map_to_schema(item, self.model_schema_file, self.model_schema)
+            item['_id'] = item[self.model_identifier]
+            items.append(item)
+        self.connection.insert_many(items)
+        super().publish('batch_create', items, **kwargs)
+        return items
+
     def read(self, **kwargs):
         if kwargs.get('operation') == 'query':
             return self.find(**kwargs)
@@ -61,7 +71,7 @@ class MongoAdapter(BaseAdapter):
         return self.connection.find_one(kwargs['query'])
 
     def find(self, **kwargs):
-        results = self.connection.find(kwargs['query'])
+        results = self.connection.find(kwargs['query'], **kwargs.get('params', {}))
         return list(results)
 
     def update(self, **kwargs):
