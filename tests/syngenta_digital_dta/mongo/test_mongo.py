@@ -117,8 +117,7 @@ class MongoAdapterTest(unittest.TestCase):
             count += 1
         results = self.adapter.read(query={'test_query_id': 'some-query'}, operation='query',
                                     params={'skip': 5, 'limit': 5})
-
-        self.adapter.delete_many(query={'test_query_id': 'some-query'})  # clean up
+        result = self.adapter._MongoAdapter__collection.delete_many({'test_query_id': 'some-query'}) # clean up
         self.assertEqual(len(results), 5)
 
     def test_count(self):

@@ -112,12 +112,6 @@ class MongoAdapter(BaseAdapter):
         super().publish('delete', data, **kwargs)
         return result
 
-    def delete_many(self, **kwargs):
-        data = self.find(**kwargs)
-        result = self.__collection.delete_many(kwargs['query'])
-        super().publish('delete_many', data, **kwargs)
-        return result
-
     def batch_delete(self, **kwargs):
         items = self.__map_documents(**kwargs)
         bulk_operations = []
