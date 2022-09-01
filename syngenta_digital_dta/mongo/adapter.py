@@ -11,15 +11,10 @@ class MongoAdapter(BaseAdapter):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.endpoint = kwargs['endpoint']
-        self.database = kwargs['database']
-        self.collection = kwargs['collection']
-        self.user = kwargs['user']
-        self.password = kwargs['password']
-        self.model_schema_file = kwargs['model_schema_file']
-        self.model_schema = kwargs['model_schema']
-        self.model_identifier = kwargs['model_identifier']
-        self.model_version_key = kwargs['model_version_key']
+        self.__collection = self.__connect(**kwargs)
+        self.__model_schema_file = kwargs['model_schema_file']
+        self.__model_schema = kwargs['model_schema']
+        self.__model_identifier = kwargs['model_identifier']
         self.__allowed_queries = [
             'find',
             'find_one',
@@ -31,18 +26,17 @@ class MongoAdapter(BaseAdapter):
             'distinct',
             'list_indexes'
         ]
-        self.connection = self.__connect()
 
     @lru_cache(maxsize=128)
-    def __connect(self):
-        client = MongoClient(self.endpoint, username=self.user, password=self.password)
-        db = client[self.database]
-        return db[self.collection]
+    def __connect(self, **kwargs):
+        client = MongoClient(kwargs['endpoint'], username=kwargs['user'], password=kwargs['password'])
+        db = client[kwargs['database']]
+        return db[kwargs['collection']]
 
     def create(self, **kwargs):
-        data = schema_mapper.map_to_schema(kwargs['data'], self.model_schema_file, self.model_schema)
-        data['_id'] = data[self.model_identifier]
-        self.connection.insert_one(data)
+        data = schema_mapper.map_to_schema(kwargs['data'], self.__model_schema_file, self.__model_schema)
+        data['_id'] = data[self.__model_identifier]
+        self.__collection.insert_one(data)
         super().publish('create', data, **kwargs)
         return data
 
@@ -64,11 +58,11 @@ class MongoAdapter(BaseAdapter):
     def query(self, **kwargs):
         if kwargs['operation'] not in self.__allowed_queries:
             raise Exception('query method is for read-only operations; please use another function for destructive operations')
-        query = getattr(self.connection, kwargs['operation'])
+        query = getattr(self.__collection, kwargs['operation'])
         return query(kwargs['query'])
 
     def find_one(self, **kwargs):
-        return self.connection.find_one(kwargs['query'])
+        return self.__collection.find_one(kwargs['query'])
 
     def find(self, **kwargs):
         results = self.connection.find(kwargs['query'], **kwargs.get('params', {}))
@@ -79,8 +73,8 @@ class MongoAdapter(BaseAdapter):
         if not original_data:
             raise Exception(f'no document found by query: {kwargs["query"]}')
         merged_data = dict_merger.merge(original_data, kwargs['data'], **kwargs)
-        updated_data = schema_mapper.map_to_schema(merged_data, self.model_schema_file, self.model_schema)
-        self.connection.replace_one(kwargs['query'], updated_data, upsert=False)
+        updated_data = schema_mapper.map_to_schema(merged_data, self.__model_schema_file, self.__model_schema)
+        self.__collection.replace_one(kwargs['query'], updated_data, upsert=False)
         super().publish('update', updated_data, **kwargs)
         return updated_data
 
@@ -90,14 +84,14 @@ class MongoAdapter(BaseAdapter):
             merged_data = dict_merger.merge(original_data, kwargs['data'], **kwargs)
         else:
             merged_data = kwargs['data']
-        data = schema_mapper.map_to_schema(merged_data, self.model_schema_file, self.model_schema)
-        data['_id'] = data[self.model_identifier]
-        self.connection.replace_one(kwargs['query'], data, upsert=True)
+        data = schema_mapper.map_to_schema(merged_data, self.__model_schema_file, self.__model_schema)
+        data['_id'] = data[self.__model_identifier]
+        self.__collection.replace_one(kwargs['query'], data, upsert=True)
         super().publish('upsert', data, **kwargs)
         return data
 
     def delete(self, **kwargs):
         data = self.find_one(**kwargs)
-        result = self.connection.delete_one(kwargs['query'])
+        result = self.__collection.delete_one(kwargs['query'])
         super().publish('delete', data, **kwargs)
         return result
