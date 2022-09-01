@@ -122,5 +122,5 @@ class MongoAdapter(BaseAdapter):
     def delete_many(self, **kwargs):
         data = self.find_one(**kwargs)
         result = self.connection.delete_many(kwargs['query'])
-        super().publish('delete', data, **kwargs)
+        super().publish('delete_many', data, **kwargs)
         return result
