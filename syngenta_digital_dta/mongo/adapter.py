@@ -43,8 +43,8 @@ class MongoAdapter(BaseAdapter):
     def batch_create(self, **kwargs):
         items = []
         for item in kwargs['data']:
-            item = schema_mapper.map_to_schema(item, self.__model_schema_file, self.model_schema)
-            item['_id'] = item[self.model_identifier]
+            item = schema_mapper.map_to_schema(item, self.__model_schema_file, self.__model_schema)
+            item['_id'] = item[self.__model_identifier]
             items.append(item)
         self.__collection.insert_many(items)
         super().publish('batch_create', items, **kwargs)
