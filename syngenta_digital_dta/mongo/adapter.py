@@ -52,9 +52,9 @@ class MongoAdapter(BaseAdapter):
             item = schema_mapper.map_to_schema(item, self.model_schema_file, self.model_schema)
             item['_id'] = item[self.model_identifier]
             items.append(item)
-        self.connection.insert_many(items)
+        insert_result = self.connection.insert_many(items, **kwargs.get('params', {}))
         super().publish('batch_create', items, **kwargs)
-        return items
+        return insert_result
 
     def read(self, **kwargs):
         if kwargs.get('operation') == 'query':
@@ -73,6 +73,9 @@ class MongoAdapter(BaseAdapter):
     def find(self, **kwargs):
         results = self.connection.find(kwargs['query'], **kwargs.get('params', {}))
         return list(results)
+
+    def count(self, **kwargs):
+        return self.connection.count_documents(kwargs.get('query', {}), **kwargs.get('params', {}))
 
     def update(self, **kwargs):
         original_data = self.find_one(**kwargs)
@@ -99,5 +102,11 @@ class MongoAdapter(BaseAdapter):
     def delete(self, **kwargs):
         data = self.find_one(**kwargs)
         result = self.connection.delete_one(kwargs['query'])
+        super().publish('delete', data, **kwargs)
+        return result
+
+    def delete_many(self, **kwargs):
+        data = self.find_one(**kwargs)
+        result = self.connection.delete_many(kwargs['query'])
         super().publish('delete', data, **kwargs)
         return result
