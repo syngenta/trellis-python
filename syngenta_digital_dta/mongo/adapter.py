@@ -46,7 +46,7 @@ class MongoAdapter(BaseAdapter):
             item = schema_mapper.map_to_schema(item, self.model_schema_file, self.model_schema)
             item['_id'] = item[self.model_identifier]
             items.append(item)
-        self.connection.insert_many(items)
+        self.__collection.insert_many(items)
         super().publish('batch_create', items, **kwargs)
         return items
 
@@ -65,7 +65,7 @@ class MongoAdapter(BaseAdapter):
         return self.__collection.find_one(kwargs['query'])
 
     def find(self, **kwargs):
-        results = self.connection.find(kwargs['query'], **kwargs.get('params', {}))
+        results = self.__collection.find(kwargs['query'], **kwargs.get('params', {}))
         return list(results)
 
     def update(self, **kwargs):
