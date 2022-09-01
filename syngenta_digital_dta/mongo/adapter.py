@@ -46,7 +46,7 @@ class MongoAdapter(BaseAdapter):
         super().publish('create', data, **kwargs)
         return data
 
-    def __map_documents(self, kwargs):
+    def __map_documents(self, **kwargs):
         items = []
         for item in kwargs['data']:
             item = schema_mapper.map_to_schema(item, self.model_schema_file, self.model_schema)
@@ -55,13 +55,13 @@ class MongoAdapter(BaseAdapter):
         return items
 
     def batch_create(self, **kwargs):
-        items = self.__map_documents(kwargs)
+        items = self.__map_documents(**kwargs)
         insert_result = self.connection.insert_many(items, **kwargs.get('params', {}))
         super().publish('batch_create', items, **kwargs)
         return insert_result
 
     def batch_upsert(self, **kwargs):
-        items = self.__map_documents(kwargs)
+        items = self.__map_documents(**kwargs)
 
         bulk_operations = [
             operations.ReplaceOne(filter={'_id': item['_id']}, replacement=item, upsert=True) for item in items
@@ -120,7 +120,17 @@ class MongoAdapter(BaseAdapter):
         return result
 
     def delete_many(self, **kwargs):
-        data = self.find_one(**kwargs)
+        data = self.find(**kwargs)
         result = self.connection.delete_many(kwargs['query'])
         super().publish('delete_many', data, **kwargs)
         return result
+
+    def batch_delete(self, **kwargs):
+        items = self.__map_documents(**kwargs)
+        bulk_operations = []
+        for item in items:
+            bulk_operations.append(operations.DeleteOne(filter={'_id': item['_id']}))
+
+        results = self.connection.bulk_write(bulk_operations, **kwargs.get('params', {}))
+        super().publish('batch_delete', items, **kwargs)
+        return results
