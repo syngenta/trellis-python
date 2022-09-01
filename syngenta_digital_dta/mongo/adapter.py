@@ -46,13 +46,11 @@ class MongoAdapter(BaseAdapter):
             item = schema_mapper.map_to_schema(item, self.__model_schema_file, self.__model_schema)
             item['_id'] = item[self.__model_identifier]
             items.append(item)
-        self.__collection.insert_many(items)
-        super().publish('batch_create', items, **kwargs)
         return items
 
     def batch_create(self, **kwargs):
         items = self.__map_documents(**kwargs)
-        insert_result = self.connection.insert_many(items, **kwargs.get('params', {}))
+        insert_result = self.__collection.insert_many(items, **kwargs.get('params', {}))
         super().publish('batch_create', items, **kwargs)
         return insert_result
 
@@ -63,7 +61,7 @@ class MongoAdapter(BaseAdapter):
             operations.ReplaceOne(filter={'_id': item['_id']}, replacement=item, upsert=True) for item in items
         ]
         super().publish('batch_upsert', items, **kwargs)
-        return self.connection.bulk_write(bulk_operations, **kwargs.get('params', {}))
+        return self.__collection.bulk_write(bulk_operations, **kwargs.get('params', {}))
 
     def read(self, **kwargs):
         if kwargs.get('operation') == 'query':
@@ -84,7 +82,7 @@ class MongoAdapter(BaseAdapter):
         return list(results)
 
     def count(self, **kwargs):
-        return self.connection.count_documents(kwargs.get('query', {}), **kwargs.get('params', {}))
+        return self.__collection.count_documents(kwargs.get('query', {}), **kwargs.get('params', {}))
 
     def update(self, **kwargs):
         original_data = self.find_one(**kwargs)
@@ -116,7 +114,7 @@ class MongoAdapter(BaseAdapter):
 
     def delete_many(self, **kwargs):
         data = self.find(**kwargs)
-        result = self.connection.delete_many(kwargs['query'])
+        result = self.__collection.delete_many(kwargs['query'])
         super().publish('delete_many', data, **kwargs)
         return result
 
@@ -126,6 +124,6 @@ class MongoAdapter(BaseAdapter):
         for item in items:
             bulk_operations.append(operations.DeleteOne(filter={'_id': item['_id']}))
 
-        results = self.connection.bulk_write(bulk_operations, **kwargs.get('params', {}))
+        results = self.__collection.bulk_write(bulk_operations, **kwargs.get('params', {}))
         super().publish('batch_delete', items, **kwargs)
         return results
