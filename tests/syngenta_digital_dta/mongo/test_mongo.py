@@ -37,12 +37,29 @@ class MongoAdapterTest(unittest.TestCase):
 
     def test_batch_create_succeed(self):
         data = mock_data.get_items()
-        result = self.adapter.batch_create(data=data)
-        for item in result:
-            item.pop('_id')
-        self.assertListEqual(result, data)
-        for item in result:
+        insert_result = self.adapter.batch_create(data=data)
+
+        for item in data:
             self.adapter.delete(query={'test_id': item['test_id']})
+
+        self.assertEqual(len(insert_result.inserted_ids), len(data))
+
+    def test_batch_upsert_succeed(self):
+        data = mock_data.get_items()
+
+        insert_result = self.adapter.batch_create(data=data)
+        for item in data:
+            item['test_query_id'] = 'update_query_id'
+
+        batch_upsert_result = self.adapter.batch_upsert(data=data)
+
+        results = self.adapter.find(query={'test_query_id': 'update_query_id'})
+        for item in data:
+            self.adapter.delete(query={'test_id': item['test_id']})
+
+        affected_documents_count = batch_upsert_result.inserted_count + batch_upsert_result.modified_count + batch_upsert_result.upserted_count
+
+        self.assertTrue(len(results) == len(data) and affected_documents_count == len(data))
 
     def test_create_fail_non_unique(self):
         data = mock_data.get_standard()
@@ -98,10 +115,34 @@ class MongoAdapterTest(unittest.TestCase):
             data['test_query_id'] = 'some-query'
             self.adapter.create(data=data)
             count += 1
-        results = self.adapter.read(query={'test_query_id': 'some-query'}, operation='query', params={'skip': 5, 'limit': 5})
-        for result in results:
-            self.adapter.delete(query={'test_id': result['test_id']})  # clean up
+        results = self.adapter.read(query={'test_query_id': 'some-query'}, operation='query',
+                                    params={'skip': 5, 'limit': 5})
+        result = self.adapter._MongoAdapter__collection.delete_many({'test_query_id': 'some-query'}) # clean up
         self.assertEqual(len(results), 5)
+
+    def test_count(self):
+        data = mock_data.get_items()
+        count_before = self.adapter.count()
+        self.adapter.batch_create(data=data)
+        count_after = self.adapter.count()
+
+        # cleanup
+        for item in data:
+            self.adapter.delete(query={'test_id': item['test_id']})
+
+        self.assertEqual(count_after - count_before, 2)
+
+    def test_count_query(self):
+        data = mock_data.get_items()
+        self.adapter.batch_create(data=data)
+        test_id = data[0]['test_id']
+        count = self.adapter.count(query={'test_id': test_id})
+
+        # cleanup
+        for item in data:
+            self.adapter.delete(query={'test_id': item['test_id']})
+
+        self.assertEqual(count, 1)
 
     def test_update_success(self):
         data = mock_data.get_standard()

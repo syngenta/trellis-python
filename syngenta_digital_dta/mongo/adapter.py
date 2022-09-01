@@ -1,6 +1,6 @@
 from functools import lru_cache
 
-from pymongo import MongoClient
+from pymongo import MongoClient, operations
 
 from syngenta_digital_dta.common.base_adapter import BaseAdapter
 from syngenta_digital_dta.common import dict_merger
@@ -40,15 +40,28 @@ class MongoAdapter(BaseAdapter):
         super().publish('create', data, **kwargs)
         return data
 
-    def batch_create(self, **kwargs):
+    def __map_documents(self, **kwargs):
         items = []
         for item in kwargs['data']:
             item = schema_mapper.map_to_schema(item, self.__model_schema_file, self.__model_schema)
             item['_id'] = item[self.__model_identifier]
             items.append(item)
-        self.__collection.insert_many(items)
-        super().publish('batch_create', items, **kwargs)
         return items
+
+    def batch_create(self, **kwargs):
+        items = self.__map_documents(**kwargs)
+        insert_result = self.__collection.insert_many(items, **kwargs.get('params', {}))
+        super().publish('batch_create', items, **kwargs)
+        return insert_result
+
+    def batch_upsert(self, **kwargs):
+        items = self.__map_documents(**kwargs)
+
+        bulk_operations = [
+            operations.ReplaceOne(filter={'_id': item['_id']}, replacement=item, upsert=True) for item in items
+        ]
+        super().publish('batch_upsert', items, **kwargs)
+        return self.__collection.bulk_write(bulk_operations, **kwargs.get('params', {}))
 
     def read(self, **kwargs):
         if kwargs.get('operation') == 'query':
@@ -67,6 +80,9 @@ class MongoAdapter(BaseAdapter):
     def find(self, **kwargs):
         results = self.__collection.find(kwargs['query'], **kwargs.get('params', {}))
         return list(results)
+
+    def count(self, **kwargs):
+        return self.__collection.count_documents(kwargs.get('query', {}), **kwargs.get('params', {}))
 
     def update(self, **kwargs):
         original_data = self.find_one(**kwargs)
@@ -95,3 +111,13 @@ class MongoAdapter(BaseAdapter):
         result = self.__collection.delete_one(kwargs['query'])
         super().publish('delete', data, **kwargs)
         return result
+
+    def batch_delete(self, **kwargs):
+        items = self.__map_documents(**kwargs)
+        bulk_operations = []
+        for item in items:
+            bulk_operations.append(operations.DeleteOne(filter={'_id': item['_id']}))
+
+        results = self.__collection.bulk_write(bulk_operations, **kwargs.get('params', {}))
+        super().publish('batch_delete', items, **kwargs)
+        return results
