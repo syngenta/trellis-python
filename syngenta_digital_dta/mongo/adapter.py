@@ -66,7 +66,7 @@ class MongoAdapter(BaseAdapter):
         bulk_operations = [
             operations.ReplaceOne(filter={"_id": item["_id"]}, replacement=item, upsert=True) for item in items
         ]
-
+        super().publish('batch_upsert', items, **kwargs)
         return self.connection.bulk_write(bulk_operations, **kwargs.get('params', {}))
 
     def read(self, **kwargs):
