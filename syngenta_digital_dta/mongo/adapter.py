@@ -1,6 +1,6 @@
 from functools import lru_cache
 
-from pymongo import MongoClient
+from pymongo import MongoClient, operations
 
 from syngenta_digital_dta.common.base_adapter import BaseAdapter
 from syngenta_digital_dta.common import dict_merger
@@ -46,15 +46,28 @@ class MongoAdapter(BaseAdapter):
         super().publish('create', data, **kwargs)
         return data
 
-    def batch_create(self, **kwargs):
+    def __map_documents(self, kwargs):
         items = []
         for item in kwargs['data']:
             item = schema_mapper.map_to_schema(item, self.model_schema_file, self.model_schema)
             item['_id'] = item[self.model_identifier]
             items.append(item)
+        return items
+
+    def batch_create(self, **kwargs):
+        items = self.__map_documents(kwargs)
         insert_result = self.connection.insert_many(items, **kwargs.get('params', {}))
         super().publish('batch_create', items, **kwargs)
         return insert_result
+
+    def batch_upsert(self, **kwargs):
+        items = self.__map_documents(kwargs)
+
+        bulk_operations = [
+            operations.ReplaceOne(filter={"_id": item["_id"]}, replacement=item, upsert=True) for item in items
+        ]
+
+        return self.connection.bulk_write(bulk_operations, **kwargs.get('params', {}))
 
     def read(self, **kwargs):
         if kwargs.get('operation') == 'query':
@@ -63,7 +76,8 @@ class MongoAdapter(BaseAdapter):
 
     def query(self, **kwargs):
         if kwargs['operation'] not in self.__allowed_queries:
-            raise Exception('query method is for read-only operations; please use another function for destructive operations')
+            raise Exception(
+                'query method is for read-only operations; please use another function for destructive operations')
         query = getattr(self.connection, kwargs['operation'])
         return query(kwargs['query'])
 

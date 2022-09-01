@@ -44,6 +44,23 @@ class MongoAdapterTest(unittest.TestCase):
 
         self.assertEqual(len(insert_result.inserted_ids), len(data))
 
+    def test_batch_upsert_succeed(self):
+        data = mock_data.get_items()
+
+        insert_result = self.adapter.batch_create(data=data)
+        for item in data:
+            item['test_query_id'] = 'update_query_id'
+
+        batch_upsert_result = self.adapter.batch_upsert(data=data)
+
+        results = self.adapter.find(query={'test_query_id': 'update_query_id'})
+        for item in data:
+            self.adapter.delete(query={'test_id': item['test_id']})
+
+        affected_documents_count = batch_upsert_result.inserted_count + batch_upsert_result.modified_count + batch_upsert_result.upserted_count
+
+        self.assertTrue(len(results) == len(data) and affected_documents_count == len(data))
+
     def test_create_fail_non_unique(self):
         data = mock_data.get_standard()
         data['test_id'] = 'fail-non-unique'
