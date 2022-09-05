@@ -55,13 +55,23 @@ class MongoAdapter(BaseAdapter):
         return insert_result
 
     def batch_upsert(self, **kwargs):
-        items = self.__map_documents(**kwargs)
+        data = kwargs['data']
+        batch_size = kwargs.get('batch_size', 25)
 
-        bulk_operations = [
-            operations.ReplaceOne(filter={'_id': item['_id']}, replacement=item, upsert=True) for item in items
-        ]
-        super().publish('batch_upsert', items, **kwargs)
-        return self.__collection.bulk_write(bulk_operations, **kwargs.get('params', {}))
+        if not isinstance(data, list):
+            raise Exception('Batched data must be contained within a list')
+
+        batched_data = (data[pos:pos + batch_size] for pos in range(0, len(data), batch_size))
+        results = []
+        for items in batched_data:
+            bulk_operations = [
+                operations.ReplaceOne(filter={'_id': item[self.__model_identifier]}, replacement=item, upsert=True) for item in items
+            ]
+            batch_results = self.__collection.bulk_write(bulk_operations, **kwargs.get('params', {}))
+            results.append(batch_results)
+
+        super().publish('batch_upsert', data, **kwargs)
+        return results
 
     def read(self, **kwargs):
         if kwargs.get('operation') == 'query':
@@ -70,7 +80,8 @@ class MongoAdapter(BaseAdapter):
 
     def query(self, **kwargs):
         if kwargs['operation'] not in self.__allowed_queries:
-            raise Exception('query method is for read-only operations; please use another function for destructive operations')
+            raise Exception(
+                'query method is for read-only operations; please use another function for destructive operations')
         query = getattr(self.__collection, kwargs['operation'])
         return query(kwargs['query'])
 
