@@ -57,7 +57,7 @@ class MongoAdapterTest(unittest.TestCase):
         for item in data:
             self.adapter.delete(query={'test_id': item['test_id']})
 
-        affected_documents_count = batch_upsert_result.inserted_count + batch_upsert_result.modified_count + batch_upsert_result.upserted_count
+        affected_documents_count = batch_upsert_result[0].inserted_count + batch_upsert_result[0].modified_count + batch_upsert_result[0].upserted_count
 
         self.assertTrue(len(results) == len(data) and affected_documents_count == len(data))
 
