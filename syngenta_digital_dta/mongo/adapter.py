@@ -69,8 +69,8 @@ class MongoAdapter(BaseAdapter):
             ]
             batch_results = self.__collection.bulk_write(bulk_operations, **kwargs.get('params', {}))
             results.append(batch_results)
+            super().publish('batch_upsert', items, **kwargs)
 
-        super().publish('batch_upsert', data, **kwargs)
         return results
 
     def read(self, **kwargs):
