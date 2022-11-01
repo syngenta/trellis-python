@@ -9,7 +9,7 @@ python_version = "3.8.6"
 [packages]
 aws-psycopg2 = "*"
 boto3 = "*"
-elasticsearch = "==7.13.4"
+elasticsearch = "==8.4.3"
 jsonref = "*"
 jsonpickle = "*"
 pymongo = {extras = ["srv"], version = "*"}
