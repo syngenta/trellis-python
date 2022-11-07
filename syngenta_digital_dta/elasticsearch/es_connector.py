@@ -26,7 +26,7 @@ class ESConnector:
         elif not self.port and not self.local:
             self.port = 443
         config = {
-            'hosts':[
+            'hosts': [
                 {
                     'host': self.host,
                     'port': self.port
@@ -34,7 +34,8 @@ class ESConnector:
             ],
             'use_ssl': not self.local,
             'verify_certs': not self.local,
-            'connection_class': RequestsHttpConnection
+            'connection_class': RequestsHttpConnection,
+            "timeout": 30
         }
         if self.authentication == 'lambda':
             config['http_auth'] = self.__authenticate_lambda()
