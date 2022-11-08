@@ -57,5 +57,5 @@ class ESConnectorTest(unittest.TestCase):
             connection_class=mock.ANY,
             timeout=30,
             request_timeout=30,
-            http_auth=('user', 'pasword')
+            http_auth=('user', 'password')
         )
