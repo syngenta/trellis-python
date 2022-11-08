@@ -35,7 +35,8 @@ class ESConnector:
             'use_ssl': not self.local,
             'verify_certs': not self.local,
             'connection_class': RequestsHttpConnection,
-            'request_timeout': 30
+            'timeout': 30,  # Amount of time to wait to collect info on all nodes
+            'request_timeout': 30  # Amount of time to wait for an HTTP response to start
         }
         if self.authentication == 'lambda':
             config['http_auth'] = self.__authenticate_lambda()
