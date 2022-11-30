@@ -21,7 +21,7 @@ class DynamoDBAdapterTest(unittest.TestCase):
             table=TABLE_NAME,
             endpoint='http://localhost:4000',
             model_schema='test-dynamo-model',
-            model_schema_file='tests/openapi.yml',
+            model_schema_file='../../../tests/openapi.yml',
             model_identifier='test_id',
             model_version_key='modified'
         )
@@ -96,7 +96,7 @@ class DynamoDBAdapterTest(unittest.TestCase):
             }
         )
 
-        passed = data['Items'][0] == self.mock_table.mock_data and data.get('LastEvaluatedKey')
+        passed = data[0]['Items'][0] == self.mock_table.mock_data and data[0].get('LastEvaluatedKey')
         self.assertTrue(passed)
 
     def test_adapter_scan(self):
@@ -106,7 +106,7 @@ class DynamoDBAdapterTest(unittest.TestCase):
     def test_adapter_raw_scan(self):
         data = self.adapter.scan(**{'raw_scan': True})
         print(data)
-        self.assertDictEqual(data['Items'][0], self.mock_table.mock_data)
+        self.assertDictEqual(data[0]['Items'][0], self.mock_table.mock_data)
 
     def test_adapter_create(self):
         new_data = {

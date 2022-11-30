@@ -1,10 +1,10 @@
+import typing
 from functools import lru_cache
 
 import boto3
 from boto3.dynamodb.conditions import Attr
-
-from syngenta_digital_dta.common import schema_mapper
 from syngenta_digital_dta.common import dict_merger
+from syngenta_digital_dta.common import schema_mapper
 from syngenta_digital_dta.common.base_adapter import BaseAdapter
 
 
@@ -38,18 +38,41 @@ class DynamodbAdapter(BaseAdapter):
             return self.scan(**kwargs)
         return self.get(**kwargs)
 
+    def paginate(self, func, query) -> typing.List[typing.Dict]:
+        data = []
+        response = func(**query)
+        data.append(response)
+
+        while 'LastEvaluatedKey' in response:
+            query['ExclusiveStartKey'] = response['LastEvaluatedKey']
+            response = func(**query)
+            data.append(response)
+
+        return data
+
+    @staticmethod
+    def __flatten_items(raw_results):
+        results = []
+        for result in raw_results:
+            results.extend(result.get('Items', []))
+        return results
+
     def scan(self, **kwargs):
+        raw_results = self.paginate(func=self.table.scan, query=kwargs.get('query', {}))
         if kwargs.get('raw_scan'):
-            return self.table.scan(**kwargs.get('query', {}))
-        return self.table.scan(**kwargs.get('query', {})).get('Items', [])
+            return raw_results
+        else:
+            return self.__flatten_items(raw_results)
 
     def get(self, **kwargs):
         return self.table.get_item(**kwargs.get('query', {})).get('Item', {})
 
     def query(self, **kwargs):
+        raw_results = self.paginate(func=self.table.query, query=kwargs.get('query', {}))
         if kwargs.get('raw_query'):
-            return self.table.query(**kwargs.get('query', {}))
-        return self.table.query(**kwargs.get('query', {})).get('Items', [])
+            return raw_results
+        else:
+            return self.__flatten_items(raw_results)
 
     def overwrite(self, **kwargs):
         overwrite_item = schema_mapper.map_to_schema(kwargs['data'], self.model_schema_file, self.model_schema)
@@ -96,7 +119,8 @@ class DynamodbAdapter(BaseAdapter):
         original_data = self._get_original_data(**kwargs)
         merged_data = dict_merger.merge(original_data, kwargs['data'], **kwargs)
         updated_data = schema_mapper.map_to_schema(merged_data, self.model_schema_file, self.model_schema)
-        self.table.put_item(Item=updated_data, ConditionExpression=Attr(self.model_version_key).eq(original_data[self.model_version_key]))
+        self.table.put_item(Item=updated_data,
+                            ConditionExpression=Attr(self.model_version_key).eq(original_data[self.model_version_key]))
         super().publish('update', updated_data, **kwargs)
         return updated_data
 
