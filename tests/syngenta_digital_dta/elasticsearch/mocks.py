@@ -160,6 +160,14 @@ def get_mapping(company_name_type = 'text'):
                 'type': 'text'
             },
             'details': {
+                'properties': {
+                    'details_name': {
+                        'type': 'text'
+                    },
+                    'details_value': {
+                        'type': 'text'
+                    }
+                },
                 'type': 'nested'
             }
         }
