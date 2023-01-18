@@ -21,6 +21,7 @@ class DynamodbAdapter(BaseAdapter):
         self.model_schema = kwargs['model_schema']
         self.model_identifier = kwargs['model_identifier']
         self.model_version_key = kwargs['model_version_key']
+        self.default_limit = kwargs.get('default_limit', 100)
 
     @lru_cache(maxsize=128)
     def _get_dynamo_table(self, table, endpoint=None):
@@ -38,15 +39,19 @@ class DynamodbAdapter(BaseAdapter):
             return self.scan(**kwargs)
         return self.get(**kwargs)
 
-    def paginate(self, func, query) -> typing.List[typing.Dict]:
+    def paginate(self, func: typing.Callable, query: typing.Dict) -> typing.List[typing.Dict]:
+        if 'Limit' not in query:
+            query['Limit'] = self.default_limit
+
         data = []
         response = func(**query)
         data.append(response)
 
-        while 'LastEvaluatedKey' in response:
+        while 'LastEvaluatedKey' in response and query['Limit'] != 0:
             query['ExclusiveStartKey'] = response['LastEvaluatedKey']
             response = func(**query)
             data.append(response)
+            query['Limit'] -= len(response['Items'])
 
         return data
 

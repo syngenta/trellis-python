@@ -1,8 +1,6 @@
 import unittest
 import warnings
 
-import boto3
-
 import syngenta_digital_dta
 from tests.syngenta_digital_dta.dynamodb.mock_table import MockTable
 from syngenta_digital_dta.dynamodb.adapter import BatchItemException
@@ -21,7 +19,7 @@ class DynamoDBAdapterTest(unittest.TestCase):
             table=TABLE_NAME,
             endpoint='http://localhost:4000',
             model_schema='test-dynamo-model',
-            model_schema_file='tests/openapi.yml',
+            model_schema_file='../../../tests/openapi.yml',
             model_identifier='test_id',
             model_version_key='modified'
         )
@@ -105,7 +103,6 @@ class DynamoDBAdapterTest(unittest.TestCase):
 
     def test_adapter_raw_scan(self):
         data = self.adapter.scan(**{'raw_scan': True})
-        print(data)
         self.assertDictEqual(data[0]['Items'][0], self.mock_table.mock_data)
 
     def test_adapter_create(self):
