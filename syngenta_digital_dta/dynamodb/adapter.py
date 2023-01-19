@@ -1,10 +1,11 @@
+import typing
 from functools import lru_cache
 
 import boto3
 from boto3.dynamodb.conditions import Attr
-import typing
-from syngenta_digital_dta.common import schema_mapper
+
 from syngenta_digital_dta.common import dict_merger
+from syngenta_digital_dta.common import schema_mapper
 from syngenta_digital_dta.common.base_adapter import BaseAdapter
 
 
@@ -21,7 +22,7 @@ class DynamodbAdapter(BaseAdapter):
         self.model_schema = kwargs['model_schema']
         self.model_identifier = kwargs['model_identifier']
         self.model_version_key = kwargs['model_version_key']
-        self.default_limit = kwargs.get("limit", 100)
+        self.default_limit = kwargs.get('limit', 100)
 
     @lru_cache(maxsize=128)
     def _get_dynamo_table(self, table, endpoint=None):
@@ -68,8 +69,7 @@ class DynamodbAdapter(BaseAdapter):
         raw_results = self.paginate(func=self.table.scan, query=kwargs.get('query', {}))
         if kwargs.get('raw_scan'):
             return raw_results
-        else:
-            return self.__flatten_items(raw_results)
+        return self.__flatten_items(raw_results)
 
     def get(self, **kwargs):
         return self.table.get_item(**kwargs.get('query', {})).get('Item', {})
@@ -78,8 +78,7 @@ class DynamodbAdapter(BaseAdapter):
         raw_results = self.paginate(func=self.table.query, query=kwargs.get('query', {}))
         if kwargs.get('raw_query'):
             return raw_results
-        else:
-            return self.__flatten_items(raw_results)
+        return self.__flatten_items(raw_results)
 
     def overwrite(self, **kwargs):
         overwrite_item = schema_mapper.map_to_schema(kwargs['data'], self.model_schema_file, self.model_schema)
@@ -126,7 +125,8 @@ class DynamodbAdapter(BaseAdapter):
         original_data = self._get_original_data(**kwargs)
         merged_data = dict_merger.merge(original_data, kwargs['data'], **kwargs)
         updated_data = schema_mapper.map_to_schema(merged_data, self.model_schema_file, self.model_schema)
-        self.table.put_item(Item=updated_data, ConditionExpression=Attr(self.model_version_key).eq(original_data[self.model_version_key]))
+        self.table.put_item(Item=updated_data,
+                            ConditionExpression=Attr(self.model_version_key).eq(original_data[self.model_version_key]))
         super().publish('update', updated_data, **kwargs)
         return updated_data
 
