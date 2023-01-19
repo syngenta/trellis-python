@@ -133,7 +133,6 @@ class DynamoDBAdapterTest(unittest.TestCase):
         item_list = {'data': [{'test_id': str(x), 'test_query_id': str(x)} for x in range(100)]}
         self.adapter.batch_insert(**item_list)
         data = self.adapter.scan()
-        print(len(data))
         self.assertTrue(len(data) == 101)  # Table comes initialized with one test record
 
     def test_adapter_batch_insert_fail(self):
