@@ -638,7 +638,6 @@ result = self.adapter.update(query={'test_id': data['test_id']}, data=data, upda
 self.adapter.delete(query={'test_id': data['test_id']})
 ```
 
-
 ## Contributing
 If you would like to contribute please make sure to follow the established patterns and unit test your code:
 
