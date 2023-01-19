@@ -1,9 +1,10 @@
 import unittest
 import warnings
+from unittest import mock
 
 import syngenta_digital_dta
-from tests.syngenta_digital_dta.dynamodb.mock_table import MockTable
 from syngenta_digital_dta.dynamodb.adapter import BatchItemException
+from tests.syngenta_digital_dta.dynamodb.mock_table import MockTable
 
 
 class DynamoDBAdapterTest(unittest.TestCase):
@@ -19,9 +20,10 @@ class DynamoDBAdapterTest(unittest.TestCase):
             table=TABLE_NAME,
             endpoint='http://localhost:4000',
             model_schema='test-dynamo-model',
-            model_schema_file='../../../tests/openapi.yml',
+            model_schema_file='tests/openapi.yml',
             model_identifier='test_id',
-            model_version_key='modified'
+            model_version_key='modified',
+            limit=200
         )
 
     def test_init(self):
@@ -268,3 +270,113 @@ class DynamoDBAdapterTest(unittest.TestCase):
             }
         )
         self.assertDictEqual(deleted_data, {})
+
+    def test_query_pagination(self):
+        self.adapter.table = mock.MagicMock()
+        self.adapter.table.query.side_effect = self.mock_table.mock_pagination_data
+
+        data = self.adapter.query()
+
+        self.adapter.table.query.assert_has_calls(
+            calls=[
+                mock.call(Limit=200),
+                mock.call(Limit=199, ExclusiveStartKey={'somekey': 'somevalue'})
+            ]
+        )
+
+        self.assertListEqual(
+            [
+                {
+                    'array_number': [1, 2, 3],
+                    'array_objects': [
+                        {'array_number_key': 1, 'array_string_key': 'a'}
+                    ],
+                    'created': '2020-10-05',
+                    'modified': '2020-10-05',
+                    'object_key': {'string_key': 'nothing'},
+                    'test_id': 'abc123',
+                    'test_query_id': 'def345'},
+                {
+                    'array_number': [1, 2, 3],
+                    'array_objects': [
+                        {'array_number_key': 1, 'array_string_key': 'a'}
+                    ],
+                    'created': '2020-10-05',
+                    'modified': '2020-10-05',
+                    'object_key': {'string_key': 'nothing'},
+                    'test_id': 'abc123',
+                    'test_query_id': 'def345'
+                }
+            ],
+            data
+        )
+
+    def test_raw_query_pagination(self):
+        self.adapter.table = mock.MagicMock()
+        self.adapter.table.query.side_effect = self.mock_table.mock_pagination_data
+
+        data = self.adapter.query(raw_query=True)
+
+        self.adapter.table.query.assert_has_calls(
+            calls=[
+                mock.call(Limit=200),
+                mock.call(Limit=199, ExclusiveStartKey={'somekey': 'somevalue'})
+            ]
+        )
+
+        self.assertListEqual(self.mock_table.mock_pagination_data, data)
+
+    def test_scan_pagination(self):
+        self.adapter.table = mock.MagicMock()
+        self.adapter.table.scan.side_effect = self.mock_table.mock_pagination_data
+
+        data = self.adapter.scan()
+
+        self.adapter.table.scan.assert_has_calls(
+            calls=[
+                mock.call(Limit=200),
+                mock.call(Limit=199, ExclusiveStartKey={'somekey': 'somevalue'})
+            ]
+        )
+
+        self.assertListEqual(
+            [
+                {
+                    'array_number': [1, 2, 3],
+                    'array_objects': [
+                        {'array_number_key': 1, 'array_string_key': 'a'}
+                    ],
+                    'created': '2020-10-05',
+                    'modified': '2020-10-05',
+                    'object_key': {'string_key': 'nothing'},
+                    'test_id': 'abc123',
+                    'test_query_id': 'def345'},
+                {
+                    'array_number': [1, 2, 3],
+                    'array_objects': [
+                        {'array_number_key': 1, 'array_string_key': 'a'}
+                    ],
+                    'created': '2020-10-05',
+                    'modified': '2020-10-05',
+                    'object_key': {'string_key': 'nothing'},
+                    'test_id': 'abc123',
+                    'test_query_id': 'def345'
+                }
+            ],
+            data
+        )
+
+    def test_raw_scan_pagination(self):
+        self.adapter.table = mock.MagicMock()
+        self.adapter.table.scan.side_effect = self.mock_table.mock_pagination_data
+
+        data = self.adapter.scan(raw_scan=True)
+
+        self.adapter.table.scan.assert_has_calls(
+            calls=[
+                mock.call(Limit=200),
+                mock.call(Limit=199, ExclusiveStartKey={'somekey': 'somevalue'})
+            ]
+        )
+
+        self.assertListEqual(self.mock_table.mock_pagination_data, data)

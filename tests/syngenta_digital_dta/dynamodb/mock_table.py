@@ -22,6 +22,11 @@ class MockTable():
             'modified': '2020-10-05'
         }
 
+        self.mock_pagination_data = [
+            {'Items': [self.mock_data], 'LastEvaluatedKey': {'somekey': 'somevalue'}},
+            {'Items': [self.mock_data]}
+        ]
+
     def setup_test_table(self):
         self.clear_table()
         self.create_table()
