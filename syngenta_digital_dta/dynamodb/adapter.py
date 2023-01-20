@@ -41,8 +41,7 @@ class DynamodbAdapter(BaseAdapter):
         return self.get(**kwargs)
 
     def paginate(self, func: typing.Callable, query: typing.Dict) -> typing.List[typing.Dict]:
-        if 'Limit' not in query:
-            query['Limit'] = self.default_limit
+        query['Limit'] = query.get('Limit') or self.default_limit
 
         data = []
         response = func(**query)
