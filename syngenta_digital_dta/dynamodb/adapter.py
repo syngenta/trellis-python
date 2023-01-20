@@ -22,7 +22,6 @@ class DynamodbAdapter(BaseAdapter):
         self.model_schema = kwargs['model_schema']
         self.model_identifier = kwargs['model_identifier']
         self.model_version_key = kwargs['model_version_key']
-        self.default_limit = kwargs.get('limit', 100)
 
     @lru_cache(maxsize=128)
     def _get_dynamo_table(self, table, endpoint=None):
