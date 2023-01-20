@@ -14,7 +14,6 @@ class BatchItemException(Exception):
 
 
 class DynamodbAdapter(BaseAdapter):
-    no_limit = 100_000_000_000_000
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -23,7 +22,6 @@ class DynamodbAdapter(BaseAdapter):
         self.model_schema = kwargs['model_schema']
         self.model_identifier = kwargs['model_identifier']
         self.model_version_key = kwargs['model_version_key']
-        self.default_limit = kwargs.get('limit', self.no_limit)
 
     @lru_cache(maxsize=128)
     def _get_dynamo_table(self, table, endpoint=None):
@@ -42,21 +40,30 @@ class DynamodbAdapter(BaseAdapter):
         return self.get(**kwargs)
 
     def paginate(self, func: typing.Callable, query: typing.Dict) -> typing.List[typing.Dict]:
-        query['Limit'] = query.get('Limit') or self.default_limit
-
-        data = []
-        response = func(**query)
-        data.append(response)
-
-        query['Limit'] -= len(response['Items'])
-
-        while 'LastEvaluatedKey' in response and query['Limit'] != 0:
-            query['ExclusiveStartKey'] = response['LastEvaluatedKey']
+        if query.get('Limit'):
+            data = []
             response = func(**query)
             data.append(response)
             query['Limit'] -= len(response['Items'])
 
+            while 'LastEvaluatedKey' in response and query['Limit'] != 0:
+                query['ExclusiveStartKey'] = response['LastEvaluatedKey']
+                response = func(**query)
+                data.append(response)
+                query['Limit'] -= len(response['Items'])
+
+        else:
+            query.pop('Limit', None)
+            data = []
+            response = func(**query)
+            data.append(response)
+            while 'LastEvaluatedKey' in response:
+                query['ExclusiveStartKey'] = response['LastEvaluatedKey']
+                response = func(**query)
+                data.append(response)
+
         return data
+
 
     @staticmethod
     def __flatten_items(raw_results):
