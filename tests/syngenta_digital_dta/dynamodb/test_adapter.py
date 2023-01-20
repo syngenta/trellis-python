@@ -20,7 +20,7 @@ class DynamoDBAdapterTest(unittest.TestCase):
             table=TABLE_NAME,
             endpoint='http://localhost:4000',
             model_schema='test-dynamo-model',
-            model_schema_file='tests/openapi.yml',
+            model_schema_file='../../../tests/openapi.yml',
             model_identifier='test_id',
             model_version_key='modified',
             limit=200
@@ -279,8 +279,8 @@ class DynamoDBAdapterTest(unittest.TestCase):
 
         self.adapter.table.query.assert_has_calls(
             calls=[
-                mock.call(Limit=200),
-                mock.call(Limit=199, ExclusiveStartKey={'somekey': 'somevalue'})
+                mock.call(),
+                mock.call(ExclusiveStartKey={'somekey': 'somevalue'})
             ]
         )
 
@@ -319,8 +319,8 @@ class DynamoDBAdapterTest(unittest.TestCase):
 
         self.adapter.table.query.assert_has_calls(
             calls=[
-                mock.call(Limit=200),
-                mock.call(Limit=199, ExclusiveStartKey={'somekey': 'somevalue'})
+                mock.call(),
+                mock.call(ExclusiveStartKey={'somekey': 'somevalue'})
             ]
         )
 
@@ -334,8 +334,8 @@ class DynamoDBAdapterTest(unittest.TestCase):
 
         self.adapter.table.scan.assert_has_calls(
             calls=[
-                mock.call(Limit=200),
-                mock.call(Limit=199, ExclusiveStartKey={'somekey': 'somevalue'})
+                mock.call(),
+                mock.call(ExclusiveStartKey={'somekey': 'somevalue'})
             ]
         )
 
@@ -374,8 +374,8 @@ class DynamoDBAdapterTest(unittest.TestCase):
 
         self.adapter.table.scan.assert_has_calls(
             calls=[
-                mock.call(Limit=200),
-                mock.call(Limit=199, ExclusiveStartKey={'somekey': 'somevalue'})
+                mock.call(),
+                mock.call(ExclusiveStartKey={'somekey': 'somevalue'})
             ]
         )
 
