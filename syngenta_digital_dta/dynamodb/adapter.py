@@ -2,7 +2,7 @@ from functools import lru_cache
 
 import boto3
 from boto3.dynamodb.conditions import Attr
-
+import typing
 from syngenta_digital_dta.common import schema_mapper
 from syngenta_digital_dta.common import dict_merger
 from syngenta_digital_dta.common.base_adapter import BaseAdapter
@@ -21,6 +21,7 @@ class DynamodbAdapter(BaseAdapter):
         self.model_schema = kwargs['model_schema']
         self.model_identifier = kwargs['model_identifier']
         self.model_version_key = kwargs['model_version_key']
+        self.default_limit = kwargs.get("limit", 100)
 
     @lru_cache(maxsize=128)
     def _get_dynamo_table(self, table, endpoint=None):
@@ -38,18 +39,47 @@ class DynamodbAdapter(BaseAdapter):
             return self.scan(**kwargs)
         return self.get(**kwargs)
 
+    def paginate(self, func: typing.Callable, query: typing.Dict) -> typing.List[typing.Dict]:
+        if 'Limit' not in query:
+            query['Limit'] = self.default_limit
+
+        data = []
+        response = func(**query)
+        data.append(response)
+
+        query['Limit'] -= len(response['Items'])
+
+        while 'LastEvaluatedKey' in response and query['Limit'] != 0:
+            query['ExclusiveStartKey'] = response['LastEvaluatedKey']
+            response = func(**query)
+            data.append(response)
+            query['Limit'] -= len(response['Items'])
+
+        return data
+
+    @staticmethod
+    def __flatten_items(raw_results):
+        results = []
+        for result in raw_results:
+            results.extend(result.get('Items', []))
+        return results
+
     def scan(self, **kwargs):
+        raw_results = self.paginate(func=self.table.scan, query=kwargs.get('query', {}))
         if kwargs.get('raw_scan'):
-            return self.table.scan(**kwargs.get('query', {}))
-        return self.table.scan(**kwargs.get('query', {})).get('Items', [])
+            return raw_results
+        else:
+            return self.__flatten_items(raw_results)
 
     def get(self, **kwargs):
         return self.table.get_item(**kwargs.get('query', {})).get('Item', {})
 
     def query(self, **kwargs):
+        raw_results = self.paginate(func=self.table.query, query=kwargs.get('query', {}))
         if kwargs.get('raw_query'):
-            return self.table.query(**kwargs.get('query', {}))
-        return self.table.query(**kwargs.get('query', {})).get('Items', [])
+            return raw_results
+        else:
+            return self.__flatten_items(raw_results)
 
     def overwrite(self, **kwargs):
         overwrite_item = schema_mapper.map_to_schema(kwargs['data'], self.model_schema_file, self.model_schema)
