@@ -49,10 +49,22 @@ class S3AdapterTest(unittest.TestCase):
         results = self.adapter.create(
             s3_path='test/test-create.json',
             data={'test': True},
+            json=True
+        )
+        self.assertEqual(results['ResponseMetadata']['HTTPStatusCode'], 200)
+
+    def test_create_with_tags(self):
+        self.adapter.create(
+            s3_path='test/test-create.json',
+            data={'test': True},
             json=True,
             tags='partener=ingestor&integrationAccountReference=dummy_account'
         )
-        self.assertEqual(results['ResponseMetadata']['HTTPStatusCode'], 200)
+        tags_result =  self.adapter.client.get_object_tagging(
+            Bucket=self.bucket,
+            Key='test/test-create.json',
+        )
+        self.assertListEqual(tags_result['TagSet'], [{'Key': 'integrationAccountReference', 'Value': 'dummy_account'}, {'Key': 'partener', 'Value': 'ingestor'}])
 
     def test_put_stream(self):
         url = 'https://github.com/syngenta-digital/package-python-dta/archive/refs/heads/master.zip'
