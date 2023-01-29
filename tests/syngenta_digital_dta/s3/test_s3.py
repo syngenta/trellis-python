@@ -58,7 +58,7 @@ class S3AdapterTest(unittest.TestCase):
             s3_path='test/test-create.json',
             data={'test': True},
             json=True,
-            tags=[{'partener':'ingestor'}, {'integrationAccountReference':'dummy_account'}]
+            tags={'partener':'ingestor', 'integrationAccountReference':'dummy_account'}
         )
         tags_result =  self.adapter.client.get_object_tagging(
             Bucket=self.bucket,
@@ -82,7 +82,7 @@ class S3AdapterTest(unittest.TestCase):
         # modify tags
         self.adapter.put_object_tags(
             s3_path='test/test-create2.json',
-            tags=[{'partener':'ingestor'}, {'integrationAccountReference':'dummy_account'}]
+            tags={'partener':'ingestor', 'integrationAccountReference':'dummy_account'}
         )
         # validate the existing tags
         tags_result =  self.adapter.client.get_object_tagging(
