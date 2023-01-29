@@ -51,19 +51,20 @@ class S3Adapter(BaseAdapter):
     def put(self, **kwargs):
         acl = self.__set_acl(kwargs.get('public_read', False))
         body = self.__set_body(**kwargs)
+        tags = self.__concat_tags(**kwargs)
         results = self.client.put_object(
             ACL=acl,
             Body=body,
             Bucket=self.bucket,
             Key=kwargs['s3_path'],
-            Tagging=kwargs.get('tags', '')
+            Tagging= tags
         )
         if kwargs.get('publish', True):
             super().publish('create', self.__generate_publish_data(**kwargs), **kwargs)
         return results
 
     def put_object_tags(self, **kwargs):
-        tags = self.__create_tags(kwargs['tags'])
+        tags = self.__create_tags(**kwargs)
         results = self.client.put_object_tagging(
             Bucket=self.bucket,
             Key=kwargs['s3_path'],
@@ -251,10 +252,18 @@ class S3Adapter(BaseAdapter):
     def __generate_publish_data(self, **kwargs):
         return {'presigned_url': self.create_presigned_read_url(**kwargs)}
 
-    def __create_tags(self, tags):
-        tags = tags.split('&')
+    def __create_tags(self, **kwargs):
+        tags = kwargs.get('tags', None)
         result_tags = []
         for tag in tags:
-            tag_content = tag.split('=')
-            result_tags.append({ 'Key' : tag_content[0], 'Value': tag_content[1]})
+            for key, value in tag.items():
+                result_tags.append({ 'Key' : key, 'Value': value})
         return result_tags
+
+    def __concat_tags(self, **kwargs):
+        tags = kwargs.get('tags' , None)
+        result_tags = ''
+        for tag in tags:
+            for key, value in tag.items():
+                result_tags += f'{key}={value}&'
+        return result_tags[:-1]
