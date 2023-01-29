@@ -55,7 +55,8 @@ class S3Adapter(BaseAdapter):
             ACL=acl,
             Body=body,
             Bucket=self.bucket,
-            Key=kwargs['s3_path']
+            Key=kwargs['s3_path'],
+            Tagging=kwargs.get('tags', 'name=default')
         )
         if kwargs.get('publish', True):
             super().publish('create', self.__generate_publish_data(**kwargs), **kwargs)

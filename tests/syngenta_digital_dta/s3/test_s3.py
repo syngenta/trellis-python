@@ -49,7 +49,8 @@ class S3AdapterTest(unittest.TestCase):
         results = self.adapter.create(
             s3_path='test/test-create.json',
             data={'test': True},
-            json=True
+            json=True,
+            tags='partener=ingestor&integrationAccountReference=dummy_account'
         )
         self.assertEqual(results['ResponseMetadata']['HTTPStatusCode'], 200)
 
