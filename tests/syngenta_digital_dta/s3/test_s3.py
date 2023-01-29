@@ -64,7 +64,7 @@ class S3AdapterTest(unittest.TestCase):
             Bucket=self.bucket,
             Key='test/test-create.json',
         )
-        self.assertListEqual(tags_result['TagSet'], [{'Key': 'integrationAccountReference', 'Value': 'dummy_account'}, {'Key': 'partener', 'Value': 'ingestor'}])
+        self.assertListEqual(tags_result['TagSet'], [{'Key': 'partener', 'Value': 'ingestor'}, {'Key': 'integrationAccountReference', 'Value': 'dummy_account'}])
 
     def test_put_stream(self):
         url = 'https://github.com/syngenta-digital/package-python-dta/archive/refs/heads/master.zip'
