@@ -62,8 +62,16 @@ class S3Adapter(BaseAdapter):
             super().publish('create', self.__generate_publish_data(**kwargs), **kwargs)
         return results
 
-    def put_object_tagging(self):
-        pass
+    def put_object_tags(self, **kwargs):
+        tags = self.__create_tags(kwargs['tags'])
+        results = self.client.put_object_tagging(
+            Bucket=self.bucket,
+            Key=kwargs['s3_path'],
+            Tagging={
+                'TagSet': tags
+            }
+        )
+        return results
 
     def upload_stream(self, **kwargs):
         conf = boto3.s3.transfer.TransferConfig(
@@ -242,3 +250,11 @@ class S3Adapter(BaseAdapter):
 
     def __generate_publish_data(self, **kwargs):
         return {'presigned_url': self.create_presigned_read_url(**kwargs)}
+
+    def __create_tags(self, tags):
+        tags = tags.split('&')
+        result_tags = []
+        for tag in tags:
+            tag_content = tag.split('=')
+            result_tags.append({ 'Key' : tag_content[0], 'Value': tag_content[1]})
+        return result_tags
