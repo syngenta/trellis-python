@@ -24,6 +24,8 @@ def __walk_schema(properties, mapping, special):
         elif property_value.get('items', {}).get('properties'):
             mapping[property_key] = {}
             mapping[property_key]['type'] = 'nested'
+            mapping[property_key]['properties'] = {}
+            __walk_schema(property_value['items']['properties'], mapping[property_key]['properties'], special)
         elif special and isinstance(special, dict) and special.get(property_key):
             mapping[property_key] = {'type': special[property_key]}
         else:
