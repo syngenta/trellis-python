@@ -237,4 +237,4 @@ class S3Adapter(BaseAdapter):
         return 'private'
 
     def __generate_publish_data(self, **kwargs):
-        return {'presigned_url': self.create_presigned_read_url(**kwargs)}
+        return {'presigned_url': self.create_public_url(**kwargs)}
