@@ -255,8 +255,11 @@ class S3Adapter(BaseAdapter):
     def __create_tags(self, **kwargs):
         tags = kwargs.get('tags', None)
         result_tags = []
-        for key, value in tags.items():
-            result_tags.append({ 'Key' : key, 'Value': value})
+        try:
+            for key, value in tags.items():
+                result_tags.append({ 'Key' : key, 'Value': value})
+        except AttributeError:
+            pass
         return result_tags
 
     def __concat_tags(self, **kwargs):
