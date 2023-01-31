@@ -261,8 +261,8 @@ class S3Adapter(BaseAdapter):
             for key, value in tags.items():
                 result_tags.append({ 'Key' : key, 'Value': value})
             return result_tags
-        except AttributeError:
-            raise TypeError(' tags parameter is invalid, it should be Dict object')
+        except AttributeError as error:
+            raise TypeError(' tags parameter is invalid, it should be Dict object') from error
 
 
     def __construct_tags_string(self, **kwargs):
@@ -274,5 +274,5 @@ class S3Adapter(BaseAdapter):
             for key, value in tags.items():
                 result_tags += f'{key}={value}&'
             return result_tags[:-1]
-        except AttributeError:
-            raise TypeError(' tags parameter is invalid, it should be Dict object')
+        except AttributeError as error:
+            raise TypeError(' tags parameter is invalid, it should be Dict object') from error
