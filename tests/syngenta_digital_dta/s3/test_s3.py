@@ -53,6 +53,44 @@ class S3AdapterTest(unittest.TestCase):
         )
         self.assertEqual(results['ResponseMetadata']['HTTPStatusCode'], 200)
 
+    def test_create_with_tags(self):
+        self.adapter.create(
+            s3_path='test/test-create.json',
+            data={'test': True},
+            json=True,
+            tags={'partener':'ingestor', 'integrationAccountReference':'dummy_account'}
+        )
+        tags_result =  self.adapter.client.get_object_tagging(
+            Bucket=self.bucket,
+            Key='test/test-create.json',
+        )
+        self.assertListEqual(tags_result['TagSet'], [{'Key': 'partener', 'Value': 'ingestor'}, {'Key': 'integrationAccountReference', 'Value': 'dummy_account'}])
+
+    def test_add_tags(self):
+        # create object
+        self.adapter.create(
+            s3_path='test/test-create2.json',
+            data={'test': True},
+            json=True,
+        )
+        # make sure no tags exists for the created object
+        tags_result =  self.adapter.client.get_object_tagging(
+            Bucket=self.bucket,
+            Key='test/test-create2.json',
+        )
+        self.assertListEqual(tags_result['TagSet'], [])
+        # modify tags
+        self.adapter.put_object_tags(
+            s3_path='test/test-create2.json',
+            tags={'partener':'ingestor', 'integrationAccountReference':'dummy_account'}
+        )
+        # validate the existing tags
+        tags_result =  self.adapter.client.get_object_tagging(
+            Bucket=self.bucket,
+            Key='test/test-create2.json',
+        )
+        self.assertListEqual(tags_result['TagSet'], [{'Key': 'partener', 'Value': 'ingestor'}, {'Key': 'integrationAccountReference', 'Value': 'dummy_account'}])
+
     def test_put_stream(self):
         url = 'https://github.com/syngenta-digital/package-python-dta/archive/refs/heads/master.zip'
         response = requests.get(url, stream=True)
