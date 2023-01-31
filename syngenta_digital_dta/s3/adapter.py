@@ -51,7 +51,7 @@ class S3Adapter(BaseAdapter):
     def put(self, **kwargs):
         acl = self.__set_acl(kwargs.get('public_read', False))
         body = self.__set_body(**kwargs)
-        tags = self.__concat_tags(**kwargs)
+        tags = self.__construct_tags_string(**kwargs)
         results = self.client.put_object(
             ACL=acl,
             Body=body,
@@ -64,7 +64,7 @@ class S3Adapter(BaseAdapter):
         return results
 
     def put_object_tags(self, **kwargs):
-        tags = self.__create_tags(**kwargs)
+        tags = self.__construct_tag_set(**kwargs)
         results = self.client.put_object_tagging(
             Bucket=self.bucket,
             Key=kwargs['s3_path'],
@@ -252,22 +252,27 @@ class S3Adapter(BaseAdapter):
     def __generate_publish_data(self, **kwargs):
         return {'presigned_url': self.create_public_url(**kwargs)}
 
-    def __create_tags(self, **kwargs):
+    def __construct_tag_set(self, **kwargs) -> list:
         tags = kwargs.get('tags', None)
         result_tags = []
+        if not tags:
+            return result_tags
         try:
             for key, value in tags.items():
                 result_tags.append({ 'Key' : key, 'Value': value})
+            return result_tags
         except AttributeError:
-            pass
-        return result_tags
+            raise TypeError(" tags parameter is invalid, it should be Dict object")
 
-    def __concat_tags(self, **kwargs):
+
+    def __construct_tags_string(self, **kwargs):
         tags = kwargs.get('tags' , None)
         result_tags = ''
+        if not tags:
+            return result_tags
         try:
             for key, value in tags.items():
                 result_tags += f'{key}={value}&'
             return result_tags[:-1]
         except AttributeError:
-            return result_tags
+            raise TypeError(" tags parameter is invalid, it should be Dict object")
